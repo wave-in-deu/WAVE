@@ -1,82 +1,92 @@
-23.05.03
-6-1 데이터와 연산 
--숫자(Number) 
--문자열(String)
--영상/소리/기타 등등 
 
 6-2 데이터 타입
-public class Datatpye{
-    public static void main(String[] args) {
-        System.out.println(6); // Number
-        System.out.println("six"); // String
-         
-        System.out.println("6"); // 문자 6
-         
-        System.out.println(6+6); // 12
-        System.out.println("6"+"6"); // 문자 66
-         
-        System.out.println(6*6); // 36
-//      System.out.println("6"*"6"); // 문자로 인식 =>곱해지지 않음
-         
-        System.out.println("1111".length()); // 문자열의 길이 4
-//      System.out.println(1111.length()); // 숫자의 길이 x
     }
 }
-6-3 숫자와 연산 
 
-public class Number {
+8-2 변수의 효용
+public class Letter {
  
     public static void main(String[] args) {
-        // Operator
-        System.out.println(6 + 2); // 8
-        System.out.println(6 - 2); // 4
-        System.out.println(6 * 2); // 12
-        System.out.println(6 / 2); // 3
- 
-        System.out.println(Math.PI); // 3.141592653589793
-        System.out.println(Math.floor(Math.PI));//소수점 제거
-        System.out.println(Math.ceil(Math.PI));
+        String name = "leezche";
+        System.out.println("Hello, "+name+" ... "+name+" ... egoing ... bye");
          
-         
+        double VAT = 10.0;
+        System.out.println(VAT);
     }
  
 }
 
-6-4 문자열의 표현
+8-3 데이터 타입의 변환
 
--문자열은 기본적으로 Sting에 ""안에 작성
-
-public class StringApp {
+public class Casting {
  
     public static void main(String[] args) {
          
-        // Character VS String 
-        System.out.println("Hello World"); // 문자 표현
-        System.out.println('H'); // 문자형 '' 사용 x
-        System.out.println("H"); 
-     
-        System.out.println("Hello "
-                + "World"); // helloworld 출력
+        double a = 1.1;
+        double b = 1;
+        double b2 = (double) 1;
          
-        // new line
-        System.out.println("Hello \nWorld");//Hello후 아랫줄 World 출력
+        System.out.println(b);
          
-        // escape
-        System.out.println("Hello \"World\"");// escape =>특수한 기호를 문자열에 넣기위함
+        // int c = 1.1;
+        double d = 1.1;
+        int e = (int) 1.1;
+        System.out.println(e);
+         
+        // 1 to String 
+        String f = Integer.toString(1);
+        System.out.println(f.getClass());
+ 
+ 
     }
  
 }
 
-6-5 문자열 다루기
-public class StringOperation {
+9-1 프로그래밍이란 무엇인가 
+
+public class Program {
  
     public static void main(String[] args) {
          
-        System.out.println("Hello World".length()); // 11
-        System.out.println("Hello, [[[name]]] ... bye. ".replace("[[[name]]]", "duru"));// replace => oldChar(바꾸고 싶은 부분), newChar(바꾸고자 하는 문자열)을 받음
+        System.out.println(1);
+        System.out.println(2);
+        System.out.println(3);
  
     }
-
+ 
 }
 
-7. 작심삼일공학
+9-3 IOT 프로그램 만들기
+
+- 반복적인 값을 변수 지정으로 재사용 가능.가독성 높임
+
+import org.opentutorials.iot.Elevator;
+import org.opentutorials.iot.Lighting;
+import org.opentutorials.iot.Security;
+ 
+public class OkJavaGoInHome {
+ 
+    public static void main(String[] args) {
+         
+        String id = "JAVA APT 507";
+         
+        // Elevator call 
+        Elevator myElevator = new Elevator(id);
+        myElevator.callForUp(1);
+         
+        // Security off 
+        Security mySecurity = new Security(id);
+        mySecurity.off();
+         
+        // Light on
+        Lighting hallLamp = new Lighting(id+" / Hall Lamp");
+        hallLamp.on();
+         
+        Lighting floorLamp = new Lighting(id+" / floorLamp");
+        floorLamp.on();
+ 
+    }
+ 
+}
+
+10 디버거
