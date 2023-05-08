@@ -162,6 +162,14 @@ public class Datatype{
 	}
 }
 
+결과 : 6
+six
+6
+12
+66
+36
+4
+
 Description	Resource	Path	Location	Type The project cannot be built until build path errors are resolved	HelloWorld		Unknown	Java Problem
 editor does no contain a main type
 java.lang.ClassNotFoundException
@@ -169,3 +177,202 @@ java.lang.ClassNotFoundException
 Project-properties-java build path-전부 jdk20으로 호환시켜주면 됨
 
 타입별로 연산방법이 존재
+
+
+New-class-Name+public static void main(String[] args)체크 
+연산자 = Operator
+Math (캐비넷)안에 수학과 관련된 명령어 기능
+
+public class Number {
+
+	public static void main(String[] args) {
+		// Operator
+		System.out.println(6 + 2); //8
+		System.out.println(6 - 2); //4
+		System.out.println(6 * 2); //12
+		System.out.println(6 / 2); //3
+		
+		System.out.println(Math.PI); //3.141592653589793
+		System.out.println(Math.floor(Math.PI)); //3.0 내림
+		System.out.println(Math.ceil(Math.PI)); //4.0 올림
+		System.out.println(Math.round(Math.PI)); //3 반올림
+		System.out.println(Math.abs(-5)); //인수의 절대값 반환
+		System.out.println(Math.pow(3, 4)); //거듭 제곱 (3에 4승)
+		System.out.println(Math.random()); //0.0~1.0 사이의 실수를 랜덤 생성하여 반환
+
+	}
+
+}
+
+결과 : 8
+4
+12
+3
+3.141592653589793
+3.0
+4.0
+3
+5
+81.0
+0.302652439921948 <-랜덤값
+
+
+public class StringApp {
+
+	public static void main(String[] args) {
+		
+		System.out.println("Hello World"); //String 문자열 문자가 모인
+		
+		System.out.println('Hello World'); //Character 문자 한글자만 에러
+		
+		System.out.println("H"); //이건 가능은 함
+		
+		System.out.println("Hello " //이클립스가 자동으로 연결
+				+ "World");
+		
+		System.out.println("Hello \nWorld"); // \n은 new line의 약자 (역슬레시 n) 줄바꿈
+		
+		System.out.println("Hello \"World\""); // escape Hello "World" //특정
+
+	}
+
+}
+
+결과 : H
+Hello World
+Hello 
+World
+Hello "World"
+
+
+public class StringOpreration {
+
+	public static void main(String[] args) {
+		
+		System.out.println("Hello World".length()); //11
+		System.out.println("Hello, leezche ... bye.".replace("leezche", "egoing")); //대체
+		
+	}
+
+}
+
+결과 : 11
+Hello, egoing ... bye.
+
+3일차
+
+
+public class Variable {
+
+	public static void main(String[] args) {
+		
+		int a = 1; // Number -> integer 정수 
+		System.out.println(a); // 1
+		
+		double b = 1.1; //real number -> double 실수
+		System.out.println(b); // 1.1
+		
+		String c = "Hello World";
+		System.out.println(c); // Hello World
+
+	}
+
+}
+
+1
+1.1
+Hello World
+
+
+public class Letter {
+
+	public static void main(String[] args) {
+		System.out.println("Hello, egoing ... egoing ... egoing ... bye");
+		String name = "egoing";
+		System.out.println("Hello, "+name+" ... "+name+" ... egoing ... bye");
+		
+		double VAT = 10.0;
+		System.out.println(VAT);
+		
+
+	}
+
+}
+
+결과 : Hello, egoing ... egoing ... egoing ... bye
+Hello, egoing ... egoing ... egoing ... bye
+10.0
+
+
+public class Casting {
+
+	public static void main(String[] args) {
+		
+		double a = 1.1;
+		double b = 1;
+		double b2 = (double) 1; // 손실 없으므로 같음
+		
+		System.out.println(b);
+		
+//		int c = 1.1;
+		double d = 1.1;
+		int e = (int) 1.1;
+		System.out.println(e); // 1.1 -> 1.0 손실
+		
+		// 1 to String
+		String f = Integer.toString(1);
+		System.out.println(f.getClass());
+
+	}
+
+}
+
+결과 : 1.0
+1
+class java.lang.String
+
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		System.out.println(1);
+		System.out.println(2);
+		System.out.println(3);
+
+	}
+
+}
+
+import org.opentutorials.iot.Elevator;
+import org.opentutorials.iot.Lighting;
+import org.opentutorials.iot.Security;
+
+public class OkJavaGoInHome {
+
+	public static void main(String[] args) {
+		
+		String id = "JAVA APT 507";
+		// Elevator call
+		Elevator myElevator = new Elevator("id");
+		myElevator.callForUp(1);
+		
+		// Security off
+		Security mySecurity = new Security("id");
+		mySecurity.off();
+		
+		// Light on
+		Lighting hallLamp = new Lighting("id+ / Hall Lamp");
+		hallLamp.on();
+		Lighting floorLamp = new Lighting("id+ / floor Lamp");
+		floorLamp.on();
+
+	}
+
+}
+
+디버거 기능
+브레이크 포인트까지 실행
+Step Over  다움 줄에 브레이크 포인트 생성
+Resume 다음 브레이크 포인트까지 실행 더이상 없다면 끝까지 실행
+우측 Variable 탭에서 변수 확인
