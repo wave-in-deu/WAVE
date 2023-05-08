@@ -376,3 +376,14 @@ public class OkJavaGoInHome {
 Step Over  다움 줄에 브레이크 포인트 생성
 Resume 다음 브레이크 포인트까지 실행 더이상 없다면 끝까지 실행
 우측 Variable 탭에서 변수 확인
+
+4일차
+ argument는 사용자 입력을 의미하는 문자열배열
+parameter는 함수에서 전달되어 사용되어지는 변수
+argument는 main()함수의 매개변수로 작용한다.
+args는 문자열 배열(array)로 여러 개의 String 데이터가 들어있을 수 있다.
+인덱스를 통해 배열의 데이터를 꺼내 쓸 수 있고, 인덱스는 0번부터 시작
+자바 파일 컴파일하기
+기존에 있던 class 파일을 지우고 javac Program.java를 컴파일
+실행하기 
+java Program
