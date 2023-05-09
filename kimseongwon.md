@@ -387,3 +387,110 @@ args는 문자열 배열(array)로 여러 개의 String 데이터가 들어있�
 기존에 있던 class 파일을 지우고 javac Program.java를 컴파일
 실행하기 
 java Program
+
+# 5일차
+====================================================================
+## c13 자바 문서 보는 법
+--------------------------------------------------------------------
+자바 API(Application Programming Interface) = 자바의 도구들을 응용해서 사용하기 위해서 일정한 조작 장치를 구성
+사용자가 자바 프로그램을 사용할 수 있도록 만들어둔 장치 = UI(User Interface)
+패키지>연관된 클래스>연관된 변수, 메소드
+인스턴스는 클래스를 컴퓨터 상에서 실체화한 것
+클래스의 상속관계
+자식에 해당하는 클래스는 부모에 해당하는 클래스의 모든 변수와 메소드를 사용할 수 있다.
+
+## c14.4까지 나의 앱만들기
+--------------------------------------------------------------------
+public class AccoutingApp {
+
+	public static void main(String[] args) {
+		
+		System.out.println("Value of supply : "+12345.0);
+		System.out.println("VAT : "+ (12345.0*0.1));
+		System.out.println("Total : "+ (12345.0+ 12345.0*0.1));
+		System.out.println("Expense : "+ (12345.0*0.3));
+		System.out.println("Income : "+ (12345.0 - 12345.0*0.3));
+		System.out.println("Dividend 1 : "+ (12345.0 - 12345.0*0.3) * 0.5 );
+		System.out.println("Dividend 2 : "+ (12345.0 - 12345.0*0.3) * 0.3 );
+		System.out.println("Dividend 3 : "+ (12345.0 - 12345.0*0.3) * 0.2 );
+		
+	}
+
+}
+
+Find/Replace로 선택한 값 모두 대체 
+**단축키 ctrl + f**
+
+변수 적용하기 우클릭+Refactor+Extract Local Variable 변수 지정
+**단축키 alt + shift + L**
+
+---------------------------------------------------------
+public class AccoutingApp {
+
+	public static void main(String[] args) {
+		
+		double ValueOfSupply = 10000.0;
+		double vatRate = 0.1;
+		double vat = ValueOfSupply*vatRate;
+		double total = ValueOfSupply+ vat;
+		double expenseRate = 0.3;
+		double expense = ValueOfSupply*expenseRate;
+		double income = ValueOfSupply - expense;
+		double dividend1 = income * 0.5;
+		double dividend2 = income * 0.3;
+		double dividend3 = income * 0.2;
+		
+		System.out.println("Value of supply : "+ValueOfSupply);
+		System.out.println("VAT : "+ vat);
+		System.out.println("Total : "+ total);
+		System.out.println("Expense : "+ expense);
+		System.out.println("Income : "+ income);
+		System.out.println("Dividend 1 : "+ dividend1 );
+		System.out.println("Dividend 2 : "+ dividend2 );
+		System.out.println("Dividend 3 : "+ dividend3 );
+		
+	}
+
+}
+**프로그램의 기능은 바꾸지 않으면서 이해하기 쉽게 바꾸는 과정을 리팩토링**
+
+아규먼트를 받는 프로그램으로 수정하기
+
+public class AccountingApp {
+
+	public static void main(String[] args) {
+		
+		double ValueOfSupply = Double.parseDouble(args[0]);
+		double vatRate = 0.1;
+		double vat = ValueOfSupply*vatRate;
+		double total = ValueOfSupply+ vat;
+		double expenseRate = 0.3;
+		double expense = ValueOfSupply*expenseRate;
+		double income = ValueOfSupply - expense;
+		double dividend1 = income * 0.5;
+		double dividend2 = income * 0.3;
+		double dividend3 = income * 0.2;
+		
+		System.out.println("Value of supply : "+ValueOfSupply);
+		System.out.println("VAT : "+ vat);
+		System.out.println("Total : "+ total);
+		System.out.println("Expense : "+ expense);
+		System.out.println("Income : "+ income);
+		System.out.println("Dividend 1 : "+ dividend1 );
+		System.out.println("Dividend 2 : "+ dividend2 );
+		System.out.println("Dividend 3 : "+ dividend3 );
+		
+	}
+
+}
+
+문자열을 실수형으로 바꾼다는 코드 **Double.parseDouble**
+
+터미널에서 실행하기
+Properties -> Location 복사 -> 터미널(cmd)에서 cd+주소 ->
+javac AccountingApp.java javac 명령어로 컴파일 -> java AccountingApp 33333.0 java 명령어로 AccountingApp 실행 아규먼트로 원하는 공급가액 입력
+
+*사소한 실수*
+터미널 실행하면서 에러가 떳는데 알고보니 파일명에서 n을 빼먹어서 발생했다.
+자바 파일을 우클릭하고 rename으로 이름을 다시 바꾸고 소스도 바꿔주니 정상적으로 작동하였다.
+
