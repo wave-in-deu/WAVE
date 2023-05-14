@@ -1084,3 +1084,203 @@ public class LoopArray {
 	}
 
 }
+
+#### This is a 8-1
+종합응용1
+package javaflowcontrol;
+
+public class AuthApp3 {
+
+	public static void main(String[] args) {
+		
+		String[] users = {"egoing", "jinhuck", "youbin"};
+		String inputId = args[0];
+		
+		boolean isLogined = false;
+		for(int i=0; i<users.length; i++) {
+			String currentId = users[i];
+			if(currentId.equals(inputId)) {
+				isLogined = true;
+				break;//break가 있으면 break가 속해있는 반복문은 종료
+			}
+		}
+		System.out.println("Hi,");
+		if(isLogined) {
+			System.out.println("Master!!");
+		} else {
+			System.out.println("Who are you?");
+		}
+	}
+
+}//아규먼트에 egoing을 넣고 실행하면 Hi, Master!! 실행됨
+// 아규먼트에 leezche를 넣으면 Hi, Who are you?가 실행됨
+
+##### This is a 8-2
+종합응용2
+package javaflowcontrol;
+
+public class AuthApp3 {
+
+	public static void main(String[] args) {
+		
+		//String[] users = {"egoing","jinhuck", "youbin"};//users의 배열의 값이 string이었는데
+		String[][] users = {
+				{"egoing", "1111"},
+				{"jinhuck", "2222"},
+				{"youbin", "3333"}
+				//배열안에 또 다른 배열이 들어간다 / users는 users의 원소가 배열이고 그 각가의 배열의 원소의 값은 string인 값
+		};
+		String inputId = args[0];
+		String inputPass = args[1];//두번째 값을 비밀번호로 받는다.
+		
+		boolean isLogined = false;
+		for(int i=0; i<users.length; i++) {
+			String[] current = users[i];
+			if(
+					current[0].equals(inputId)&&
+					current[0].equals(inputPass)
+			   ) {//입력된 아이디의 값과 각각의 원소의 첫번째 자리인 아이디의 값을 비교하는 코드
+				isLogined = true;
+				break;//break가 있으면 break가 속해있는 반복문은 종료
+			}
+		}
+		System.out.println("Hi,");
+		if(isLogined) {
+			System.out.println("Master!!");
+		} else {
+			System.out.println("Who are you?");
+		}
+	}
+
+}
+
+This is an 메소드
+-------------
+*메소드
+메소드 : 클래스와 관련된 작업을 하는 함수
+메소드를 이용하여 코드를 정리정돈하고 재사용성을 높일 수 있는 방법
+
+# This is a 2
+익숙한 메소드
+public class FirstMethod {
+
+	public static void main(String[] args) {
+		
+		System.out.println("Hello Method");
+		System.out.println(Math.floor(1.1));
+	}
+}//main이라는 메소드
+
+## This is a 3
+메소드의 기본 형식
+public class WhyMethod {
+	public static void printTwoTimesA() {
+		System.out.println("-");
+		System.out.println("a");
+		System.out.println("a");
+	}
+
+	public static void main(String[] args) {
+		
+	  // 100000000
+	  printTwoTimesA();
+        // 100000000
+        printTwoTimesA();
+        // 100000000
+        printTwoTimesA();
+	}
+}
+//Refactor -> Etract Method로 만들어도 됨.
+
+### This is a 4
+메소드의 입력
+public class WhyMethod {
+	
+	public static void main(String[] args) {
+		
+		             // 인자, argument : 함수 안으로 주입한 구체적인 값(a라는 문자열)
+	  printTwoTimes("a","-");//첫번쨰 입력값이 a구나 그러면 text값은 중괄호 안에서 a구나 라고 생각
+	  // 100000000
+        printTwoTimes("a","*");
+        // 100000000
+        printTwoTimes("a","&");
+        printTwoTimes("b","!");
+        
+	}
+                                     // 매개변수, parameter : 메소드 바깥쪽에서 메소드를 사용하는 쪽에서 주입한 값을 메소드 안으로 흘려보내주는 매개자 (text,delimiter같은 변수)
+	public static void printTwoTimes(String text, String delimiter) {//printTwoTimes이라는 메소드를 정의하고 있구나 그리고 미 메소드의 괄호안에 들어오는 첫번째 값은 반드시 String이구나 그리고 그렇게 들어온 값은 이 중괄호안에서 text라는 이름의 변수의 값이 되겠구나
+		System.out.println(delimiter);//delimiter는 구분자
+		System.out.println(text);
+		System.out.println(text);
+	}
+}
+
+#### This is a 5
+메소드의 출력
+public class OutMethod {
+	
+	public static String a() {//a라는 메소드는 return값이 String이다 아웃풋이 String이다.
+		//...
+		return "a";//a라는 메소드는 return뒤에 있는 값이 됩니다. 
+	}
+	
+	public static int one() {
+		return 1;
+	}//그 메소드의 return값 뒤에 있는 값이 그 메소드의 실행결과가 된다. return은 그 메소드를 종료시키는 역할도 한다.
+
+	public static void main(String[] args) {
+
+
+		System.out.println(a());
+		System.out.println(one());
+	}
+}
+
+
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WhyMethod {
+	
+	public static void main(String[] args) throws IOException {
+		
+		System.out.println(twoTimes("a","-"));
+		FileWriter fw = new FileWriter("out.txt");
+		fw.write(twoTimes("a","*"));
+		fw.close();
+ //     Email.send("egoing@a.com", "two times a", twoTimes("a","&")); 
+	}
+	public static String twoTimes(String text, String delimiter) {
+		String out = "";
+		out = out + delimiter + "\n";
+		out = out + text + "\n";
+		out = out + text + "\n";
+		return out;
+	}
+}
+
+##### This is a 6
+메소드의 활용
+public class AccountingApp {
+	//공급가액
+	double valueOfSupply = 10000.0;
+			
+	//부가가치세율
+	double vatRate = 0.1;
+			
+	public static void getVAT() {
+		return valueOfSupply * vatRate;
+	}
+	
+	public static double getTotal() {
+		return valueOgSupply + getVAT;
+	}
+
+	public static void main(String[] args) {
+		
+		System.out.println("Value of supply : " + valueOfSupply);
+		System.out.println("VAT : " + getVAT());
+		System.out.println("Total : " + getTotal());
+	}
+}
