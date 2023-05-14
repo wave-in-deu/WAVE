@@ -1284,3 +1284,227 @@ public class AccountingApp {
 		System.out.println("Total : " + getTotal());
 	}
 }
+
+###### This is a 8
+부록 (access level modifiers)
+class Greeting{
+	//public(다른 클래스에서도 사용 가능), protected, default, private(같은 클래스 안에서만 사용 가능)
+		public static void hi() {
+			System.out.println("Hi");
+		}
+}
+public class AccessLevelModifierMethod {
+	private static void hi() {
+		System.out.println("Hi");
+	}
+
+	public static void main(String[] args) {
+		hi();
+
+	}
+}
+
+###### This is a 9
+부록 (static)
+static - class method (static을 쓰면 클래스의 소속)
+non static - instance method (static을 쓰지 않으면 인스턴스의 소속)
+
+class Print{
+	public String delimiter;
+	public void a() {
+		System.out.println(this.delimiter);
+		System.out.println("a");
+		System.out.println("a");
+	}
+	public void b() {
+		System.out.println(this.delimiter);
+		System.out.println("b");
+		System.out.println("b");
+		
+	}
+	public static void c(String delimiter) {
+		System.out.println(delimiter);
+		System.out.println("b");
+		System.out.println("b");
+		
+	}
+}
+
+public class staticMethod {
+	
+	public static void main(String[] args) {
+//		Print.a("-");
+//		Print.b("-");
+		
+		//instance
+		Print t1 = new Print();
+		t1.delimiter = "-";
+		t1.a();//a라는 메소드는 클래스가 아니라 인스턴스의 소속이다
+		t1.b();
+		Print.c("$");// 프린트의 소속인 c를 호출할 수 있다 (static이기 때문에)
+		
+//		Print.a("*");
+//		Print.b("*");		
+		
+		Print t2 = new Print();
+		t2.delimiter = "*";
+		t2.a();
+		t2.b();
+
+	}
+
+}//메소드가 인스턴스의 소속일땐 static을 빼줘야 함 하지만 메소드가 클래스의 소속일땐 있어야 함.
+
+
+This is an 객체지향 프로그래밍
+-------------
+
+# This is a H1
+메소드는 언어마다 메소드(method), 함수(function), 서브루틴(subroutin), 프로시져(procedure)라는 여러 이름으로 불립니다.
+객체 지향 프로그래밍(Object Oriented Programming) :  클래스를 이용해서 프로그램의 구조를 만들어 가는 방식
+객체 지향 언어(Object Oriented Language) :  이러한 방식을 언어 차원에서 지원하는 프로그래밍 언어
+
+## This is a H2
+2 남의 클래스 남의 인스턴스
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class OthersOOP {
+
+	public static void main(String[] args) throws IOException {
+		//class : System, Math, FileWriter
+		// instance : f1, f2
+		
+		System.out.println(Math.PI);
+		System.out.println(Math.floor(1.8));
+		System.out.println(Math.ceil(1.8));
+		
+		FileWriter f1 = new FileWriter("data.txt"); // data.txt에다가 파일을 저장하겠다. FileWriter라는 클래스의 복제본이 생김.
+		f1.write("Hello");
+		f1.write("Java");
+		f1.close();
+		
+		FileWriter f2 = new FileWriter("data2.txt");
+		f2.write("Hello");
+		f2.write("Java2");
+		f2.close();
+		
+		f1.write("!!!");
+		f1.close();
+		// 긴 맥락을 가지고 작업해야하는 작업인 경우에는 클래스를 직접 사용하는게 아니라 클래스를 복제해서 복제본을 만들어 사용한다.
+
+	}
+
+}
+
+### This is a H3
+3 변수와 메소드
+public class MyOOP {
+	public static String delimiter = "";
+
+	public static void main(String[] args) {
+		String delimiter = "----";
+		printA();
+		printA();
+		printB();
+		printB();
+		
+		delimiter = "****";
+		printA();
+		printA();
+		printB();
+		printB();
+//메소드 안에서 정의된 변수는 그 메소드 안에서만 쓸 수 있다.
+	}
+
+	public static void printA() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	
+	public static void printB() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+
+}
+
+#### This is a H4
+4-1 클래스(존재 이유와 기본형식)
+클래스는 관련있는 변수들과 메소드를 묶어서 정리정돈을 할 수 있게 합니다.
+구분자로 분리된 A 문자열과 B 문자열을 출력하는 메소드를
+Print라는 클래스로 따로 떼어내서 만들 수 있게 되었습니다.
+그래서 굳이 메소드의 이름을 printA라고 적지 않고 A라고만 적어도
+
+Print 객체의 A메소드이기 때문에 A를 출력한다는 의미를 쉽게 유추할 수 있게 됩니다.
+class Print{
+	public static String delimiter = "";
+	public static void A() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	
+	public static void B() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+public class MyOOP {
+	public static void main(String[] args) {
+		Print.delimiter = "----";
+		Print.A();
+		Print.A();
+		Print.B();
+		Print.B();
+		
+		Print.delimiter = "****";
+		Print.A();
+		Print.A();
+		Print.B();
+		Print.B();
+	}
+
+}
+
+4-2 클래스 (형식)
+클래스는 한 파일에 여러 개를 넣을 수 있지만, 접근제어자 public은 java 파일과 같은 이름의 클래스에 하나만 붙일 수 있습니다.
+우리가 public 클래스를 실행하고자 할 때, 자바의 소스코드를 실행하고자 할 때, 소스코드 파일명과 동일한 public 클래스를 컴파일해서 그 클래스의 main 메소드를 실행하도록 약속되어 있습니다. 소스 코드를 컴파일을 할 때 그 안에 들어 있는 클래스는 아래와 같이 따로따로 하나씩 class 파일로 만들어집니다.
+그러므로, 한 파일 안에 여러 클래스가 등장할 수도 있지만 여러 클래스를 각각 하나의 java 파일로 만들게 되면, 프로그램의 기능별로 쪼개어서 소스 코드를 별도로 저장할 수 있게 됩니다. 실행을 담당하는 main 메소em가 들어 있는 MyOOP.java 파일,프로그램의 실질적인 액션을 담당하는 Print.java 파일로 분리해서  코드를 정리정돈 할 수 있게 됩니다.
+
+Refactor -> Move type to new File
+
+##### This is a H5
+5 인스턴스
+클래스는 어떠한 형틀이고, 인스턴스는 그 형틀로 찍어낸 실체와도 같은 것입니다.
+그래서 클래스를 바꾸면 그것으로 찍어낸 모든 사물들이 다른 형태를 갖게 되고.
+형틀로 찍어낸 사물을 바꾸면 그 사물의 자매와도 같은 다른 사물에는 어떠한 영향도 없습니다.
+즉 객체를 인스턴스로 만들면, 그 인스턴스를 바꾼다고 해도 다른 인스턴스에는 영향을 끼치지 않게 됩니다.
+
+
+public class MyOOP {
+	public static void main(String[] args) {
+		Print p1 = new Print();
+		p1.delimiter = "----";
+		p1.A();
+		p1.A();
+		p1.B();
+		p1.B();
+		
+		Print p2 = new Print();
+		p2.delimiter = "****";
+		p2.A();
+		p2.A();
+		p2.B();
+		p2.B();
+		
+		
+		p1.A();
+		p2.A();
+		p1.A();
+		p2.A();
+	}
+}
