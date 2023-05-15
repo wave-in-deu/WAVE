@@ -1416,3 +1416,347 @@ public class staticMethod {
 -------------
 
 <hr/>
+
+< 2023-05-12 / JAVA 2 / 객체지향 프로그래밍 1 ~ 5 >
+-------------
+
+* 메소드와 절차적 프로그래밍
+-메소드는 언어마다 메소드, 함수, 서브루틴, 프로시저라는 이름으로 불림.   
+-이러한 메소드를 중심으로 프로그램을 만들어 나가는 프로그래밍을 절차적 프로그래밍이라고 함.   
+-대표적 언어 : C언어   
+
+* 클래스와 객체지향 프로그래밍
+-객체지향 프로그래밍 : 변수와 메소드를 모은 수납상자와 같은 클래스를 이용하여 프로그램을 정돈시켜 프로그램의 구조를 만들어 가는 방식.   
+-객체 지향 언어 : 위와 같은 방식은 언어차원에서 지원하는 프로그래밍 언어.   
+
+* 남의 클래스, 남의 인스턴스
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+ 
+public class OthersOOP {
+ 
+    public static void main(String[] args) throws IOException {
+        // class : System, Math, FileWriter
+        // instance : f1, f2
+         
+        System.out.println(Math.PI);
+        System.out.println(Math.floor(1.8));
+        System.out.println(Math.ceil(1.8));
+         
+        FileWriter f1 = new FileWriter("data.txt");
+        f1.write("Hello");
+        f1.write(" Java");
+         
+         
+        FileWriter f2 = new FileWriter("data2.txt");
+        f2.write("Hello");
+        f2.write(" Java2");
+        f2.close();
+         
+        f1.write("!!!");
+        f1.close();
+    }
+}
+</code></pre>
+-Math Class : 수학적 계산을 도와주는 여러 메소드를 포함.   
+=> floor, ceil 메소드, 클래스 변수(PI)   
+=> 자연상수 E, 삼각함수, 제곱, 로그, 절대값, 난수, 반올림 등의 기능들을 할 수 있는 여러 메소드와 변수 포함.   
+=> 이러한 메소드와 변수는 인스턴스를 생성하지 않아도 클래스에서 직접 호출할 수 있다.   
+-FileWriter class : 파일을 열고 원하는 내용을 입력할 수 있는 기능 제공.   
+=> 각각의 파일에 해당하는 인스턴스를 생성하여 Write 메소드로 쓰기 작업을 수행하고 close 메소드로 파일을 닫는다.   
+=> 이러한 메소드와 변수는 인스턴스를 생성하여 사용하여야 하고 클래스에서 직접 호출할 수 없다.   
+
+* 변수와 메소드
+<pre><code>
+public class MyOOP {
+
+	public static void main(String[] args) {
+		String delimiter = "----";
+		printA(delimiter);
+		printA(delimiter);
+		printB(delimiter);
+		printB(delimiter);
+		
+		delimiter = "****";
+		printA(delimiter);
+		printA(delimiter);
+		printB(delimiter);
+		printB(delimiter);
+	}
+
+	public static void printA(String delimiter) {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	public static void printB(String delimiter) {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+</code></pre>
+-위 코드에서 String delimiter는 변수의 인자값을 바꾸는 변수선언이다.   
+-메소드 안에서 정의된 변수는 메소드안에서만 사용할 수 있다.   
+-이때 print 소속의 변수를 선언하면 아래 코드와 같다.
+<pre><code>
+class Print {
+	public static String delimiter = "";
+	public static void printA() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	public static void printB() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+	public static void printAll() {
+		printA();
+		printA();
+		printB();
+		printB();
+	}
+}
+public class MyOOP {
+	
+	public static void main(String[] args) {
+		Print.delimiter = "----";
+		Print.printAll();
+		
+		Print.delimiter = "****";
+		Print.printAll();
+	}	
+}
+</code></pre>
+
+* 클래스의 존재 이유와 기본형식
+-클래스의 장점 : 관련있는 변수들과 메소드를 묶어서 정리정돈을 할 수 있게 한다.   
+-우리는 위 코드에서  PrintA(), PrintB() 식으로 프린트문을 실행했다. 이를 더 편하게 하려면 Print.A, Print.B 이런식으로 변경해주면 된다. 이는 Print에 속한 A라는 뜻이다.
+=> Print.A 처럼 쓰면 굳이 메소드의 이름을 PrintA라고 적지 않고 A라고만 적어도 Print 객체의 A메소드이기 때문에 A를 출력한다는 의미를 쉽게 유추할 수 있다.   
+
+* 클래스의 형식
+-클래스는 한파일에 여러 개를 넣을 수 있지만 접근제어자 Public은 Java 파일과 같은 이름의 클래스에 하나만 붙일 수 있다.   
+-소스 코드를 컴파일할 때 그 안에 들어 있는 클래스는 아래와 같이 따로따로 하나씩 class 파일로 만들어진다.   
+<pre><code>
+    MyOOP.class // 실행을 담당하는 main 메소드가 들어있는 MyOOP.class
+    Print.class // 프로그램의 실질적인 액션을 담당하는 Print.class
+(폴더)src
+    MYOOP.java
+</code></pre>
+-따라서 한 파일안에 여러 클래스가 등장할 수 있지만 여러 클래스를 각각 하나의 java 파일로 만들게 되면 프로그램 기능별로 쪼개어 소스 코드를 별도 저장할 수 있다.   
+
+* 인스턴스
+-클래스 : 어떠한 형틀.   
+-인스턴스 : 형틀로 찍어낸 실체.   
+-객체를 인스턴스로 만들면 그 인스턴스를 바꾼다 하더라도 다른 인스턴스는 영향을 받지 않는다.   
+-클래스를 복제하는 키워드 : "new"   
+<pre><code>
+class Print {
+	public String delimiter = "";
+	public void A() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	public void B() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+public class MyOOP {
+	
+	public static void main(String[] args) {
+		Print p1 = new Print();
+		p1.delimiter = "----";
+		Print p2 = new Print();
+		p2.delimiter = "****";
+		
+		p1.A();
+		p2.A();
+		p1.B();
+		p2.B();	
+	}	
+}
+</code></pre>
+-위 코드에서 A()와 B() 속에 있는 코드를 실행시킬려면, MyOOP 클래스의 main에서 Print 클래스를 객체화 시켜 p1,p2이라는 변수를 선언하고 이를 "new" 를 사용해 Print()를 복제한 복제본을 만들어서 각각의 복제본을 내부적으로 다른데이터(딜리버리)를 유지하게 하여 코드를 깔끔하고 중복을 제거하는 결과를 얻게되었다.   
+
+< 2023-05-12 / JAVA 2 / 객체지향 프로그래밍 1 ~ 5 END >
+-------------
+
+<hr/>
+
+< 2023-05-15 / JAVA 2 / 객체지향 프로그래밍 6 ~ 9 >
+-------------
+
+* static
+-static 변수, 메소드는 클래스에서 생성된 모든 인스턴스가 공유하는 자원,   
+인스턴스를 만들지 않고도 클래스에서 직접 호출할 수 있다.   
+<pre><code>
+class Foo{
+    public static String classVar = "I class var";
+    public String instanceVar = "I instance var";
+    public static void classMethod() {
+        System.out.println(classVar); // Ok
+//      System.out.println(instanceVar); // Error
+    }
+    public void instanceMethod() {
+        System.out.println(classVar); // Ok
+        System.out.println(instanceVar); // Ok
+    }
+}
+public class StaticApp {
+ 
+    public static void main(String[] args) {
+        System.out.println(Foo.classVar); // OK
+//      System.out.println(Foo.instanceVar); // Error
+        Foo.classMethod();
+//      Foo.instanceMethod();
+         
+        Foo f1 = new Foo();
+        Foo f2 = new Foo();
+//      
+        System.out.println(f1.classVar); // I class var
+        System.out.println(f1.instanceVar); // I instance var
+//      
+        f1.classVar = "changed by f1";
+        System.out.println(Foo.classVar); // changed by f1
+        System.out.println(f2.classVar);  // changed by f1
+//      
+        f1.instanceVar = "changed by f1";
+        System.out.println(f1.instanceVar); // changed by f1
+        System.out.println(f2.instanceVar); // I instance var
+    }
+}
+</code></pre>
+-Class 메소드 안에서는 class변수는 접근이 가능하지만 instance변수는 접근이 불가능하다.   
+-Instance 메소드 안에서는 class변수와 instance변수 모두 접근이 가능하다.   
+-f1 인스턴스는 class를 원형으로 하기 때문에 class의 여러가지 멤버들을 복제한다.   
+-만약 class에 값도 세팅되어 있다면 f1에서 그 값까지 복제가 된다.   
+-따라서 class의 변수를 바꾸면 모든 인스턴스들의 변수의 값까지 바뀐다.   
+
+* 생성자와 this
+<pre><code>
+class Print {
+	public String delimiter = "";
+	public Print(String delimiter) {
+		this.delimiter = delimiter;
+	}
+	public void A() {
+		System.out.println(this.delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	public void B() {
+		System.out.println(this.delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+public class MyOOP {
+    public static void main(String[] args) {
+        Print p1 = new Print("----");
+        p1.A();
+        p1.A();
+        p1.B();
+        p1.B();
+ 
+        Print p2 = new Print("****");
+        p2.A();
+        p2.A();
+        p2.B();
+        p2.B();
+         
+         
+        p1.A();
+        p2.A();
+        p1.A();
+        p2.A();
+    }
+}
+</code></pre>
+-생성자는 초기에 주입할 필요가 있는 값을 전달하거나 초기에 작업을 수행할 때 사용한다   
+-this란 클래스가 인스턴스화 되었을때 그 클래스의 인스턴스를 가리킨다.   
+
+* 활용 (클래스화)
+<pre><code>
+class Accounting{
+    public static double valueOfSupply;
+    public static double vatRate = 0.1;
+    public static double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public static double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting.valueOfSupply = 10000.0;
+        System.out.println("Value of supply : " + Accounting.valueOfSupply);
+        System.out.println("VAT : " + Accounting.getVAT());
+        System.out.println("Total : " + Accounting.getTotal());
+  
+    }
+}
+</code></pre>
+-위 코드는 부가가치세와 총 가격을 구하는 프로그램이다.   
+-Accounting 클래스를 새로 정의하여 valueOfSupply, vatRate, getVAT, getTotal을 static 필드, 메소드로 구현한다.   
+-AccountingApp이라는 클래스를 새로 만들어서 프린트문을 작성한다. 이때 내부 파라미터의 값은 본래 값을 가지고 있는 Accounting 클래스를 상속받는다.   
+
+* 활용 (인스턴스화)
+-위 코드에서는 클래스 하나만으로는 그 때마다 일일이 필드를 수정해야 하는 귀찮은 작업을 해야한다.   
+-밑에 코드는 공급가액이 서로 다르고 번갈아 가면서 부가가치세와 총 가격을 구해서 출력해야 할 상황을 가정해서 인스턴스를 생성한 코드이다.   
+<pre><code>
+class Accounting{
+    public double valueOfSupply;
+    public static double vatRate = 0.1;
+    public Accounting(double valueOfSupply) {
+        this.valueOfSupply = valueOfSupply;
+    }
+    public double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting a1 = new Accounting(10000.0);
+         
+        Accounting a2 = new Accounting(20000.0);
+         
+        System.out.println("Value of supply : " + a1.valueOfSupply);
+        System.out.println("Value of supply : " + a2.valueOfSupply);
+         
+        System.out.println("VAT : " + a1.getVAT());
+        System.out.println("VAT : " + a2.getVAT());
+         
+        System.out.println("Total : " + a1.getTotal());
+        System.out.println("Total : " + a2.getTotal());
+    }
+}
+</code></pre>
+-AccountingApp에서 new를 통해 Accounting 클래스를 복제 하여 a1,a2라는 인스턴스를 만들고 값을 받을 수 있게했다.
+-static은 클래스의 소속이기 때문에 valueOfSupply, getVAT, getTotal 는 static이 되면 안된다.   
+-정리하면 static을 삭제처리해서 인스턴스화 하고 생성할때 초기화를 해야하기 때문에 생성자 세팅을 해줘야한다.   
+-생성자가 호출될 때 인자를 매개변수로 전달하려면 Accounting 클래스에서 아래 코드처럼 선언해야 한다.    
+<pre><code>
+public Accounting(double valueOfSupply){
+    this.valueOfSupply = valueOfSupply;
+}
+</code></pre>
+
+* 상속과 인터페이스
+-어떤 클래스와 비슷한 다른 것을 만들고 싶다면 어떻게 해야할까?   
+=> 상속 : 어떤 클래스의 변수와 메소드를 모두 복사해서 만드는 방법.   
+=> 인터페이스 : 일종의 규격, 클래스에 대한 규격을 선언하는 것.   
+
+< 2023-05-15 / JAVA 2 / 객체지향 프로그래밍 6 ~ 9 END >
+-------------
+
+<hr/>
