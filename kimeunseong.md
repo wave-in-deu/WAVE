@@ -1181,3 +1181,138 @@ pubilc 을 대신할수있는 메소드들 : protected, default,  private
 static 이 있으면 class method, 없으면 instance method
 
 ___
+0512
+
+# 자바 2 - 객체지향 1 ~ 5 
+
+- 남의 클래스 남의 인스턴스
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WS {
+   public static void main(String[] args) throws IOException {
+
+       System.out.println(Math.PI);
+       System.out.println(Math.floor(1.8));
+       System.out.println(Math.ceil(1.8));
+
+       FileWriter f1 = new FileWriter("data.txt");
+       f1.write("aa");
+
+       FileWriter f2 = new FileWriter("data2.txt");
+       f2.write("aa");
+       f2.close();
+       
+       f1.write("bb");
+       f1.close();
+       
+       // class : System, Math, FileWriter
+       // instance : f1, f2
+    }
+}
+
+</code></pre>
+
+- 변수와 메소드
+
+<pre><code>
+public class WS {
+   public static void main(String[] args) {
+
+       qq = "-----";
+       printA();
+       printA();
+       printB();
+       printB();
+   }
+    public static String qq = "";
+    public static void printA() {
+        System.out.println(qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public static void printB() {
+        System.out.println(qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+
+</code></pre>
+
+- 클래스
+
+<pre><code>
+class Print{
+    public static String qq = "";
+    public static void A() {
+        System.out.println(qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public static void B() {
+        System.out.println(qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+public class WS {
+   public static void main(String[] args) {
+
+       Print.qq = "-----";
+       Print.A();
+       Print.A();
+       Print.B();
+       Print.B();
+
+       // 클래스를 이용해 더욱 단정한 코드를 만들 수 있다
+   }
+}
+</code></pre>
+
+여러 클래스를 각각의 java 파일로 만들어 기능별로 쪼개는것도 가능하다.
+
+- 인스턴스
+
+<pre><code>
+class Print{
+    public  String qq = "";
+    public  void A() {
+        System.out.println(qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public  void B() {
+        System.out.println(qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+public class WS {
+   public static void main(String[] args) {
+
+       Print p1 = new Print();
+       p1.qq = "-----";
+       p1.A();
+       p1.A();
+       p1.B();
+       p1.B();
+
+       Print p2 = new Print();
+       p2.qq = "*****";
+       p2.A();
+       p2.A();
+       p2.B();
+       p2.B();
+   }
+}
+</code></pre>
+
+<pre><code>
+</code></pre>
+
