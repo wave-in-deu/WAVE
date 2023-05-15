@@ -1633,3 +1633,250 @@ class Print{
 }
 </code></pre>
 
+***
+
+2023-05-15 10일차 스터디
+-------------
+
+- StaticApp
+
+<pre><code>
+class Foo{
+	public static String classVar = "I class var"; // 변수
+	public String instanceVar = "I instance var"; // 변수
+	public static void classMethod() {
+		System.out.println(classVar);
+		// class method 안에서는 class variable에 접근이 가능하다
+		// System.out.println(instanceVar);
+		// instance variable에는 접근할 수 없다
+	}
+	public void instanceMethod() {
+		System.out.println(classVar);
+		System.out.println(instanceVar); 
+		// 모두 접근 가능하다
+	}
+}
+
+public class StaticApp {
+
+	public static void main(String[] args) {
+		System.out.println(Foo.classVar); // ok
+		// System.out.println(Foo.instanceVar); // error
+		// class를 통해서는 당연히 class variable에 접근이 가능하지만
+		// instance는 instance를 통해서 사용할 수 있도록 고안된 variable이다
+		Foo.classMethod();
+		// Foo.instanceMethod();
+		// instanceMethod는 instance 소속이기 때문에 class를 통해서 접근하는 것은 금지되어 있다
+		
+		Foo f1 = new Foo();
+		Foo f2 = new Foo();
+		// f1은 class를 원형으로 하기 때문에 class에 있는 여러가지 멤버들을 복제해온다
+		// 실제값이 존재하지 않고 Foo라고 하는 class를 가리키고 있을 뿐이다
+		// instanceVar라고 하는 변수가 생성되면서 class의 값도 세팅되어 있다면 이 값까지 복제된다
+		// 이 둘은 링크되어 있지 않기 때문에 instance f1의 값을 바꾼다고 해서 class Foo instanceVar의 값이 바뀌진 않는다 
+		
+		// 하지만 instance f1의 classVar 값을 바꾸면 class Foo의 classVar 값이 바뀐다 (반대로 해도 바뀜)
+		// 메소드는 서로 독립된 존재이다
+		// class의 변수를 바꾸면 모든 instance의 변수의 값이 바뀐다
+		// instance에서 class 변수를 바꿀수도 있는데 그렇게 되면 class의 변수가 바뀌고
+		// 걔를 사용하고 있는 모든 instance의 값도 바뀐다
+		
+		System.out.println(f1.classVar);
+		System.out.println(f1.instanceVar);
+		
+		f1.classVar = "changed by f1";
+		System.out.println(Foo.classVar); // changed by f1
+		System.out.println(f2.classVar); // changed by f1
+		
+		f1.instanceVar = "changed by f1";
+		System.out.println(f1.instanceVar); // changed by f1
+		System.out.println(f2.instanceVar); // I instance var
+	}
+
+}
+</code></pre>
+
+- MyOOp2
+
+<pre><code>
+public class MyOOP2 {
+
+	public static void main(String[] args) {
+		Print p1 = new Print("----");
+		p1.A();
+//		p1.A();
+//		p1.B();
+//		p1.B();
+//		
+//		Print p2 = new Print();
+//		p2.delimiter = "&&&&&&&&&";
+//		p2.A();
+//		p2.A();
+//		p2.B();
+//		p2.B();
+		
+	}
+	
+}
+</code></pre>
+
+- Print
+
+<pre><code>
+class Print{
+	public String delimiter = "";
+	public Print(String delimiter) {
+		this.delimiter = delimiter;
+	}
+	
+	public void A() {
+		System.out.println(this.delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	} 
+	
+	public void B() {
+		System.out.println(this.delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+	
+}
+</code></pre>
+
+- 자바에서의 class는 생성자라고 하는 아주 특수한 method를 구현할 수 있는 기능을 우리에게 제공하고 이의 주요한 작업은 초기화이다
+
+- class와 똑같은 이름의 method를 정의하면 이것이 생성자(+매개변수)이다
+
+  우리가 instance를 생성할 때 자바는 이 class와 동일한 이름의 method가 있다면 그 method를 호출하도록 약속되어 있기 때문에
+	
+	우리는 그 class가 instance화 될 때 실행돼야 될 코드를 construct method 안에 정의하는 것을 통해서 초기화의 목적을 달성할 수 있다
+
+- 생성자는 static이나 return 데이터 타입을 지정하지 않는다
+
+- 만약 instance delimiter 변수와 생성자의 delimiter 매개변수를 똑같이 하면 instance 변수가 실행된다
+
+  = 이런 경우엔 this를 붙여주면 된다
+
+  this는 그 class가 instance화 되었을 때 우리가 생성한 instance를 가리키는 이름이다
+
+- class의 상태가 계속해서 바뀌어야 하는 상황에선 instance
+
+  instance마다 고유한 상태를 주게되면 독립된 instance를 제어할 수 있게된다
+
+- AccountingApp
+
+<pre><code>
+class Accounting{
+	public double valueOfSupply; // this.valueOfSupply	
+	public static double vatRate = 0.1;
+	// 부가가치세율은 어떤 instance건 간에 동일하기 때문에 class 소속인 static으로 내버려두는 것이 더 좋을 수 있다
+	// 컴퓨터 자원 절약(메모리), 유지보수 편이성(한번에 값이 다 바뀐다)
+	public Accounting(double valueOfSupply) {
+		this.valueOfSupply = valueOfSupply;
+	}
+	public double getVAT() {
+		return valueOfSupply * vatRate;
+	}
+	public double getTotal() {
+		return valueOfSupply + getVAT();
+	}
+}
+
+public class AccountingApp {
+	public static void main(String[] args) {
+		Accounting a1 = new Accounting(10000.0);
+		
+		Accounting a2 = new Accounting(20000.0);
+		
+		System.out.println("Vaule of supply :" +a1.valueOfSupply);
+		System.out.println("Vaule of supply :" +a2.valueOfSupply);
+		
+		System.out.println("VAT : "+a1.getVAT());
+		System.out.println("VAT : "+a2.getVAT());
+		
+		System.out.println("Total : " +a1.getTotal());
+		System.out.println("Total : " +a2.getTotal());
+		
+//		Accounting.valueOfSupply = 10000.0;
+//		System.out.println("Vaule of supply :" +Accounting.valueOfSupply);
+//		System.out.println("VAT : "+Accounting.getVAT());
+//		System.out.println("Total : " +Accounting.getTotal());
+
+	}
+}
+</code></pre>
+
+- Parent
+
+<pre><code>
+class Parent {
+	
+	public void method1() {
+		//..
+	}
+
+}
+</code></pre>
+
+- Childe
+
+<pre><code>
+class Child extends Parent{
+	// Child class는 Parent class를 상속(inheritance)받게 된다
+	
+	public void method2() {
+		//..
+		// Parent method1을 수정하면 얘를 상속받는 모든 자식들의 method1이 수정된다
+	}
+
+}
+</code></pre>
+
+- Contract
+
+<pre><code>
+interface Contract {
+	
+	public String method1(String param);
+	public int method2(int param);
+	
+}
+</code></pre>
+
+- Contract1
+
+<pre><code>
+class Concreate1 implements Contract {
+	
+	public String method1(String param) {
+		return "foo";
+	}
+	
+	public int method2(int param) {
+		return 1;
+	}
+
+}
+</code></pre>
+
+- 규격
+
+  어떻게 구현했는지는 상관 없고 얘가 어떤 값을 뱉어주는지, 어떤 값을 입력하는 지만 신경쓴다
+
+- interface
+
+  method의 이름, parameter return 값의 형식은 적지만 실제 내용은 적지 않는다
+
+  implement에서 interface에 적혀있는 method들의 형식을 구현해야 된다
+
+  interfac에 적혀있는 형태의 method를 구체적으로 구현해야 하는 책임을 implement가 맡게 된다
+
+- package
+
+  같은 이름의 class가 존재하기 위해서는 서로 다른 package에 담는다.
+
+	com.company1.Foo
+	
+  com.company2.Foo
+
