@@ -1084,3 +1084,427 @@ public class LoopArray {
 	}
 
 }
+
+#### This is a 8-1
+종합응용1
+package javaflowcontrol;
+
+public class AuthApp3 {
+
+	public static void main(String[] args) {
+		
+		String[] users = {"egoing", "jinhuck", "youbin"};
+		String inputId = args[0];
+		
+		boolean isLogined = false;
+		for(int i=0; i<users.length; i++) {
+			String currentId = users[i];
+			if(currentId.equals(inputId)) {
+				isLogined = true;
+				break;//break가 있으면 break가 속해있는 반복문은 종료
+			}
+		}
+		System.out.println("Hi,");
+		if(isLogined) {
+			System.out.println("Master!!");
+		} else {
+			System.out.println("Who are you?");
+		}
+	}
+
+}//아규먼트에 egoing을 넣고 실행하면 Hi, Master!! 실행됨
+// 아규먼트에 leezche를 넣으면 Hi, Who are you?가 실행됨
+
+##### This is a 8-2
+종합응용2
+package javaflowcontrol;
+
+public class AuthApp3 {
+
+	public static void main(String[] args) {
+		
+		//String[] users = {"egoing","jinhuck", "youbin"};//users의 배열의 값이 string이었는데
+		String[][] users = {
+				{"egoing", "1111"},
+				{"jinhuck", "2222"},
+				{"youbin", "3333"}
+				//배열안에 또 다른 배열이 들어간다 / users는 users의 원소가 배열이고 그 각가의 배열의 원소의 값은 string인 값
+		};
+		String inputId = args[0];
+		String inputPass = args[1];//두번째 값을 비밀번호로 받는다.
+		
+		boolean isLogined = false;
+		for(int i=0; i<users.length; i++) {
+			String[] current = users[i];
+			if(
+					current[0].equals(inputId)&&
+					current[0].equals(inputPass)
+			   ) {//입력된 아이디의 값과 각각의 원소의 첫번째 자리인 아이디의 값을 비교하는 코드
+				isLogined = true;
+				break;//break가 있으면 break가 속해있는 반복문은 종료
+			}
+		}
+		System.out.println("Hi,");
+		if(isLogined) {
+			System.out.println("Master!!");
+		} else {
+			System.out.println("Who are you?");
+		}
+	}
+
+}
+
+This is an 메소드
+-------------
+*메소드
+메소드 : 클래스와 관련된 작업을 하는 함수
+메소드를 이용하여 코드를 정리정돈하고 재사용성을 높일 수 있는 방법
+
+# This is a 2
+익숙한 메소드
+public class FirstMethod {
+
+	public static void main(String[] args) {
+		
+		System.out.println("Hello Method");
+		System.out.println(Math.floor(1.1));
+	}
+}//main이라는 메소드
+
+## This is a 3
+메소드의 기본 형식
+public class WhyMethod {
+	public static void printTwoTimesA() {
+		System.out.println("-");
+		System.out.println("a");
+		System.out.println("a");
+	}
+
+	public static void main(String[] args) {
+		
+	  // 100000000
+	  printTwoTimesA();
+        // 100000000
+        printTwoTimesA();
+        // 100000000
+        printTwoTimesA();
+	}
+}
+//Refactor -> Etract Method로 만들어도 됨.
+
+### This is a 4
+메소드의 입력
+public class WhyMethod {
+	
+	public static void main(String[] args) {
+		
+		             // 인자, argument : 함수 안으로 주입한 구체적인 값(a라는 문자열)
+	  printTwoTimes("a","-");//첫번쨰 입력값이 a구나 그러면 text값은 중괄호 안에서 a구나 라고 생각
+	  // 100000000
+        printTwoTimes("a","*");
+        // 100000000
+        printTwoTimes("a","&");
+        printTwoTimes("b","!");
+        
+	}
+                                     // 매개변수, parameter : 메소드 바깥쪽에서 메소드를 사용하는 쪽에서 주입한 값을 메소드 안으로 흘려보내주는 매개자 (text,delimiter같은 변수)
+	public static void printTwoTimes(String text, String delimiter) {//printTwoTimes이라는 메소드를 정의하고 있구나 그리고 미 메소드의 괄호안에 들어오는 첫번째 값은 반드시 String이구나 그리고 그렇게 들어온 값은 이 중괄호안에서 text라는 이름의 변수의 값이 되겠구나
+		System.out.println(delimiter);//delimiter는 구분자
+		System.out.println(text);
+		System.out.println(text);
+	}
+}
+
+#### This is a 5
+메소드의 출력
+public class OutMethod {
+	
+	public static String a() {//a라는 메소드는 return값이 String이다 아웃풋이 String이다.
+		//...
+		return "a";//a라는 메소드는 return뒤에 있는 값이 됩니다. 
+	}
+	
+	public static int one() {
+		return 1;
+	}//그 메소드의 return값 뒤에 있는 값이 그 메소드의 실행결과가 된다. return은 그 메소드를 종료시키는 역할도 한다.
+
+	public static void main(String[] args) {
+
+
+		System.out.println(a());
+		System.out.println(one());
+	}
+}
+
+
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WhyMethod {
+	
+	public static void main(String[] args) throws IOException {
+		
+		System.out.println(twoTimes("a","-"));
+		FileWriter fw = new FileWriter("out.txt");
+		fw.write(twoTimes("a","*"));
+		fw.close();
+ //     Email.send("egoing@a.com", "two times a", twoTimes("a","&")); 
+	}
+	public static String twoTimes(String text, String delimiter) {
+		String out = "";
+		out = out + delimiter + "\n";
+		out = out + text + "\n";
+		out = out + text + "\n";
+		return out;
+	}
+}
+
+##### This is a 6
+메소드의 활용
+public class AccountingApp {
+	//공급가액
+	double valueOfSupply = 10000.0;
+			
+	//부가가치세율
+	double vatRate = 0.1;
+			
+	public static void getVAT() {
+		return valueOfSupply * vatRate;
+	}
+	
+	public static double getTotal() {
+		return valueOgSupply + getVAT;
+	}
+
+	public static void main(String[] args) {
+		
+		System.out.println("Value of supply : " + valueOfSupply);
+		System.out.println("VAT : " + getVAT());
+		System.out.println("Total : " + getTotal());
+	}
+}
+
+###### This is a 8
+부록 (access level modifiers)
+class Greeting{
+	//public(다른 클래스에서도 사용 가능), protected, default, private(같은 클래스 안에서만 사용 가능)
+		public static void hi() {
+			System.out.println("Hi");
+		}
+}
+public class AccessLevelModifierMethod {
+	private static void hi() {
+		System.out.println("Hi");
+	}
+
+	public static void main(String[] args) {
+		hi();
+
+	}
+}
+
+###### This is a 9
+부록 (static)
+static - class method (static을 쓰면 클래스의 소속)
+non static - instance method (static을 쓰지 않으면 인스턴스의 소속)
+
+class Print{
+	public String delimiter;
+	public void a() {
+		System.out.println(this.delimiter);
+		System.out.println("a");
+		System.out.println("a");
+	}
+	public void b() {
+		System.out.println(this.delimiter);
+		System.out.println("b");
+		System.out.println("b");
+		
+	}
+	public static void c(String delimiter) {
+		System.out.println(delimiter);
+		System.out.println("b");
+		System.out.println("b");
+		
+	}
+}
+
+public class staticMethod {
+	
+	public static void main(String[] args) {
+//		Print.a("-");
+//		Print.b("-");
+		
+		//instance
+		Print t1 = new Print();
+		t1.delimiter = "-";
+		t1.a();//a라는 메소드는 클래스가 아니라 인스턴스의 소속이다
+		t1.b();
+		Print.c("$");// 프린트의 소속인 c를 호출할 수 있다 (static이기 때문에)
+		
+//		Print.a("*");
+//		Print.b("*");		
+		
+		Print t2 = new Print();
+		t2.delimiter = "*";
+		t2.a();
+		t2.b();
+
+	}
+
+}//메소드가 인스턴스의 소속일땐 static을 빼줘야 함 하지만 메소드가 클래스의 소속일땐 있어야 함.
+
+
+This is an 객체지향 프로그래밍
+-------------
+
+# This is a H1
+메소드는 언어마다 메소드(method), 함수(function), 서브루틴(subroutin), 프로시져(procedure)라는 여러 이름으로 불립니다.
+객체 지향 프로그래밍(Object Oriented Programming) :  클래스를 이용해서 프로그램의 구조를 만들어 가는 방식
+객체 지향 언어(Object Oriented Language) :  이러한 방식을 언어 차원에서 지원하는 프로그래밍 언어
+
+## This is a H2
+2 남의 클래스 남의 인스턴스
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class OthersOOP {
+
+	public static void main(String[] args) throws IOException {
+		//class : System, Math, FileWriter
+		// instance : f1, f2
+		
+		System.out.println(Math.PI);
+		System.out.println(Math.floor(1.8));
+		System.out.println(Math.ceil(1.8));
+		
+		FileWriter f1 = new FileWriter("data.txt"); // data.txt에다가 파일을 저장하겠다. FileWriter라는 클래스의 복제본이 생김.
+		f1.write("Hello");
+		f1.write("Java");
+		f1.close();
+		
+		FileWriter f2 = new FileWriter("data2.txt");
+		f2.write("Hello");
+		f2.write("Java2");
+		f2.close();
+		
+		f1.write("!!!");
+		f1.close();
+		// 긴 맥락을 가지고 작업해야하는 작업인 경우에는 클래스를 직접 사용하는게 아니라 클래스를 복제해서 복제본을 만들어 사용한다.
+
+	}
+
+}
+
+### This is a H3
+3 변수와 메소드
+public class MyOOP {
+	public static String delimiter = "";
+
+	public static void main(String[] args) {
+		String delimiter = "----";
+		printA();
+		printA();
+		printB();
+		printB();
+		
+		delimiter = "****";
+		printA();
+		printA();
+		printB();
+		printB();
+//메소드 안에서 정의된 변수는 그 메소드 안에서만 쓸 수 있다.
+	}
+
+	public static void printA() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	
+	public static void printB() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+
+}
+
+#### This is a H4
+4-1 클래스(존재 이유와 기본형식)
+클래스는 관련있는 변수들과 메소드를 묶어서 정리정돈을 할 수 있게 합니다.
+구분자로 분리된 A 문자열과 B 문자열을 출력하는 메소드를
+Print라는 클래스로 따로 떼어내서 만들 수 있게 되었습니다.
+그래서 굳이 메소드의 이름을 printA라고 적지 않고 A라고만 적어도
+
+Print 객체의 A메소드이기 때문에 A를 출력한다는 의미를 쉽게 유추할 수 있게 됩니다.
+class Print{
+	public static String delimiter = "";
+	public static void A() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	
+	public static void B() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+public class MyOOP {
+	public static void main(String[] args) {
+		Print.delimiter = "----";
+		Print.A();
+		Print.A();
+		Print.B();
+		Print.B();
+		
+		Print.delimiter = "****";
+		Print.A();
+		Print.A();
+		Print.B();
+		Print.B();
+	}
+
+}
+
+4-2 클래스 (형식)
+클래스는 한 파일에 여러 개를 넣을 수 있지만, 접근제어자 public은 java 파일과 같은 이름의 클래스에 하나만 붙일 수 있습니다.
+우리가 public 클래스를 실행하고자 할 때, 자바의 소스코드를 실행하고자 할 때, 소스코드 파일명과 동일한 public 클래스를 컴파일해서 그 클래스의 main 메소드를 실행하도록 약속되어 있습니다. 소스 코드를 컴파일을 할 때 그 안에 들어 있는 클래스는 아래와 같이 따로따로 하나씩 class 파일로 만들어집니다.
+그러므로, 한 파일 안에 여러 클래스가 등장할 수도 있지만 여러 클래스를 각각 하나의 java 파일로 만들게 되면, 프로그램의 기능별로 쪼개어서 소스 코드를 별도로 저장할 수 있게 됩니다. 실행을 담당하는 main 메소em가 들어 있는 MyOOP.java 파일,프로그램의 실질적인 액션을 담당하는 Print.java 파일로 분리해서  코드를 정리정돈 할 수 있게 됩니다.
+
+Refactor -> Move type to new File
+
+##### This is a H5
+5 인스턴스
+클래스는 어떠한 형틀이고, 인스턴스는 그 형틀로 찍어낸 실체와도 같은 것입니다.
+그래서 클래스를 바꾸면 그것으로 찍어낸 모든 사물들이 다른 형태를 갖게 되고.
+형틀로 찍어낸 사물을 바꾸면 그 사물의 자매와도 같은 다른 사물에는 어떠한 영향도 없습니다.
+즉 객체를 인스턴스로 만들면, 그 인스턴스를 바꾼다고 해도 다른 인스턴스에는 영향을 끼치지 않게 됩니다.
+
+
+public class MyOOP {
+	public static void main(String[] args) {
+		Print p1 = new Print();
+		p1.delimiter = "----";
+		p1.A();
+		p1.A();
+		p1.B();
+		p1.B();
+		
+		Print p2 = new Print();
+		p2.delimiter = "****";
+		p2.A();
+		p2.A();
+		p2.B();
+		p2.B();
+		
+		
+		p1.A();
+		p2.A();
+		p1.A();
+		p2.A();
+	}
+}
