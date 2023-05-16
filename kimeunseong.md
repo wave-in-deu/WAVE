@@ -745,3 +745,574 @@ public class AccountingIFApp {
 		// 이렇게 정리 가능
 </code></pre>
 
+___
+0510
+
+# 자바 2 - 제어문 1 ~ 7.3
+
+- Boolean Datatype
+
+<pre><code>
+public class BooleanApp {
+    public static void main(String[] args){
+
+        System.out.println("One");
+        System.out.println(1);
+
+        System.out.println(true);
+        System.out.println(false);
+
+        String foo = "aaaa";
+        // String ture = "aaa";  << 오류발생
+        // true, false 같이 프로그램 내에서 사용이 되고있거나 될 가능성이 있는 단어들은 reserved word로 분류된다. (String 값으로 사용 불가)
+
+        System.out.println(foo.contains("a"));
+        System.out.println(foo.contains("b"));
+    }
+}
+</code></pre>
+
+- 비교 연산자
+<pre><code>
+        System.out.println(1 > 1); // f
+        System.out.println(1 == 1); // t
+        System.out.println(1 < 1); // f
+        System.out.println(1 <= 1); //t
+</code></pre>
+
+-조건문
+<pre><code>
+public class IfApp {
+    public static void main(String[] args){
+
+        if(false){  // 만약 괄호 안에 있는 값이 거짓이라면 1을 출력한다.
+            System.out.println(1);
+        }   else if (true) {  // 위에 있던 괄호안의 값이 거짓이 아닐경우에 괄호안의 값이 진실이면 2를 출력한다.
+            System.out.println(2);
+        }   else {  // 모두 아니였을시 3을 출력한다.
+            System.out.println(3);
+        }
+    }
+}
+</code></pre>
+
+응용 1
+
+<pre><code>
+public class AuthApp {
+    public static void main(String[] args){
+
+        //아규먼트 = aaaa
+
+        String id = "aaaa";
+        String inputid = args[0];
+
+        System.out.println("Hi.");
+
+        if (inputid.equals(id)){  // == 연산자를 사용시 문자열에서 오류가 일어날 가능성이 있기에 equals 를 사용
+            System.out.println("T");
+        }   else {
+            System.out.println("F");
+        }
+        
+    }
+}
+</code></pre>
+
+응용 2
+
+<pre><code>
+public class AuthApp {
+    public static void main(String[] args){
+
+        String id = "aaaa";
+        String inputid = args[0];
+
+        String PW = "1111";
+        String inputPW = args[1];
+
+        System.out.println("Hi.");
+
+        <!-- if (inputid.equals(id)){
+            if (inputPW.equals(PW)){
+                System.out.println("T");
+            }   else {
+                System.out.println("Wrong PassWord");
+            }
+        }   else {
+            System.out.println("F");
+        } -->
+    }
+}
+        // 위 코드를 조건 연산자를 이용해 간략화 할수있다
+
+public class AuthApp {
+    public static void main(String[] args){
+
+        String id = "aaaa";
+        String inputid = args[0];
+
+        String PW = "1111";
+        String inputPW = args[1];
+
+        System.out.println("Hi.");
+
+        // && 연산자는 전항과 후항 모두가 참일때만 참을 반환한다.
+        // || 연산자는 전항과 후항 중 하나라도 참일 경우 참을 반환하고 모두 거짓일 때에만 거짓을 반환한다.
+
+        if (inputid.equals(id) && inputPW.equals(PW)){
+                System.out.println("T");
+        }   else {
+            System.out.println("F");
+        }
+
+    }
+}
+</code></pre>
+
+- == VS equals
+<pre><code>
+원시 데이터 타입 : boolean, byte, char, short, int, long, float, double
+
+클래스들은 원시 테이터가 아니다.
+
+int p1 = 1
+int p2 = 1
+
+p1 == p2 => true
+
+String o1 = new String("java")
+String o2 = new String("java")
+
+o1 == o2 => false
+
+String o3 = "jave2"
+String o4 = "jave2"
+
+o3 == o4 => true
+
+int 같은 원시 데이터는 1을 같은 값으로 받지만
+new String 으로 값을 만들면 같은 값이여도 따로 받아서 오류가 발생할 수 있음
+</code></pre>
+- 논리 연산자
+
+<pre><code>
+public class WS {
+    public static void main(String[] args){
+
+        System.out.println(1 == 1);
+
+        // AND
+        System.out.println(true && true); //t
+        System.out.println(true && false); //f
+        System.out.println(false && true); //f
+        System.out.println(false && false); //f
+
+        // OR
+        System.out.println(true || true); //t
+        System.out.println(true || false); //t
+        System.out.println(false || true); //t
+        System.out.println(false || false); //f
+
+        // NOT
+        System.out.println(!true);
+    }
+}
+</code></pre>
+
+<pre><code>
+public class WS {
+    public static void main(String[] args){
+
+        String id = "aaaa";
+        String inputid = args[0];
+
+        String PW = "1111";
+        String PW2 = "2222";
+        String inputPW = args[1];
+
+        System.out.println("Hi.");
+
+        boolean RightPW = (inputPW.equals(PW) || inputPW.equals(PW2));
+        // PW 둘중 하나만 맞으면 패스워드가 맞은걸로 함
+        if (inputid.equals(id) && RightPW){
+            System.out.println("T");
+        }   else {
+            System.out.println("F");
+        }
+    }
+}
+
+</code></pre>
+
+- 반복문
+
+<pre><code>
+public class WS {
+    public static void main(String[] args){
+
+        System.out.println(1);
+
+        int i = 0;
+        System.out.println("=== while ===");
+        while (i < 3){
+            System.out.println(2);
+            System.out.println(3);
+            i++;
+        }
+        System.out.println("=== for ===");
+        int j;
+        for (j = 0; j < 3; j++){
+            System.out.println(2);
+            System.out.println(3);
+        }
+        System.out.println(4);
+
+    }
+}
+</code></pre>
+
+- 배열
+
+<pre><code>
+public class WS {
+    public static void main(String[] args){
+
+        String []users = new String[3];
+        users[0] = "a";
+        users[1] = "b";
+        users[2] = "c";
+
+        System.out.println(users[1]);
+        System.out.println(users.length);
+
+        int[] scores = {10, 100, 100};
+        System.out.println(scores[1]);
+        System.out.println(scores.length)
+    }
+}
+</code></pre>
+
+- 반복문 + 배열
+<pre><code>
+
+    String []users = new String[3];
+    users[0] = "a";
+    users[1] = "b";
+    users[2] = "c";
+
+    for (int i = 0; i < users.length ; i++){
+        System.out.println(users[i]+",");
+    }
+        
+</code></pre>
+
+___
+0511
+
+# 자바 2 - 제어문 8.1 ~ 메소드 9
+
+- 응용
+
+<pre><code>
+public class WS {
+    public static void main(String[] args){
+
+        String []users = {"a", "b", "c"};
+        String inputID = args[0];
+
+        boolean Logined = false;
+        for (int i=0; i < users.length; i++){
+            String currentID = users[i];
+            if (currentID.equals(inputID));{
+                Logined = true;
+                break; // 반복문을 깨고 나옴
+            }
+        }
+        
+        System.out.println("Hi,");
+        if (Logined){
+            System.out.println("Master");
+        }   else {
+            System.out.println("Who are you");
+        }
+        
+    }
+}
+</code></pre>
+
+- 응용 2
+
+<pre><code>
+public class WS {
+    public static void main(String[] args){
+
+        String [][] users = 
+        {"a","1111"},
+        {"b","2222"},
+        {"c","3333"};
+
+        // 행,열 의  순서로 접근
+
+        String inputID = args[0];
+        String inputPW = args[1];
+
+        boolean Logined = false;
+        for (int i=0; i < users.length; i++){
+            String[] current = users[i];
+            if (current.equals(inputID) && current.equals(inputPW));
+                Logined = true;
+                break;
+            }
+
+        System.out.println("Hi,");
+        if (Logined){
+            System.out.println("Master");
+        }   else {
+            System.out.println("Who are you");
+        }
+
+    }
+}
+</code></pre>
+
+## 메소드
+
+- 이미 익숙한 메소드
+
+equals, contains, floor 등
+
+- 메소드의 기본 형식
+
+<pre><code>
+public class WS {
+    public static void PrintTwoTimesA(){
+        System.out.println(1);
+        System.out.println(2);
+        System.out.println(3);
+    }
+    public static void main(String[] args){
+
+        PrintTwoTimesA();  
+        // 메소드를 만들어 프린트문을 생략가능하다
+        // 100000000
+        PrintTwoTimesA();
+    }
+}
+
+</code></pre>
+
+- 메소드의 입력
+
+<pre><code>
+public class WS {
+
+    public static void main(String[] args){
+
+        PrintTwoTimesA("a", "-");
+        PrintTwoTimesA("a", "=");
+        PrintTwoTimesA("b", "~");
+    }
+    public static void PrintTwoTimesA(String aa, String bb){
+        System.out.println(bb);
+        System.out.println(aa);
+        System.out.println(aa);
+    }
+}
+
+</code></pre>
+
+- 메소드의 출력
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WS {
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.println(twoTimes("a", "-"));
+        FileWriter fw = new FileWriter("out.txt");
+        fw.write(twoTimes("a", "*"));
+        fw.close();
+
+
+    }
+    public static String twoTimes(String aa, String bb){
+        String out = "";
+        out = out + bb + "\n";
+        out = out + aa + "\n";
+        out = out + aa + "\n";
+        return out;
+    }
+}
+
+</code></pre>
+
+- 메소드의 활용
+
+<pre><code>
+public class WS {
+    public static double ValueOfSupply = 10000.0;
+    public static double VATrate = 0.1;
+    public static double getVAT() {
+        return ValueOfSupply * VATrate;
+    }
+    public static double getTotal() {
+        return ValueOfSupply + getVAT();
+    }
+    
+    public static void main(String[] args){
+    
+            System.out.println("Vaule of supply :" +ValueOfSupply);
+            System.out.println("VAT : "+getVAT());
+            System.out.println("Total : " +getTotal());
+
+    }
+}
+
+</code></pre>
+
+- 부록
+
+pubilc 을 대신할수있는 메소드들 : protected, default,  private
+
+static 이 있으면 class method, 없으면 instance method
+
+___
+0512
+
+# 자바 2 - 객체지향 1 ~ 5 
+
+- 남의 클래스 남의 인스턴스
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WS {
+   public static void main(String[] args) throws IOException {
+
+       System.out.println(Math.PI);
+       System.out.println(Math.floor(1.8));
+       System.out.println(Math.ceil(1.8));
+
+       FileWriter f1 = new FileWriter("data.txt");
+       f1.write("aa");
+
+       FileWriter f2 = new FileWriter("data2.txt");
+       f2.write("aa");
+       f2.close();
+       
+       f1.write("bb");
+       f1.close();
+       
+       // class : System, Math, FileWriter
+       // instance : f1, f2
+    }
+}
+
+</code></pre>
+
+- 변수와 메소드
+
+<pre><code>
+public class WS {
+   public static void main(String[] args) {
+
+       qq = "-----";
+       printA();
+       printA();
+       printB();
+       printB();
+   }
+    public static String qq = "";
+    public static void printA() {
+        System.out.println(qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public static void printB() {
+        System.out.println(qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+
+</code></pre>
+
+- 클래스
+
+<pre><code>
+class Print{
+    public static String qq = "";
+    public static void A() {
+        System.out.println(qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public static void B() {
+        System.out.println(qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+public class WS {
+   public static void main(String[] args) {
+
+       Print.qq = "-----";
+       Print.A();
+       Print.A();
+       Print.B();
+       Print.B();
+
+       // 클래스를 이용해 더욱 단정한 코드를 만들 수 있다
+   }
+}
+</code></pre>
+
+여러 클래스를 각각의 java 파일로 만들어 기능별로 쪼개는것도 가능하다.
+
+- 인스턴스
+
+<pre><code>
+class Print{
+    public  String qq = "";
+    public  void A() {
+        System.out.println(qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public  void B() {
+        System.out.println(qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+public class WS {
+   public static void main(String[] args) {
+
+       Print p1 = new Print();
+       p1.qq = "-----";
+       p1.A();
+       p1.A();
+       p1.B();
+       p1.B();
+
+       Print p2 = new Print();
+       p2.qq = "*****";
+       p2.A();
+       p2.A();
+       p2.B();
+       p2.B();
+   }
+}
+</code></pre>
+
+<pre><code>
+</code></pre>
+
