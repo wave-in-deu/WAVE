@@ -1880,3 +1880,132 @@ class Concreate1 implements Contract {
 	
   com.company2.Foo
 
+	***
+
+2023-05-16 11일차 스터디
+-------------
+
+- inheritanceApp
+
+<pre><code>
+class Cal{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}
+	// Overloading, 자식이 가질수도 있다, 딱히 상속과는 상관이 없다
+	public int sum(int v1, int v2, int v3) {
+		return this.sum(v1,v2)+v3;
+		// sum은 이미 자기자신이 가지고 있는 sum의 기능을 그대로 내부적으로 가지고 있는 것이다
+		// this는 자기자신을 나타내고,특히나 인스턴스를 말한다
+	}
+}
+
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1-v2;
+	}
+	public int sum(int v1, int v2) {
+		System.out.println("Cal3 !!");
+		return super.sum(v1,v2);
+		// super은 부모 class의 sum을 가리킨다
+	} 
+	// 부모가 갖고있지 않은 method를 추가했고, 
+	// 부모가 가지고 있는 method를 재정의(덮어쓰기)했다 = Overriding 
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 5));
+		System.out.println(c.sum(2, 1, 1));
+		
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+		System.out.println(c3.sum(70, 99, 2));
+	}
+
+}
+</code></pre>
+
+- inheritanceApp
+
+<pre><code>
+class Cal{
+	int v1,v2;
+	Cal(int v1, int v2){
+		System.out.println("Cal init !!");
+		this.v1 = v1; 
+		this.v2 = v2;
+	}
+	public int sum() {
+		return this.v1+v2;
+	}
+}
+
+class Cal3 extends Cal{
+	Cal3(int v1, int v2) {
+		super(v1, v2);
+		System.out.println("Cal3 init !!");
+		// super는 부모 class(의 생성자)
+	}
+	// 상속받은 class의 부모가 생성자가 있다면 자식은 반드시 부모 생성자를 실행시키도록 강제하고 있다
+	public int minus() {
+		return this.v1-v2;
+	}
+}
+
+public class InheritanceApp {
+	public static void main(String[] args) {
+		Cal c = new Cal(2,1);
+		Cal3 c3 = new Cal3(2,5);
+		System.out.println(c.sum()); // 3
+		System.out.println(c3.minus()); // -3
+		System.out.println(c3.sum()); // 7
+	}
+}
+</code></pre>
+
+- 상속
+
+  상속은 어떤 class가 있을 때 그 class가 가지고 있는 변수와 메소드를 확장해서 상속해서 다른 class가 갖도록 하는 것을 통해서 재사용성을 높이고,
+
+	유지보수 편이성을 높이고, 가독성을 높이고, 코드의 양을 줄일 수 있다.
+
+- Polymorphism
+
+  상속을 하면 기능이 급격히 늘어나고 class들 간에 호환성이 굉장히 떨어지며 class를 다른 class로 교체하는 것이 어려워진다 
+
+  이런 맥락에서 자식 class를 부모 class로써 동작하도록 규제하는 테크닉이 다형성이다
+
+- Access Modifiers
+
+  public
+
+  default
+
+  protected
+
+  private
+
+  = 접근제어자
+
+  class, method, variable을 사용자들이 아무나 건드리지 못하게 제한하는 기능이다
+
+  사용자에게 제공하려고 하는 조작장치만 손댈 수 있게하고 그 외에는 하지 못하도록 규제하는 것이다
+
+- Final
+
+  우리가 만든 class 다른 사람이 더 이상 상속하지 못하도록 하고 싶을 때, 
+
+  또 메소드를 오버라이딩 하지 못하게 하고 싶을 때,
+
+  변수를 마음대로 수정하지 못하게 규제하고 싶을 때
+
+- Abstract
+
+  class를 상속해서 사용하려는 사용자에게 어떤 특정한 메소드는 꼭 구현하라고 강제하고 싶을 때
+	
+  이 기능을 이용하면 상속자가 직접 구현해야 하는 기능을 구현토록 강제할 수 있다.
+
