@@ -1508,3 +1508,139 @@ public class MyOOP {
 		p2.A();
 	}
 }
+
+###### This is a H6
+static
+인스턴스를 생성하지 않고 클래스에서 바로 인스턴스의 변수와 메소드에 접근할 수 없습니다.
+즉 static이 아닌 변수와 메소드는 인스턴스를 생성해야 비로소 접근할 수 있게 됩니다.
+
+클래스의 변수를 바꾸면 모든 인스턴스의 변수의 값이 바뀐다. 인스턴스에서 그 클래스의 변수를 바꿀 수 있는데 그러면 클래스의 변수가 바뀌고 걔를 사용하고 있는 모든 인스턴스의 값도 바뀐다.
+
+class Foo{
+	public static String classVar = "I class var";
+	public String instanceVar = "I instance var";
+	
+	public static void classMethod() {
+		System.out.println(classVar);//OK // 클래스 메소드 안에서 클래스 변수에는 접근 가능
+//		System.out.println(instanceVar);//Error // 인스턴스 변수에는 접근 불가
+	}
+	public void instanceMethod() {
+		System.out.println(classVar);//OK
+		System.out.println(instanceVar);//OK
+	}//인스턴스 메소드에서는 클래스 변수, 인스턴스 변수 모두 가능
+}
+public class StaticApp {
+
+	public static void main(String[] args) {
+		System.out.println(Foo.classVar);//OK // 클래스를 통해서 클래스 변수에 접근 가능
+//		System.out.println(Foo.instanceVar);//Error // 인스턴스는 인스턴스를 통해서 접근해야함
+		Foo.classMethod();
+//		Foo.instanceMethod();//인스턴스 메소드는 인스턴스 소속이기 떄문에 클래스를 통해 접근하는건 금지
+		
+		Foo f1 = new Foo(); //f1 인스턴스
+		Foo f2 = new Foo(); //f2 인스턴스
+		
+		System.out.println(f1.classVar); // I class var
+		System.out.println(f1.instanceVar); // I instance var
+		
+		f1.classVar = "changed by f1"; // f1은 인스턴스인데 인스턴스의 클래스바는 static이기 때문에 Foo클래스에 있는 클래스바라고 하는 변수의 값이 changed by f1바뀌게 된다.
+		System.out.println(Foo.classVar); // changed by f1
+		System.out.println(f2.classVar); // changed by f1
+		
+		f1.instanceVar = "cganged by f1";
+		System.out.println(f1.instanceVar); // changed by f1
+		System.out.println(f2.instanceVar); // I instance var // f2는 f1과 독립적인 변수를 운영하고 있기 떄문에 값이 바뀌지 않게 된다.
+
+	}
+
+}
+
+###### This is a H7
+7 생성자와 this
+클래스는 인스턴스를 생성할 때 클래스의 이름과 같은 이름인 생성자로 인스턴스를 만듭니다.
+클래스는 따로 만들어 주지 않아도 기본 생성자를 포함하고 있습니다.
+Print()와 같이 아무것도 지정하지 않는 생성자를 기본 생성자라고 합니다.
+기본적으로 public 권한으로 설정되어 있어서 따로 명시하지 않아도 클래스를 만들게 되면
+새로운 인스턴스를 생성할 수 있도록 만듭니다.
+
+this는 인스턴스를 가리키는 예약어
+class Print{
+	public  String delimiter = "";
+	public Print(String delimiter) {
+		this.delimiter = delimiter;// this라고 하는 특수한 키워드는 내가 생성한 인스턴스를 가리키는 이름
+	}
+	public static void A() {
+		System.out.println(this.delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	
+	public static void B() {
+		System.out.println(this.delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+
+###### This is a H8-1
+8-1 활용 (클래스화)
+class Accounting{
+    public static double valueOfSupply;
+    public static double vatRate = 0.1;
+    public static double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public static double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting.valueOfSupply = 10000.0;
+        System.out.println("Value of supply : " + Accounting.valueOfSupply);
+        System.out.println("VAT : " + Accounting.getVAT());
+        System.out.println("Total : " + Accounting.getTotal());
+  
+    }
+}
+
+###### This is a H8-2
+8-2 활용 (인스턴스화)
+class Accounting{
+    public double valueOfSupply;
+    public static double vatRate = 0.1;
+    public Accounting(double valueOfSupply) {
+        this.valueOfSupply = valueOfSupply;
+    }
+    public double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting a1 = new Accounting(10000.0);
+         
+        Accounting a2 = new Accounting(20000.0);
+         
+        System.out.println("Value of supply : " + a1.valueOfSupply);
+        System.out.println("Value of supply : " + a2.valueOfSupply);
+         
+        System.out.println("VAT : " + a1.getVAT());
+        System.out.println("VAT : " + a2.getVAT());
+         
+        System.out.println("Total : " + a1.getTotal());
+        System.out.println("Total : " + a2.getTotal());
+         
+  
+    }
+}
+
+###### This is a H9
+어떤 클래스를 상속해서 새로운 클래스를 만들게 되면, 
+어떤 클래스의 모든 변수와 메소드들이 기본적으로 새로운 클래스에 포함되게 되고,
+만약 부족하다면 기존의 변수와 메소드를 덮어쓰거나(overiding),
+아예 새로운 변수와 메소드를 추가할 수도 있습니다.
+그리고 인터페이스는 일종의 규격과도 같은 것입니다.

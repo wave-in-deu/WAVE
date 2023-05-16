@@ -1624,3 +1624,184 @@ public class MyOOP {
 	}	
 } //p1, p2 두 개의 인스턴스를 print 클래스를 이용해서 찍어낸 후, 각각 다른 구분자를 넣어줌
 >>> 위의 코드랑 결과는 똑같음.
+Static
+-----------------------------
+<pre><code>
+> static 변수와 메소드는 클래스에서 생성된 모든 인스턴스가 공유하는 자원
+> 인스턴스를 만들지 않고도 클래스에서 직접 호출할 수 있다.
+class Foo{
+    public static String classVar = "I class var";
+    public String instanceVar = "I instance var";
+    public static void classMethod() {
+        System.out.println(classVar); // Ok
+//      System.out.println(instanceVar); // Error
+    }
+    public void instanceMethod() {
+        System.out.println(classVar); // Ok
+        System.out.println(instanceVar); // Ok
+    }
+}
+public class StaticApp {
+ 
+    public static void main(String[] args) {
+        System.out.println(Foo.classVar); // OK
+//      System.out.println(Foo.instanceVar); // Error
+        Foo.classMethod();
+//      Foo.instanceMethod();
+         
+        Foo f1 = new Foo();
+        Foo f2 = new Foo();
+//      
+        System.out.println(f1.classVar); // I class var
+        System.out.println(f1.instanceVar); // I instance var
+//      
+        f1.classVar = "changed by f1";
+        System.out.println(Foo.classVar); // changed by f1
+        System.out.println(f2.classVar);  // changed by f1
+//      
+        f1.instanceVar = "changed by f1";
+        System.out.println(f1.instanceVar); // changed by f1
+        System.out.println(f2.instanceVar); // I instance var
+    }
+ 
+}
+# result
+I class var
+I class var
+I class var
+I instance var
+changed by f1
+changed by f1
+changed by f1
+I instance var
+</code></pre>
+
+
+생성자와 this
+---------------------
+<pre><code> 
+> print 객체를 생성할 때(인스턴스화) new print()를 사용
+>> 구분자를 따로 두기 위해서 구분자마다 print 인스턴스를 사용했던 것
+>>> 구분자를 지정하기 위해서는 print 인스턴스의 delimiter 필드를 직접 수정해야 했다.
+class Print {
+	public String delimiter = "";
+	public Print(String delimiter) {
+		this.delimiter = delimiter; //
+	}
+	public void A() {
+		System.out.println(delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	}
+	public void B() {
+		System.out.println(delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+}
+public class MyOOP {
+    public static void main(String[] args) {
+        Print p1 = new Print("----");  // 기본 생성자 p1
+        p1.A();
+        p1.A();
+        p1.B();
+        p1.B();
+ 
+        Print p2 = new Print("****"); // 기본 생성자 p2
+        p2.A();
+        p2.A();
+        p2.B();
+        p2.B();
+         
+         
+        p1.A();
+        p2.A();
+        p1.A();
+        p2.A();
+    }
+}
+> 기본 생성자: Print()와 같이 아무것도 지정하지 않는 생성자
+> this 키워드 : 인스턴스를 가리키는 예약어
+</code></pre>
+활용
+-------------
+<pre><code>
+* 활용(클래스화)
+class Accounting{
+    public static double valueOfSupply;
+    // 공급가액
+    public static double vatRate = 0.1;
+    // 부가가치세율
+    public static double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public static double getTotal() {
+        return valueOfSupply + getVAT();
+    //총 가격
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting.valueOfSupply = 10000.0;
+        System.out.println("Value of supply : " + Accounting.valueOfSupply);
+        System.out.println("VAT : " + Accounting.getVAT());
+        System.out.println("Total : " + Accounting.getTotal());
+  
+    }
+}
+>> Accounting 클래스를 새로 정의해서 valueOfSupply, vatRate를 static 필드로 두고, getVAT,getTotal의 static 메소드 구현
+--> 이를 통해 회계라는 큰 범주의 이름을 가진 클래스에서 공급가, 부가가치세율, 총 가격 등 의미를 보다 명확하게 파악할 수 있게 문제를 풀 수 있다.
+* 활용(인스턴스화)
+class Accounting{
+    public double valueOfSupply;
+    public static double vatRate = 0.1; 
+    public Accounting(double valueOfSupply) {  // Accounting의 메소드 표현
+        this.valueOfSupply = valueOfSupply;
+    }
+    public double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting a1 = new Accounting(10000.0);
+         
+        Accounting a2 = new Accounting(20000.0);
+         
+        System.out.println("Value of supply : " + a1.valueOfSupply);
+        //a1.valueOfSupply의 인스턴스를 만들어줌
+        System.out.println("Value of supply : " + a2.valueOfSupply);
+        //a2.valueOfSupply의 인스턴스를 만들어줌
+        //-> 각각의 인스턴스는 서로에게 영향을 미치지 않기 때문에 독립적으로 작업을 처리하게 만들 수 있다.
+        System.out.println("VAT : " + a1.getVAT());
+        System.out.println("VAT : " + a2.getVAT());
+         
+        System.out.println("Total : " + a1.getTotal());
+        System.out.println("Total : " + a2.getTotal());
+    }
+}
+# result
+Value of supply : 10000.0
+Value of supply : 20000.0
+VAT : 1000.0
+VAT : 2000.0
+Total : 11000.0
+Total : 22000.0
+</code></pre>
+
+
+상속과 인터페이스
+------------------------
+<pre><code>
+클래스와 비슷한 다른 것을 만들고 싶다면 어떻게 해야될까 ?
+#1 어떤 클래스의 변수와 메소드들을 모두 복사해서 만드는 방법
+#2 상속이라는 개념을 이용하는 방법
+* 상속
+상속해서 새로운 클래스를 만들게 되면, 어떤 클래스의 모든 변수와 메소드들이 기본적으로 새로운 클래스에 포함, 만약 부족하다면 기존의 변수와 메소드를 덮어쓰거나 아예 새로운 변수와 메소드를 추가할 수도 있다.
+* 인터페이스
+규격을 선언하는 것
+</code></pre> 
