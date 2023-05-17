@@ -1760,3 +1760,143 @@ public Accounting(double valueOfSupply){
 -------------
 
 <hr/>
+
+< 2023-05-16 / JAVA 2 / 상속 1 ~ 6 >
+-------------
+
+* 기능의 개선과 발전
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+</code></pre>
+-위 코드는 부모클래스가 가지고 있지 않은 기능을 추가했으며, 부모클래스가 가진 기능이지만 더 보태서 재정의(override)했다.   
+
+* Overriding, Overloading
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+	}
+}
+</code></pre>
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+    public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+    }    
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+</code></pre>
+-위 코드에서 오버로딩 동작을 하기위해 추가된 코드는 아래 코드와 같다.   
+<pre><code>
+public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+    }
+</code></pre> 
+-만약 파라미터의 값을 세개를 추가해주고 싶다면 그 값의 개수와 동일한 코드를 부모클래스에서 찾아서 출력할 것이다.   
+-오버라이딩은 같은 클래스에서 이루어질 수 없고, 상속 관계를 가진 클래스 사이에서 이루어질 수 있다.   
+
+* This, Super
+-This : 인스턴스를 가리킴.   
+-Super : 부모클래스를 가리킴.   
+=> 자식 클래스에서 Super를 이용하여 접근 권한이 부여된 부모 클래스의 변수와 메소드에 접근할 수 있다.   
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return this.sum(v1, v2) + v3;
+	}
+}
+class Cal3 extends Cal{
+	// Overriding
+	public int sum(int v1, int v2) {
+		System.out.println("Cal3!!!");
+		return super.sum(v1, v2);
+	}
+
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+</code></pre>
+-위 코드에서 Cal3에서 Cal의 변수와 메소드에 접근하기 위해서 Super를 이용하여 오버라이딩하는 메소드에서 기존의 작업 앞 뒤로 손쉽게 추가적인 작업을 추가하였다.   
+-따라서 this는 자기자신, sum은 부모이다.   
+
+* 상속과 생성자
+<pre><code>
+class Cal{
+    int v1,v2;
+    Cal(int v1, int v2){
+        System.out.println("Cal init!!");
+        this.v1 = v1; this.v2 = v2;
+    }
+    public int sum(){return this.v1+v2;}
+}
+class Cal3 extends Cal{
+    Cal3(int v1, int v2) {
+        super(v1, v2);
+        System.out.println("Cal3 init!!");
+    }
+    public int minus(){return this.v1-v2;}
+}
+public class InheritanceApp {
+    public static void main(String[] args) {
+        Cal c = new Cal(2,1);
+        Cal3 c3 = new Cal3(2, 1);
+        System.out.println(c3.sum()); // 3
+        System.out.println(c3.minus()); // 1
+    }
+}
+</code></pre>
+-상속받은 클래스의 생성자가 있다면 반드시 부모클래스의 생성자를 실행시키도록 강제하고 있다.   
+-super = 부모클래스의 생성자.   
+-만약 부모클래스에 기본 생성자가 아닌 인자를 주는 생성자만 명시된 경우 자식 클래스에서 생성자를 명시적으로 만들지 않는다면 컴파일이 되지 않는다.   
+
+< 2023-05-16 / JAVA 2 / 상속 1 ~ 6 END >
+-------------
+
+<hr/>
