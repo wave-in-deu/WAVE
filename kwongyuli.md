@@ -1633,3 +1633,379 @@ class Print{
 }
 </code></pre>
 
+***
+
+2023-05-15 10일차 스터디
+-------------
+
+- StaticApp
+
+<pre><code>
+class Foo{
+	public static String classVar = "I class var"; // 변수
+	public String instanceVar = "I instance var"; // 변수
+	public static void classMethod() {
+		System.out.println(classVar);
+		// class method 안에서는 class variable에 접근이 가능하다
+		// System.out.println(instanceVar);
+		// instance variable에는 접근할 수 없다
+	}
+	public void instanceMethod() {
+		System.out.println(classVar);
+		System.out.println(instanceVar); 
+		// 모두 접근 가능하다
+	}
+}
+
+public class StaticApp {
+
+	public static void main(String[] args) {
+		System.out.println(Foo.classVar); // ok
+		// System.out.println(Foo.instanceVar); // error
+		// class를 통해서는 당연히 class variable에 접근이 가능하지만
+		// instance는 instance를 통해서 사용할 수 있도록 고안된 variable이다
+		Foo.classMethod();
+		// Foo.instanceMethod();
+		// instanceMethod는 instance 소속이기 때문에 class를 통해서 접근하는 것은 금지되어 있다
+		
+		Foo f1 = new Foo();
+		Foo f2 = new Foo();
+		// f1은 class를 원형으로 하기 때문에 class에 있는 여러가지 멤버들을 복제해온다
+		// 실제값이 존재하지 않고 Foo라고 하는 class를 가리키고 있을 뿐이다
+		// instanceVar라고 하는 변수가 생성되면서 class의 값도 세팅되어 있다면 이 값까지 복제된다
+		// 이 둘은 링크되어 있지 않기 때문에 instance f1의 값을 바꾼다고 해서 class Foo instanceVar의 값이 바뀌진 않는다 
+		
+		// 하지만 instance f1의 classVar 값을 바꾸면 class Foo의 classVar 값이 바뀐다 (반대로 해도 바뀜)
+		// 메소드는 서로 독립된 존재이다
+		// class의 변수를 바꾸면 모든 instance의 변수의 값이 바뀐다
+		// instance에서 class 변수를 바꿀수도 있는데 그렇게 되면 class의 변수가 바뀌고
+		// 걔를 사용하고 있는 모든 instance의 값도 바뀐다
+		
+		System.out.println(f1.classVar);
+		System.out.println(f1.instanceVar);
+		
+		f1.classVar = "changed by f1";
+		System.out.println(Foo.classVar); // changed by f1
+		System.out.println(f2.classVar); // changed by f1
+		
+		f1.instanceVar = "changed by f1";
+		System.out.println(f1.instanceVar); // changed by f1
+		System.out.println(f2.instanceVar); // I instance var
+	}
+
+}
+</code></pre>
+
+- MyOOp2
+
+<pre><code>
+public class MyOOP2 {
+
+	public static void main(String[] args) {
+		Print p1 = new Print("----");
+		p1.A();
+//		p1.A();
+//		p1.B();
+//		p1.B();
+//		
+//		Print p2 = new Print();
+//		p2.delimiter = "&&&&&&&&&";
+//		p2.A();
+//		p2.A();
+//		p2.B();
+//		p2.B();
+		
+	}
+	
+}
+</code></pre>
+
+- Print
+
+<pre><code>
+class Print{
+	public String delimiter = "";
+	public Print(String delimiter) {
+		this.delimiter = delimiter;
+	}
+	
+	public void A() {
+		System.out.println(this.delimiter);
+		System.out.println("A");
+		System.out.println("A");
+	} 
+	
+	public void B() {
+		System.out.println(this.delimiter);
+		System.out.println("B");
+		System.out.println("B");
+	}
+	
+}
+</code></pre>
+
+- 자바에서의 class는 생성자라고 하는 아주 특수한 method를 구현할 수 있는 기능을 우리에게 제공하고 이의 주요한 작업은 초기화이다
+
+- class와 똑같은 이름의 method를 정의하면 이것이 생성자(+매개변수)이다
+
+  우리가 instance를 생성할 때 자바는 이 class와 동일한 이름의 method가 있다면 그 method를 호출하도록 약속되어 있기 때문에
+	
+	우리는 그 class가 instance화 될 때 실행돼야 될 코드를 construct method 안에 정의하는 것을 통해서 초기화의 목적을 달성할 수 있다
+
+- 생성자는 static이나 return 데이터 타입을 지정하지 않는다
+
+- 만약 instance delimiter 변수와 생성자의 delimiter 매개변수를 똑같이 하면 instance 변수가 실행된다
+
+  = 이런 경우엔 this를 붙여주면 된다
+
+  this는 그 class가 instance화 되었을 때 우리가 생성한 instance를 가리키는 이름이다
+
+- class의 상태가 계속해서 바뀌어야 하는 상황에선 instance
+
+  instance마다 고유한 상태를 주게되면 독립된 instance를 제어할 수 있게된다
+
+- AccountingApp
+
+<pre><code>
+class Accounting{
+	public double valueOfSupply; // this.valueOfSupply	
+	public static double vatRate = 0.1;
+	// 부가가치세율은 어떤 instance건 간에 동일하기 때문에 class 소속인 static으로 내버려두는 것이 더 좋을 수 있다
+	// 컴퓨터 자원 절약(메모리), 유지보수 편이성(한번에 값이 다 바뀐다)
+	public Accounting(double valueOfSupply) {
+		this.valueOfSupply = valueOfSupply;
+	}
+	public double getVAT() {
+		return valueOfSupply * vatRate;
+	}
+	public double getTotal() {
+		return valueOfSupply + getVAT();
+	}
+}
+
+public class AccountingApp {
+	public static void main(String[] args) {
+		Accounting a1 = new Accounting(10000.0);
+		
+		Accounting a2 = new Accounting(20000.0);
+		
+		System.out.println("Vaule of supply :" +a1.valueOfSupply);
+		System.out.println("Vaule of supply :" +a2.valueOfSupply);
+		
+		System.out.println("VAT : "+a1.getVAT());
+		System.out.println("VAT : "+a2.getVAT());
+		
+		System.out.println("Total : " +a1.getTotal());
+		System.out.println("Total : " +a2.getTotal());
+		
+//		Accounting.valueOfSupply = 10000.0;
+//		System.out.println("Vaule of supply :" +Accounting.valueOfSupply);
+//		System.out.println("VAT : "+Accounting.getVAT());
+//		System.out.println("Total : " +Accounting.getTotal());
+
+	}
+}
+</code></pre>
+
+- Parent
+
+<pre><code>
+class Parent {
+	
+	public void method1() {
+		//..
+	}
+
+}
+</code></pre>
+
+- Childe
+
+<pre><code>
+class Child extends Parent{
+	// Child class는 Parent class를 상속(inheritance)받게 된다
+	
+	public void method2() {
+		//..
+		// Parent method1을 수정하면 얘를 상속받는 모든 자식들의 method1이 수정된다
+	}
+
+}
+</code></pre>
+
+- Contract
+
+<pre><code>
+interface Contract {
+	
+	public String method1(String param);
+	public int method2(int param);
+	
+}
+</code></pre>
+
+- Contract1
+
+<pre><code>
+class Concreate1 implements Contract {
+	
+	public String method1(String param) {
+		return "foo";
+	}
+	
+	public int method2(int param) {
+		return 1;
+	}
+
+}
+</code></pre>
+
+- 규격
+
+  어떻게 구현했는지는 상관 없고 얘가 어떤 값을 뱉어주는지, 어떤 값을 입력하는 지만 신경쓴다
+
+- interface
+
+  method의 이름, parameter return 값의 형식은 적지만 실제 내용은 적지 않는다
+
+  implement에서 interface에 적혀있는 method들의 형식을 구현해야 된다
+
+  interfac에 적혀있는 형태의 method를 구체적으로 구현해야 하는 책임을 implement가 맡게 된다
+
+- package
+
+  같은 이름의 class가 존재하기 위해서는 서로 다른 package에 담는다.
+
+	com.company1.Foo
+	
+  com.company2.Foo
+
+	***
+
+2023-05-16 11일차 스터디
+-------------
+
+- inheritanceApp
+
+<pre><code>
+class Cal{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}
+	// Overloading, 자식이 가질수도 있다, 딱히 상속과는 상관이 없다
+	public int sum(int v1, int v2, int v3) {
+		return this.sum(v1,v2)+v3;
+		// sum은 이미 자기자신이 가지고 있는 sum의 기능을 그대로 내부적으로 가지고 있는 것이다
+		// this는 자기자신을 나타내고,특히나 인스턴스를 말한다
+	}
+}
+
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1-v2;
+	}
+	public int sum(int v1, int v2) {
+		System.out.println("Cal3 !!");
+		return super.sum(v1,v2);
+		// super은 부모 class의 sum을 가리킨다
+	} 
+	// 부모가 갖고있지 않은 method를 추가했고, 
+	// 부모가 가지고 있는 method를 재정의(덮어쓰기)했다 = Overriding 
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 5));
+		System.out.println(c.sum(2, 1, 1));
+		
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+		System.out.println(c3.sum(70, 99, 2));
+	}
+
+}
+</code></pre>
+
+- inheritanceApp
+
+<pre><code>
+class Cal{
+	int v1,v2;
+	Cal(int v1, int v2){
+		System.out.println("Cal init !!");
+		this.v1 = v1; 
+		this.v2 = v2;
+	}
+	public int sum() {
+		return this.v1+v2;
+	}
+}
+
+class Cal3 extends Cal{
+	Cal3(int v1, int v2) {
+		super(v1, v2);
+		System.out.println("Cal3 init !!");
+		// super는 부모 class(의 생성자)
+	}
+	// 상속받은 class의 부모가 생성자가 있다면 자식은 반드시 부모 생성자를 실행시키도록 강제하고 있다
+	public int minus() {
+		return this.v1-v2;
+	}
+}
+
+public class InheritanceApp {
+	public static void main(String[] args) {
+		Cal c = new Cal(2,1);
+		Cal3 c3 = new Cal3(2,5);
+		System.out.println(c.sum()); // 3
+		System.out.println(c3.minus()); // -3
+		System.out.println(c3.sum()); // 7
+	}
+}
+</code></pre>
+
+- 상속
+
+  상속은 어떤 class가 있을 때 그 class가 가지고 있는 변수와 메소드를 확장해서 상속해서 다른 class가 갖도록 하는 것을 통해서 재사용성을 높이고,
+
+	유지보수 편이성을 높이고, 가독성을 높이고, 코드의 양을 줄일 수 있다.
+
+- Polymorphism
+
+  상속을 하면 기능이 급격히 늘어나고 class들 간에 호환성이 굉장히 떨어지며 class를 다른 class로 교체하는 것이 어려워진다 
+
+  이런 맥락에서 자식 class를 부모 class로써 동작하도록 규제하는 테크닉이 다형성이다
+
+- Access Modifiers
+
+  public
+
+  default
+
+  protected
+
+  private
+
+  = 접근제어자
+
+  class, method, variable을 사용자들이 아무나 건드리지 못하게 제한하는 기능이다
+
+  사용자에게 제공하려고 하는 조작장치만 손댈 수 있게하고 그 외에는 하지 못하도록 규제하는 것이다
+
+- Final
+
+  우리가 만든 class 다른 사람이 더 이상 상속하지 못하도록 하고 싶을 때, 
+
+  또 메소드를 오버라이딩 하지 못하게 하고 싶을 때,
+
+  변수를 마음대로 수정하지 못하게 규제하고 싶을 때
+
+- Abstract
+
+  class를 상속해서 사용하려는 사용자에게 어떤 특정한 메소드는 꼭 구현하라고 강제하고 싶을 때
+	
+  이 기능을 이용하면 상속자가 직접 구현해야 하는 기능을 구현토록 강제할 수 있다.
+
