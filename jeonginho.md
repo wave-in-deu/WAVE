@@ -1422,15 +1422,18 @@ public class staticMethod {
 -------------
 
 * 메소드와 절차적 프로그래밍
+
 -메소드는 언어마다 메소드, 함수, 서브루틴, 프로시저라는 이름으로 불림.   
 -이러한 메소드를 중심으로 프로그램을 만들어 나가는 프로그래밍을 절차적 프로그래밍이라고 함.   
 -대표적 언어 : C언어   
 
 * 클래스와 객체지향 프로그래밍
+
 -객체지향 프로그래밍 : 변수와 메소드를 모은 수납상자와 같은 클래스를 이용하여 프로그램을 정돈시켜 프로그램의 구조를 만들어 가는 방식.   
 -객체 지향 언어 : 위와 같은 방식은 언어차원에서 지원하는 프로그래밍 언어.   
 
 * 남의 클래스, 남의 인스턴스
+
 <pre><code>
 import java.io.FileWriter;
 import java.io.IOException;
@@ -1469,6 +1472,7 @@ public class OthersOOP {
 => 이러한 메소드와 변수는 인스턴스를 생성하여 사용하여야 하고 클래스에서 직접 호출할 수 없다.   
 
 * 변수와 메소드
+
 <pre><code>
 public class MyOOP {
 
@@ -1534,11 +1538,13 @@ public class MyOOP {
 </code></pre>
 
 * 클래스의 존재 이유와 기본형식
+
 -클래스의 장점 : 관련있는 변수들과 메소드를 묶어서 정리정돈을 할 수 있게 한다.   
 -우리는 위 코드에서  PrintA(), PrintB() 식으로 프린트문을 실행했다. 이를 더 편하게 하려면 Print.A, Print.B 이런식으로 변경해주면 된다. 이는 Print에 속한 A라는 뜻이다.
 => Print.A 처럼 쓰면 굳이 메소드의 이름을 PrintA라고 적지 않고 A라고만 적어도 Print 객체의 A메소드이기 때문에 A를 출력한다는 의미를 쉽게 유추할 수 있다.   
 
 * 클래스의 형식
+
 -클래스는 한파일에 여러 개를 넣을 수 있지만 접근제어자 Public은 Java 파일과 같은 이름의 클래스에 하나만 붙일 수 있다.   
 -소스 코드를 컴파일할 때 그 안에 들어 있는 클래스는 아래와 같이 따로따로 하나씩 class 파일로 만들어진다.   
 <pre><code>
@@ -1550,6 +1556,7 @@ public class MyOOP {
 -따라서 한 파일안에 여러 클래스가 등장할 수 있지만 여러 클래스를 각각 하나의 java 파일로 만들게 되면 프로그램 기능별로 쪼개어 소스 코드를 별도 저장할 수 있다.   
 
 * 인스턴스
+
 -클래스 : 어떠한 형틀.   
 -인스턴스 : 형틀로 찍어낸 실체.   
 -객체를 인스턴스로 만들면 그 인스턴스를 바꾼다 하더라도 다른 인스턴스는 영향을 받지 않는다.   
@@ -1594,6 +1601,7 @@ public class MyOOP {
 -------------
 
 * static
+
 -static 변수, 메소드는 클래스에서 생성된 모든 인스턴스가 공유하는 자원,   
 인스턴스를 만들지 않고도 클래스에서 직접 호출할 수 있다.   
 <pre><code>
@@ -1640,6 +1648,7 @@ public class StaticApp {
 -따라서 class의 변수를 바꾸면 모든 인스턴스들의 변수의 값까지 바뀐다.   
 
 * 생성자와 this
+
 <pre><code>
 class Print {
 	public String delimiter = "";
@@ -1683,6 +1692,7 @@ public class MyOOP {
 -this란 클래스가 인스턴스화 되었을때 그 클래스의 인스턴스를 가리킨다.   
 
 * 활용 (클래스화)
+
 <pre><code>
 class Accounting{
     public static double valueOfSupply;
@@ -1709,6 +1719,7 @@ public class AccountingApp {
 -AccountingApp이라는 클래스를 새로 만들어서 프린트문을 작성한다. 이때 내부 파라미터의 값은 본래 값을 가지고 있는 Accounting 클래스를 상속받는다.   
 
 * 활용 (인스턴스화)
+
 -위 코드에서는 클래스 하나만으로는 그 때마다 일일이 필드를 수정해야 하는 귀찮은 작업을 해야한다.   
 -밑에 코드는 공급가액이 서로 다르고 번갈아 가면서 부가가치세와 총 가격을 구해서 출력해야 할 상황을 가정해서 인스턴스를 생성한 코드이다.   
 <pre><code>
@@ -1753,8 +1764,8 @@ public Accounting(double valueOfSupply){
 </code></pre>
 
 * 상속과 인터페이스
+
 -어떤 클래스와 비슷한 다른 것을 만들고 싶다면 어떻게 해야할까?   
-=> 상속과 인터페이스를 이용한다.   
 => 상속 : 어떤 클래스의 변수와 메소드를 모두 복사해서 만드는 방법.   
 => 인터페이스 : 일종의 규격, 클래스에 대한 규격을 선언하는 것.   
 
@@ -1767,6 +1778,7 @@ public Accounting(double valueOfSupply){
 -------------
 
 * 기능의 개선과 발전
+
 <pre><code>
 class Cal {
 	public int sum(int v1, int v2) {
@@ -1793,6 +1805,7 @@ public class InheritanceApp {
 -위 코드는 부모클래스가 가지고 있지 않은 기능을 추가했으며, 부모클래스가 가진 기능이지만 더 보태서 재정의(override)했다.   
 
 * Overriding, Overloading
+
 <pre><code>
 class Cal {
 	public int sum(int v1, int v2) {
@@ -1840,6 +1853,7 @@ public int sum(int v1, int v2, int v3) {
 -오버라이딩은 같은 클래스에서 이루어질 수 없고, 상속 관계를 가진 클래스 사이에서 이루어질 수 있다.   
 
 * This, Super
+
 -This : 인스턴스를 가리킴.   
 -Super : 부모클래스를 가리킴.   
 => 자식 클래스에서 Super를 이용하여 접근 권한이 부여된 부모 클래스의 변수와 메소드에 접근할 수 있다.   
@@ -1869,6 +1883,7 @@ class Cal3 extends Cal{
 -따라서 this는 자기자신, sum은 부모이다.   
 
 * 상속과 생성자
+
 <pre><code>
 class Cal{
     int v1,v2;
@@ -1902,3 +1917,125 @@ public class InheritanceApp {
 -------------
 
 <hr/>
+
+< 2023-05-17 / JAVA 2 / 인터페이스 1 ~ 5 >
+-------------
+
+* 인터페이스
+
+-규격을 지정한다.   
+-메소드에서 implements 인터페이스시에 해당 메소드에서는 인터페이스의 규격 메소드가 생성된다.   
+<pre><code>
+interface Calculable {
+	int sum(int v1, int v2);
+}
+class RealCal implements Calculable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}	
+}
+</code></pre>
+-위 코드에서 interface로 Calculable을 만들고 내부에서 정수형 sum변수의 파라미터를 지정하였다.   
+
+* 인터페이스의 형식
+
+<pre><code>
+interface Calculable {
+	double PI = 3.14; // 변수를 초기화.
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+// 하나의 클래스는 여러개의 인터페이스를 구현할 수 있다.
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print();
+		System.out.println(c.PI);
+	}
+}
+</code></pre>
+-인터페이스의 이름은 대문자로 시작하고 형용사의 이름을 붙이기도 한다.   
+-인터페이스는 클래스 여러개를 모두 적용할 수 있다.   
+-인터페이스에는 변수를 정의할 수 있다.(변수는 반드시 초기화 되어야 한다.)   
+-인터페이스를 적용한 클래스는 변수를 다시 대입할 수 없다.   
+
+* 다형성
+
+-다형성 : 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인스턴스로 만든 객체와 같이 행동하는 것.   
+<pre><code>
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		Calculable c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print(); // Compile Error
+		System.out.println(c.PI);
+	}
+}
+</code></pre>
+-RealCal 인스턴스를 Calculable 타입으로 선언하면, Printable 메소드를 사용할 수 없다.   
+-Printable 타입으로 선언하면, Calculable 메소드를 사용할 수 없다.
+-어떤 클래스가 데이터타입을 무엇으로 하느냐에 따라서 다양한 얼굴을 가지게 된다.   
+
+* 사용설명서 속의 인터페이스
+-JAVA API속의 인터페이스   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1");
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+
+		fileWriter.close();
+	}
+}
+</code></pre>
+-FileWriter 인스턴스는 초기화할 때 파일에 접근해서 파일을 점유하고 있다는 표시를 한다.   
+-다 끝낸 후에는 close 메소드를 이용해서 현재 파일에 대한 점유를 끝낸다는 표시를 한다.   
+-close 메소드는 AutoCloseable 인터페이스에 선언되어 있는 메소드다.   
+-FileWriter와 같이 작업함에 있어서 복수의 접근을 막을 필요가 있는 경우에 AutoCloseable 인터페이스를 적용한다.   
+-(https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html)   
+
+< 2023-05-17 / JAVA 2 / 인터페이스 1 ~ 5 END>
+-------------
+
+<hr/>
+
