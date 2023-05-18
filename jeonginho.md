@@ -2034,8 +2034,185 @@ public class FileWriterApp {
 -FileWriter와 같이 작업함에 있어서 복수의 접근을 막을 필요가 있는 경우에 AutoCloseable 인터페이스를 적용한다.   
 -(https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html)   
 
-< 2023-05-17 / JAVA 2 / 인터페이스 1 ~ 5 END>
+< 2023-05-17 / JAVA 2 / 인터페이스 1 ~ 5 END >
 -------------
 
 <hr/>
 
+< 2023-05-18 / JAVA 2 / 예외 1 ~ 9 >
+-------------
+
+* 예외의 발생
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		System.out.println(2/0); // Run-Time Exception ArithmeticException
+		System.out.println(3); 
+	}
+}
+</code></pre>
+-자바는 숫자를 0으로 나누는 경우 예외로 처리한다.   
+-실제 실행을 시켜보면 ArithmeticException이라고 알려주고, 0으로 나누었다는 설명도 나오게 된다.   
+-예외가 발생하는 이유는 프로그램이 실행하는 동안, 프로그램을 만들 사람들이 설계한 모양대로 운영되지 않았기 때문이다.   
+
+* 예외의 처리
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			// 여기까지 실행 -> catch(ArrayIndexOutOfBoundsException e)문으로 이동
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch(ArithmeticException e) {
+			System.out.println("잘못된 계산이네요.");
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("없는 값을 찾고 계시네요 ^^");
+		}		
+		System.out.println(5); 
+	}
+}
+</code></pre>
+-위 코드는 try catch문을 이용하여 예외를 처리하여 이상한 경우에도 끝까지 실행되는 튼튼한 프로그램이다.
+-try catch 구문을 사용하면 프로그램이 유연하게 흘러간다.   
+-ArrayIndexOutOfBoundsException 는 배열의 없는값을 가져올려고 할때 실행된다.   
+
+* 예외의 우선순위
+ 
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요.");
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+</code></pre>
+-ArithmeticException은 RuntimeException으로부터 상속받은 클래스.   
+-또한 RuntimeException은 Exception 클래스로부터 상속받은 클래스.   
+-여러 예외가 있더라도 Exception클래스를 이용해서 포괄적으로 처리 가능.   
+-catch문의 위치가 중요하다.   
+-try문에서 발생한 예외는 여러 개의 catch문을 순서대로 거쳐서 하나씩 확인한다.   
+
+* Exception 변수 e
+
+-catch문의 변수 e는 인스턴스.   
+-예외들의 인스턴스에는 예외가 발생한 원인, 어디서 발생했는지에 대한 정보들이 들어 있다.   
+<pre><code>
+catch (ArithmeticException e) {
+	System.out.println("계산이 잘못된 것 같아요."e.getMessage());
+}
+</code></pre>
+-getMessage 메소드를 이용하면 예외 상황에 대한 자세한 정보를 얻을 수 있다.   
+
+* Checked Exception vs Unchecked Exception
+
+-ArithmeticException, ArrayIndexOutOfBoundsException 같은 경우 는 try catch 문으로 잡아내지 않아서 프로그램이 뻗어도 컴파일해서 실행할 수 있었다. 이런 예외들을 Unchecked Exception라고 부른다.   
+-try catch문 으로 잡아내지 않으면 프로그램이 컴파일 되지 않는 예외들을 Checked Exception라고 부른다.   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		try {
+			FileWriter f = new FileWriter("data.txt");
+			f.write("Hello");
+			f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+-IOException을 처리하지 않으면 컴파일이 되지 않는다.   
+
+* Finally, Resource
+
+-대표적인 Resource : 파일, 네트워크, 데이터베이스   
+=> 우리의 프로그램만을 위해 존재하지 않음.   
+=> 파일의 경우 점유상태를 나타내기도 하고, 네트워크나 데이터베이스는 연결 상태를 유지한다. 그리고 우리가 필요한 작업을 끝내고 나서는 자원을 놓아주는 작업을 한다.   
+
+-Finally : 자원을 놓아주는 작업을 try문에 넣게 되면 예외가 발생했을 때 자원을 놓아주는 작업을 하지 못한다. 그래서 자원을 일단 잡았으면 놓아주는 작업을 실행해야 하는데 이때 사용하는 형식이 Finally문이다.   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		FileWriter f = null;
+		try {
+			f = new FileWriter("data.txt");
+			f.write("Hello");
+			// close를 하기 전에 예외가 발생한다면 close가 실행되지 않음
+			// f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}			
+		}
+	}
+}
+</code></pre>
+-null : 값이 없다.   
+-위 코드를 해석하면 만약 f가 null이 아니라면 close를 실행해라.   
+-close()도 IOexception이 일어날 수 있으므로 catch에 처리해주어야 한다.   
+
+* Try-with-Resource
+
+-try-with-resource 문을 이용하여 자원관리를 훨씬 단순하게 할 수 있다.   
+-클래스가 AutoCloseable 인터페이스를 상속한다면 try-with-resource 문에 사용할 수 있다.   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TryWithResource {
+
+	public static void main(String[] args) {
+		try (FileWriter f = new FileWriter("data.txt")) {
+			f.write("Hello");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+-이전 코드는 try catch finally 문으로 매우 복잡했지만, 이번 코드는 try-with-resource문을 사용하여 코드의 가독성을 높혔다.   
+-특징으로는 try문에 괄호를 추가하여 사용할 자원을 정의한다.   
+=> 객체를 여러개 선언할 수 있고 세미콜론으로 구별한다.   
+=> 객체의 정의 가장 마지막에는 세미콜론을 넣지 않는다.   
+=> 전체 try문이 종료되면 생성된 인스턴스는 자동으로 종료되기 때문에 명시적으로 close를 이용하여 자원을 놓아주지 않는다.   
+-자바는 내부적으로 f.close를 수행한다.   
+
+< 2023-05-18 / JAVA 2 / 예외 1 ~ 9 END >
+-------------
+
+<hr/>
