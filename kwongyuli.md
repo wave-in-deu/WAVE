@@ -1874,7 +1874,7 @@ class Concreate1 implements Contract {
 	
   com.company2.Foo
 
-	***
+***
 
 2023-05-16 11일차 스터디
 -------------
