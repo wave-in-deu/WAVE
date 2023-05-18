@@ -2034,3 +2034,171 @@ Cal3 init!!
 final 키워드: 상속과 관련하여 제한을 걸어주는 키워드 
 
 abstract 키워드:  해당 클래스, 메소드가 재정의가 필요하다는 것을 강제하는 키워드
+
+
+====================
+JAVA 인터페이스
+====================
+<code><pre>
+>> 처음 원했던 덧셈을 수행하는 메소드
+ 
+# 1
+class DummyCal {
+	public int sum(int v1, int v2) { // v1, v2 인수 2개를 받아서 덧셈을 수행하는 메소드
+		// do something
+        return result_value;
+	}
+}
+# 2
+class RealCal {
+	public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+	}
+}
+// 인수 세 개를 받아서 덧셈을 수행하는 메소드를 지닌 형태
+## 두 개를 받아서 덧셈을 수행하는 메소드를 가진 형태 원했는데, 세 개를 받아서 덧셈을 수행하는 메소드를 지닌 형태의 코드를 만들었다면 ??
+>> 다시 수정해야된다. 최악의 경우에는 사용자에게 큰 피해를 끼칠 수도 있다.
+>> 이러한 경우에 인터페이스를 이용함
+interface Calculable {
+	int sum(int v1, int v2);
+}
+class RealCal implements Calculable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}	
+}
+</pre></code>
+
+
+인터페이스의 형식
+------------------
+> 인터페이스의 이름은 클래스와 마찬가지로 보통 첫 글자를 대문자로 만들고, "~을 할 수 있는" 것들의 규격이라는 의미에서 형용사의 이름을 붙이기도 함
+<code><pre>
+interface Calculable {
+	double PI = 3.14; // 인터페이스에서는 변수를 정의할 수도 있다. 다만 변수는 반드시 초기화 되어야된다.
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable { //클래스를 상속할 때는 하나의 클래스로부터 상속받을 수 있는 것과 대조적으로 인터페이스는 여러 개를 모두 적용할 수 있다 !!
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print();
+		System.out.println(c.PI);
+	}
+
+}
+>> 인터페이스를 적용한 클래스는 변수를 다시 대입할 수 없다!!
+</pre></code>
+
+다형성
+-------------------
+>
+<code><pre>
+
+# 1
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		Calculable c = new RealCal(); //Calculable로 받았기 때문에 sum, pi는 실행이 되지만, print는 에러가 난다
+		System.out.println(c.sum(2, 1)); //printable로 받으면 반대로 print는 실행이 되지만, sum,pi는 에러가 난다
+		c.print(); // Compile Error
+		System.out.println(c.PI);
+	}
+# 2 
+}
+
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}		
+}
+class AdvancedPrint implements Printable{ 
+    public void print(){
+        System.out.println("This is RealCal!!");
+    }
+}
+
+public class InterfaceApp {
+    public static void main(string[] args){ 
+        printable c = new AdvancedPrint(); // AdvancedPrint로 다양한 클래스 표현
+        c.print();
+    }
+}
+>> 다형성: 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인슽턴스로 만든 객체와 같이 행동하는 것
+</pre></code>
+
+사용설명서 속의 인터페이스
+--------------------------------
+<code><pre>
+import java.io.FileWriter; 
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1"); 
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+        // close 메소드는 AutoCloseable 인터페이스에 선언되어 있는 메소드
+		fileWriter.close(); //close 메소드 사용으로 현재 파일에 대한 점유를 끝낸다.
+	}
+}
+> 조작 하는 방식을 표준화하는데 많이 사용됨.
+>> FileWriter와 같이 작업에 있어서 복수의 접근을 막을 필요가 있는 경우에 해당 인터페이스를 적용한다.
+</pre></code>
+
+=============================
+JAVA 예외
+=============================
+
+우리는 프로그램은 어려 오류를 낼 수 있다. 
+>> 예외: 예상한 범위를 벗어나는 방식으로 프로그램을 동작시켜서 예상치 못한 결과내는 것
