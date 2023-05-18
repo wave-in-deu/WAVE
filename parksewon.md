@@ -1156,3 +1156,156 @@ public class StaticApp {
 	}
 
 }
+
+
+0516
+class accounting{
+	public static double valueOfsupply;
+	public static double vatRate = 0.1;
+	public static double getVat() {
+		return valueOfsupply * vatRate;
+	}
+	public static double getTotal() {
+		return valueOfsupply + getVat();
+			
+		}	
+
+	}
+
+public class acountingapp {
+	public static void main(String[] args) {
+		accounting.valueOfsupply = 10000.0;
+		System.out.println("Value of supply:" + accounting.valueOfsupply);
+		System.out.println("VAT : " + accounting.getVat());
+		System.out.println("Total : " + accounting.getTotal());
+	}
+
+
+	}
+
+
+
+
+static을 삭제처리해서 인스턴스화 하고
+
+생성할때 초기화해야하기 때문에 생성자 세팅을 해줘야한다. 
+class Accounting{
+    public double valueOfSupply;
+    public static double vatRate = 0.1;
+    public Accounting(double valueOfSupply) {
+        this.valueOfSupply = valueOfSupply;
+    }
+    public double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting a1 = new Accounting(10000.0);
+         
+        Accounting a2 = new Accounting(20000.0);
+         
+        System.out.println("Value of supply : " + a1.valueOfSupply);
+        System.out.println("Value of supply : " + a2.valueOfSupply);
+         
+        System.out.println("VAT : " + a1.getVAT());
+        System.out.println("VAT : " + a2.getVAT());
+         
+        System.out.println("Total : " + a1.getTotal());
+        System.out.println("Total : " + a2.getTotal());
+         
+  
+    }
+}
+
+
+
+
+
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+
+
+	
+
+}
+
+
+0518
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		
+	}
+
+
+	
+
+}
+//상속을 통해 코드의 양을 줄일 수 있다.
+
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+//상속을 통해 부모가 가지지 않는 메소드를 추가하고, 부모가 가지는 메소드를 재정의 할 수 있다.<Overriding>
+
+overriding : 기존의 클래스를 새로 상속한 클래스에서 기존 클래스의 메서드와 같은 이름의 메서드로 재정의 한 경우(같은 클래스 안에서 는 이뤄질 수 없다.)
+
+overloading : 같은 클래스 내에서 형식이 다른 같은 이름의 메소드들이 여러개 있는 경우 기존에 없던 새로운 메서드를 정의.
+
+super : 부모 클래스 인자
+
+this : 본인 클래스 인자
+부모클래스의 메서드를 오버라이딩 했을 때 자식클래스에서 부모 클래스를 사용하고 싶은 경우에 super 키워드 하나만으로 부모 클래스의 메서드에 접근 할 수 있다는 점이 편리하다.
