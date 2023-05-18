@@ -3,22 +3,19 @@ JAVA Boostcourse
 2023-05-01 1일차 스터디
 -------------
 
-<pre>
-<code>
+<pre><code>
 public class HelloWorldApp {
 	public static void main(String[] args) {
 		System.out.println("Hello World!!");
 	}
 }
-</pre>
-</code>
+</code></pre>
 
 - 데스크톱 애플리케이션 만들기
 
 	- 기본 코드
 
-<pre>
-<code>
+<pre><code>
 import javax.swing.*;   
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -40,16 +37,13 @@ public class HelloWorldGUIApp{
         });
     }
 }
-</pre>
-</code>
+</code></pre>
 
 - 수정해본 코드
 
-<pre>
-<code>
+<pre><code>
 JLabel label = new JLabel("Hello World!!", SwingConstants.CENTER);
-</pre>
-</code>
+</code></pre>
 
 ***
 
@@ -1880,7 +1874,7 @@ class Concreate1 implements Contract {
 	
   com.company2.Foo
 
-	***
+***
 
 2023-05-16 11일차 스터디
 -------------
@@ -2008,4 +2002,299 @@ public class InheritanceApp {
   class를 상속해서 사용하려는 사용자에게 어떤 특정한 메소드는 꼭 구현하라고 강제하고 싶을 때
 	
   이 기능을 이용하면 상속자가 직접 구현해야 하는 기능을 구현토록 강제할 수 있다.
+
+***
+
+2023-05-18 13일차 스터디
+-------------
+
+- error => 숙명
+
+  자바 애플리케이션이 동작하는 환경에서 문제가 생긴 것
+	
+  ex 메모리 부족, 운영체제 문제 발생으로 인한 프로그램 정지, 컴퓨터 전원이 꺼짐
+
+- exception(예외)
+
+  파일이 있는 줄 알았는데 없을 때, 사용자가 예상하지 못했던 값을 입력해서 예외적인 상황이 발생했을 때
+
+- 예외 발생시
+
+  에러만 출력해주고 나머지 실행을 계속한다면 심각한 문제가 발생할수도 있다
+
+  에러가 발생했을 때 어떤 코드를 실행하도록 해서 그 코드가 예외적 상황에 대응할 수 있는 코드가 동작하게 해주는 것이 예외를 처리하는 방법이다
+
+- ExceptionApp
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) {
+		int[] scores = {10,20,30};
+		System.out.println(scores[0]);
+		try {
+			System.out.println(scores[3]);
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("ArrayIndexOutOfBoundsException.");
+		}
+		// 배열의 울타리 밖에 있는 값을 가져오려고 한다
+		System.out.println(1);
+		try {
+			System.out.println(2/0);
+			// java에선 0으로 나눈 것을 허용하지 않는다
+		} catch(ArithmeticException e) {
+			System.out.println("ArithmeticException.");
+		} 
+		// ArithmeticException 발생시 실행되는 코드
+		// try catch를 하지 않으면 여기서 프로그램이 멈춘다
+		
+		
+		try {
+			System.out.println(1);
+			System.out.println(2/0);
+			System.out.println(2);
+			System.out.println(scores[3]);
+			System.out.println(3);
+		} catch(ArithmeticException e) {
+			System.out.println("ArithmeticException.");
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("ArrayIndexOutOfBoundsException.");
+		}
+		System.out.println(4);
+		// 이런 경우엔 1, ArithmeticException, 4만 출력되고 그 아래는 출력이 되지 않는다
+	}
+}
+</code></pre>
+
+- ExceptionApp 수정
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) {
+		int[] scores = {10,20,30};
+		System.out.println(scores[0]);
+
+		try {
+			System.out.println(1);
+			System.out.println(2/0);
+			System.out.println(2);
+			System.out.println(scores[3]);
+			System.out.println(3);
+		} catch(Exception e) {
+			System.out.println("error.");
+		}
+		System.out.println(4);
+		
+		try {
+			System.out.println(1);
+			System.out.println(2/0);
+			System.out.println(2);
+			System.out.println(scores[3]);
+			System.out.println(3);
+		} catch(ArithmeticException e) {
+			System.out.println("ArithmeticException.");
+		} catch(Exception e) {
+			System.out.println("Exception.");
+		}
+		System.out.println(4);
+		// ArithmeticException이 출력된다
+
+	}
+}
+</code></pre>
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) {
+		int[] scores = {10,20,30};
+		System.out.println(scores[0]);
+
+		try {
+			System.out.println(1);
+			System.out.println(2/0);
+			System.out.println(2);
+			System.out.println(scores[3]);
+			System.out.println(3);
+		} catch(ArithmeticException e) {
+			System.out.println("ArithmeticException."+e.getMessage());
+			// detailMessage를 출력해준다 ( 왜 에러가 발생했는 지)
+			e.printStackTrace(); 
+			// 빨간색 메세지도 출력해준다
+			// 운영체제 차원에서는 이 프로그램을 실행했을 때 정상적으로 동작하지 않았다는 것도 알려줄 수 있다
+			// 사용자한테 보여주는게 좋은 것은 아니다
+			// 보안적인 사고를 초래할 수 있는 단서들이 존재할수도 있기 때문에
+			// 에러 메세지는 내부적으로 파일 형태 (관리자들만 볼 수 있는 시스템, 로딩 시스템)으로 관리해야 한다
+		} catch(Exception e) {
+			System.out.println("Exception.");
+		}
+		System.out.println(4);
+	}
+}
+</code></pre>
+
+- CheckedException
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedException {
+
+	public static void main(String[] args) {
+		try {
+			FileWriter f = new FrileWriter("data.txt");
+			f.write("Hello");
+			f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+
+- 상속
+
+  예외는 상속이라는 걸 통해서 부모자식 관계가 있다
+
+  부모 예외를 갖다놓게 되면 부모의 자식에 해당되는 어떠한 예외가 발생하건 부모가 처리한다
+
+  부모 예외는 자식 예외를 다 포괄한다
+
+  캐치문을 어디에 넣느냐에 따라서 우선순위가 달라진다는 것을 주의해야 한다
+
+	ArithmeticException -> RuntimeException -> Exception -> Throwable -> Object
+
+- e
+
+  e는 변수이다
+
+  앞에 있는 Exception은 변수의 타입이 Exception이란 것이다
+
+  e는 아무거나 해도 된다
+
+- CheckedException
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedException {
+	// try catch finally
+	public static void main(String[] args) {
+		FileWriter f = null;
+		// null은 값이 없다고 지정하는 것이다
+		// f라고 하는 변수가 FileWriter이라고 하는 데이터 타입이다
+		try {
+			f = new FileWriter("data.txt");
+			f.write("Hello");
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			if(f != null) {
+				try{
+					f.close();
+				} catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+			// try 안에서 exception이 발생했건 하지 않았건 무조건 close가 실행된다
+			// f의 유효범위가 중괄호 안이다 그래서 밖에서 선언해야 함
+			// f가 세팅되어 있을 때만 closed가 가능하다
+		}
+	}
+}
+</code></pre>
+
+- TryWithResource
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TryWithResource {
+
+	public static void main(String[] args) {
+		// try with resource statements
+		try(FileWriter f = new FileWriter("data.txt")){
+			f.write("Hello");
+			// f.close();
+			// 자동으로 해주기 때문에 적을 필요가 없다
+			// try 괄호 안에 close가 필요한 class를 instance화 시키는 코드를 작성한다
+			// 그럼 자바는 이 모든 작업이 끝나고 나서 자동으로 f.close를 내부적으로 수행해준다
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		// class가 AutoCloseable라고 하는 interface를 가지고 있으면
+		// TryWithResource를 사용할 수 있다		
+	}
+}
+</code></pre>
+
+- MyException
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class MyException {
+
+	public static void main(String[] args) throws IOException{
+//		throw new RuntimeException("error.");
+//		// 직접 예외를 발생시킬수도 있다
+		FileWriter f = new FileWriter("./data.txt");
+		// try catch or 기능을 사용하는 쪽으로 예외를 던지기
+	}
+
+}
+</code></pre>
+
+- Exception
+
+  Checked Exception vs Unchecked Exception
+
+  checked는 컴파일러가 체크한다라는 뜻일 것이다
+
+- Unchecked Exception
+
+  Unchecked Exception은 RuntimeException을 포함한 그 자식들이다
+
+  ArithmeticException...
+
+  tryc catch문을 작성하지 않아도 컴파일이 되고, Exception이 발생했을 때 그 때 에러가 발생하는 것이다
+
+- Checked Exception
+
+  Exception에서 RuntimeException을 제외한 나머지 애들이고, Exception의 직계 자손이다
+
+  컴파일러가 체크를 한다 (Exception 처리를 했는지 안 했는지)
+
+  try catch, throws를 통해 예외에 대해서 어떠한 조치를 취해야 하고, 무심코 조치를 안 하고 넘어가는 것을 용인하지 않는다
+
+  IOException, SQLException...
+
+  IO는 input, output이고 컴퓨터의 데이터를 파일과 같은 곳에 저장한다 (output) 파일에서 데이터를 읽어온다 (input)
+
+  ex FileNotFoundException 어떤 파일을 읽으려고 했는데 파일이 존재하지 않는 것 (예외적 상황)
+
+- resource
+
+  java가 프로그램 외부에 있는 데이터에 엑세스하려고 할 때 생기는 문제들
+
+  대표적인 외부에 있는 데이터 = File(이미지, 사운드 파일), Network, DB 이러한 것들을 통틀어서 resource라고 한다
+
+  자바 내부에 존재하는 데이터가 아니기 때문에 변수 등과 비교했을 때 엄청나게 불안정한 애들이다 = 오만가지 예외적 상황이 발생할수도 있다
+
+  이러한 리소스들은 자바로 사용할 때 그 리소스를 붙잡는 모종의 행위가 있다
+
+  (파일 – 독점권, 네트워크 – 커넥션, 데이터베이스도)
+
+  작업이 끝나면 붙잡고 있던 것을 놔줘야 하는데 이때 공통적으로 사용되는 메소드가 close이다
+
+  예외는 폭탄던지기와 비슷해서 어떤 기능에서 예외가 발생하면 그것을 직접 처리할수도 있지만 그 기능을 사용하는 곳으로 예외를 던질수도 있다
+
+  = throw
+
+  throw를 하다가 어느 지점에서 예외를 처리하려고 할 때 사용하는 것이 try catch이다
+
+  아무도 try catch를 하지 않는다면 프로그램은 종료되면서 예외 메시지가 출력되는 것이다
+
 

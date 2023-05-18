@@ -1313,6 +1313,127 @@ public class WS {
 }
 </code></pre>
 
+___
+0515
+
+# 자바 2 - 객체지향 6 ~ 9
+
+- static
+
 <pre><code>
+class Foo{
+    public static String classVar = " i class var ";
+    public String instanceVar = " i instance var ";  // 선언
+    public  static  void   classMethod(){
+        System.out.println(classVar);
+    }
+    public void instanceMethod(){
+        System.out.println(classVar);
+        System.out.println(instanceVar);
+    }
+}
+public class WS {
+    
+    public static void main(String[] args){
+
+        System.out.println(Foo.classVar);
+        Foo.classMethod();
+        
+        Foo f1 = new Foo();
+        Foo f2 = new Foo();
+
+        System.out.println(f1.classVar);
+        System.out.println(f1.instanceVar);
+        
+        f1.classVar = " changed by f1 ";  // 바꿈
+        System.out.println(Foo.classVar);
+        System.out.println(f2.classVar);  // 값을 공유하기 때문에 결과값이 달라짐
+        
+        f1.instanceVar = " changed by f1 ";
+        System.out.println(f1.instanceVar);
+        System.out.println(f2.instanceVar);
+
+        // static 은 클래스의 변수
+    }
+}
 </code></pre>
 
+- 생성자와 this
+
+<pre><code>
+class Print{
+    public String qq = "";
+    public Print(String qq){
+        this.qq = qq;
+    }
+
+    public  void A() {
+        System.out.println(this.qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public  void B() {
+        System.out.println(this.qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+public class WS {
+    public static void main(String[] args) {
+
+        Print p1 = new Print("-----");
+        p1.A();
+        p1.A();
+        p1.B();
+        p1.B();
+
+        Print p2 = new Print("*****");
+        p2.A();
+        p2.A();
+        p2.B();
+        p2.B();
+    }
+}
+
+</code></pre>
+
+- 활용
+
+<pre><code>
+class Accounting{
+    public double ValueOfSupply;
+    public static double VATrate = 0.1;
+
+    public Accounting(double ValueOfSupply) {
+        this.ValueOfSupply = ValueOfSupply;
+    }
+    public double getVAT() {
+        return ValueOfSupply * VATrate;
+    }
+    public double getTotal() {
+        return ValueOfSupply + getVAT();
+    }
+}
+
+public class WS {
+    public static void main(String[] args) {
+
+        Accounting a1 = new Accounting(10000.0);
+
+        Accounting a2 = new Accounting(20000.0);
+
+        System.out.println(" Vaule of supply :" + a1.ValueOfSupply);
+        System.out.println(" Vaule of supply :" + a2.ValueOfSupply);
+
+        System.out.println(" VAT : " + a1.getVAT());
+        System.out.println(" VAT : " + a2.getVAT());
+
+        System.out.println(" Total : " + a1.getTotal());
+        System.out.println(" Total : " + a2.getTotal());
+    }
+}
+
+</code></pre>
+
+___
