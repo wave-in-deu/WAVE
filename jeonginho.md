@@ -914,9 +914,10 @@ public class AuthApp {
         } else { 
             System.out.println("Who are you?"); 
             // 아니라면 Who are you? 출력
+            }
         }
     }
-}
+}    
 </code></pre>
 
 * 조건문 응용 2
