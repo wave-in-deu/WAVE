@@ -1117,3 +1117,136 @@ public class MyOOP{
 여러 개의 클래스를 하나의 파일에 쓸 경우 한눈에 코드를 파악하기 좋지만 너무 길어질 경우 가독성이 떨어질 것 이다. 
 각각 하나의 파일에 쓰는 경우 기능에 따라 분리해 관리할 수 있어 좋지만 한눈에 코드 파악하기에 어려울 것이다.
 
+
+
+0515
+
+class Foo{
+	public static String classVar = "I class var";
+	public String instanceVar = "I instance var";
+	public static void classMethod() {
+		System.out.println(classVar);
+		//System.out.println(instanceVar);
+	}
+	public void instanceMethod() {
+		System.out.println(classVar);
+		System.out.println(instanceVar);
+	}
+}
+public class StaticApp {
+
+	public static void main(String[] args) {
+		
+		System.out.println(Foo.classVar);
+		//System.out.println(Foo.instanceVar);
+		Foo.classMethod();
+		//Foo.intanceMethod();
+		Foo f1 = new Foo();
+		Foo f2 = new Foo();
+		System.out.println(f1.classVar);
+		System.out.println(f1.instanceVar);
+		f1.classVar = "changed by f1";
+		System.out.println(Foo.classVar);
+		System.out.println(f2.classVar);
+		
+		f1.instanceVar = "changed by f1";
+		System.out.println(f1.instanceVar);
+		System.out.println(f2.instanceVar);
+		
+	}
+
+}
+
+
+0516
+class accounting{
+	public static double valueOfsupply;
+	public static double vatRate = 0.1;
+	public static double getVat() {
+		return valueOfsupply * vatRate;
+	}
+	public static double getTotal() {
+		return valueOfsupply + getVat();
+			
+		}	
+
+	}
+
+public class acountingapp {
+	public static void main(String[] args) {
+		accounting.valueOfsupply = 10000.0;
+		System.out.println("Value of supply:" + accounting.valueOfsupply);
+		System.out.println("VAT : " + accounting.getVat());
+		System.out.println("Total : " + accounting.getTotal());
+	}
+
+
+	}
+
+
+
+
+static을 삭제처리해서 인스턴스화 하고
+
+생성할때 초기화해야하기 때문에 생성자 세팅을 해줘야한다. 
+class Accounting{
+    public double valueOfSupply;
+    public static double vatRate = 0.1;
+    public Accounting(double valueOfSupply) {
+        this.valueOfSupply = valueOfSupply;
+    }
+    public double getVAT() {
+        return valueOfSupply * vatRate;
+    }
+    public double getTotal() {
+        return valueOfSupply + getVAT();
+    }
+}
+public class AccountingApp {
+    public static void main(String[] args) {
+        Accounting a1 = new Accounting(10000.0);
+         
+        Accounting a2 = new Accounting(20000.0);
+         
+        System.out.println("Value of supply : " + a1.valueOfSupply);
+        System.out.println("Value of supply : " + a2.valueOfSupply);
+         
+        System.out.println("VAT : " + a1.getVAT());
+        System.out.println("VAT : " + a2.getVAT());
+         
+        System.out.println("Total : " + a1.getTotal());
+        System.out.println("Total : " + a2.getTotal());
+         
+  
+    }
+}
+
+
+
+
+
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+
+
+	
+
+}

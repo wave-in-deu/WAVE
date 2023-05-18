@@ -1092,6 +1092,7 @@ public class LoopArray {
 -------------
 
 * 제어문 종합응용 1
+
 <pre><code>
 public class AuthApp3 {
  
@@ -1122,6 +1123,7 @@ public class AuthApp3 {
 -이후 boolean 형식의 isLogined 를 false로 선언하고, for문안에서 currentld 문자열 데이터를 선언하여 if문으로 inputid와 같을 시 동작을 시키는 코드를 만들었다.   
 
 * 제어문 종합응용 2
+
 -이차원 배열을 응용한 로그인 기능
 <pre><code>
 public class AuthApp3 {
@@ -1165,6 +1167,7 @@ if(current[0].equals(inputId) && current[1].equals(inputPass))
 -이 코드는 current 0번째 배열에 해당하는 값이 inputID에 지정된 값과 같고, current 1번째 배열에 해당하는 값이 inputPass에 지정된 값과 모두 같을 시 코드를 동작시킨다.   
 
 * 메소드 - 이미 익숙한 메소드
+
 <pre><code>
 public class FirstMethod {
  
@@ -1180,6 +1183,7 @@ public class FirstMethod {
 -main 메소드 : 특수한 메소드로, 우리가 클래스를 실행할 때 어떠한 명령을 내리지 않아도 main 메소드를 실행한다.
 
 * 메소드의 기본 형식
+
 -메소드를 이용한다면 쉽게 같은 코드를 재사용하고, 유지보수를 쉽게 할 수 있다.   
 <pre><code>
 public class WhyMethod {
@@ -1205,6 +1209,7 @@ public class WhyMethod {
 -중간에 작업을하는 코드가 여러 줄 있을 때 일일이 우리가 직접 코드를 복사해서 넣지 않아도 메소드를 이용하여 코드를 재사용하여서 코드의 가독성을 높일 수 있다.   
 
 * 메소드의 입력
+
 <pre><code>
 public class WhyMethod {
      
@@ -1231,6 +1236,7 @@ public class WhyMethod {
 -main 메소드는 문자열 배열인 args파라미터를 이용함.   
 
 * 메소드의 출력
+
 <pre><code>
 public class OutputMethod {
      
@@ -1280,6 +1286,7 @@ public class WhyMethod {
 </code></pre>
 
 * 메소드의 활용
+
 <pre><code>
 public class AccountingApp {
 
@@ -1324,11 +1331,13 @@ public class AccountingApp {
 -메소드를 이요하면 재사용성이 높아진다.   
 
 * 클래스, OOP
+
 -클래스 : 비슷한 연관된 일을 하는 메소드와 변수들을 묶어 그룹으로 만든 것.   
 -인스턴스 : 클래스를 틀로 하여 실제로 프로그램에서 동작하는 객체들.   
 -위와 같은 클래스와 인스턴스 들과 같은 객체를 뼈대로 해서 프로그램을 만들어 가는 방식을 객체지향 프로그래밍(OOP, Object Oriented Programming)이라고 한다.   
 
 * Access Level Modifiers
+
 <pre><code>
 public class AccessLevelModifiersMethod {
 
@@ -1362,6 +1371,7 @@ public class AccessLevelModifiersMethod {
 -이유 : hi는 Greeting 클래스 밖에서 직접 접근해서 사용할 수 없기 때문(private 제약조건)   
 
 * Static
+
 <pre><code>
 class Print{
     public String delimiter;
@@ -1421,15 +1431,18 @@ public class staticMethod {
 -------------
 
 * 메소드와 절차적 프로그래밍
+
 -메소드는 언어마다 메소드, 함수, 서브루틴, 프로시저라는 이름으로 불림.   
 -이러한 메소드를 중심으로 프로그램을 만들어 나가는 프로그래밍을 절차적 프로그래밍이라고 함.   
 -대표적 언어 : C언어   
 
 * 클래스와 객체지향 프로그래밍
+
 -객체지향 프로그래밍 : 변수와 메소드를 모은 수납상자와 같은 클래스를 이용하여 프로그램을 정돈시켜 프로그램의 구조를 만들어 가는 방식.   
 -객체 지향 언어 : 위와 같은 방식은 언어차원에서 지원하는 프로그래밍 언어.   
 
 * 남의 클래스, 남의 인스턴스
+
 <pre><code>
 import java.io.FileWriter;
 import java.io.IOException;
@@ -1468,6 +1481,7 @@ public class OthersOOP {
 => 이러한 메소드와 변수는 인스턴스를 생성하여 사용하여야 하고 클래스에서 직접 호출할 수 없다.   
 
 * 변수와 메소드
+
 <pre><code>
 public class MyOOP {
 
@@ -1533,11 +1547,13 @@ public class MyOOP {
 </code></pre>
 
 * 클래스의 존재 이유와 기본형식
+
 -클래스의 장점 : 관련있는 변수들과 메소드를 묶어서 정리정돈을 할 수 있게 한다.   
 -우리는 위 코드에서  PrintA(), PrintB() 식으로 프린트문을 실행했다. 이를 더 편하게 하려면 Print.A, Print.B 이런식으로 변경해주면 된다. 이는 Print에 속한 A라는 뜻이다.
 => Print.A 처럼 쓰면 굳이 메소드의 이름을 PrintA라고 적지 않고 A라고만 적어도 Print 객체의 A메소드이기 때문에 A를 출력한다는 의미를 쉽게 유추할 수 있다.   
 
 * 클래스의 형식
+
 -클래스는 한파일에 여러 개를 넣을 수 있지만 접근제어자 Public은 Java 파일과 같은 이름의 클래스에 하나만 붙일 수 있다.   
 -소스 코드를 컴파일할 때 그 안에 들어 있는 클래스는 아래와 같이 따로따로 하나씩 class 파일로 만들어진다.   
 <pre><code>
@@ -1549,6 +1565,7 @@ public class MyOOP {
 -따라서 한 파일안에 여러 클래스가 등장할 수 있지만 여러 클래스를 각각 하나의 java 파일로 만들게 되면 프로그램 기능별로 쪼개어 소스 코드를 별도 저장할 수 있다.   
 
 * 인스턴스
+
 -클래스 : 어떠한 형틀.   
 -인스턴스 : 형틀로 찍어낸 실체.   
 -객체를 인스턴스로 만들면 그 인스턴스를 바꾼다 하더라도 다른 인스턴스는 영향을 받지 않는다.   
@@ -1593,6 +1610,7 @@ public class MyOOP {
 -------------
 
 * static
+
 -static 변수, 메소드는 클래스에서 생성된 모든 인스턴스가 공유하는 자원,   
 인스턴스를 만들지 않고도 클래스에서 직접 호출할 수 있다.   
 <pre><code>
@@ -1639,6 +1657,7 @@ public class StaticApp {
 -따라서 class의 변수를 바꾸면 모든 인스턴스들의 변수의 값까지 바뀐다.   
 
 * 생성자와 this
+
 <pre><code>
 class Print {
 	public String delimiter = "";
@@ -1682,6 +1701,7 @@ public class MyOOP {
 -this란 클래스가 인스턴스화 되었을때 그 클래스의 인스턴스를 가리킨다.   
 
 * 활용 (클래스화)
+
 <pre><code>
 class Accounting{
     public static double valueOfSupply;
@@ -1708,6 +1728,7 @@ public class AccountingApp {
 -AccountingApp이라는 클래스를 새로 만들어서 프린트문을 작성한다. 이때 내부 파라미터의 값은 본래 값을 가지고 있는 Accounting 클래스를 상속받는다.   
 
 * 활용 (인스턴스화)
+
 -위 코드에서는 클래스 하나만으로는 그 때마다 일일이 필드를 수정해야 하는 귀찮은 작업을 해야한다.   
 -밑에 코드는 공급가액이 서로 다르고 번갈아 가면서 부가가치세와 총 가격을 구해서 출력해야 할 상황을 가정해서 인스턴스를 생성한 코드이다.   
 <pre><code>
@@ -1752,6 +1773,7 @@ public Accounting(double valueOfSupply){
 </code></pre>
 
 * 상속과 인터페이스
+
 -어떤 클래스와 비슷한 다른 것을 만들고 싶다면 어떻게 해야할까?   
 => 상속 : 어떤 클래스의 변수와 메소드를 모두 복사해서 만드는 방법.   
 => 인터페이스 : 일종의 규격, 클래스에 대한 규격을 선언하는 것.   
@@ -1760,3 +1782,447 @@ public Accounting(double valueOfSupply){
 -------------
 
 <hr/>
+
+< 2023-05-16 / JAVA 2 / 상속 1 ~ 6 >
+-------------
+
+* 기능의 개선과 발전
+
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+</code></pre>
+-위 코드는 부모클래스가 가지고 있지 않은 기능을 추가했으며, 부모클래스가 가진 기능이지만 더 보태서 재정의(override)했다.   
+
+* Overriding, Overloading
+
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+	}
+}
+</code></pre>
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+    public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+    }    
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+</code></pre>
+-위 코드에서 오버로딩 동작을 하기위해 추가된 코드는 아래 코드와 같다.   
+<pre><code>
+public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+    }
+</code></pre> 
+-만약 파라미터의 값을 세개를 추가해주고 싶다면 그 값의 개수와 동일한 코드를 부모클래스에서 찾아서 출력할 것이다.   
+-오버라이딩은 같은 클래스에서 이루어질 수 없고, 상속 관계를 가진 클래스 사이에서 이루어질 수 있다.   
+
+* This, Super
+
+-This : 인스턴스를 가리킴.   
+-Super : 부모클래스를 가리킴.   
+=> 자식 클래스에서 Super를 이용하여 접근 권한이 부여된 부모 클래스의 변수와 메소드에 접근할 수 있다.   
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return this.sum(v1, v2) + v3;
+	}
+}
+class Cal3 extends Cal{
+	// Overriding
+	public int sum(int v1, int v2) {
+		System.out.println("Cal3!!!");
+		return super.sum(v1, v2);
+	}
+
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+</code></pre>
+-위 코드에서 Cal3에서 Cal의 변수와 메소드에 접근하기 위해서 Super를 이용하여 오버라이딩하는 메소드에서 기존의 작업 앞 뒤로 손쉽게 추가적인 작업을 추가하였다.   
+-따라서 this는 자기자신, sum은 부모이다.   
+
+* 상속과 생성자
+
+<pre><code>
+class Cal{
+    int v1,v2;
+    Cal(int v1, int v2){
+        System.out.println("Cal init!!");
+        this.v1 = v1; this.v2 = v2;
+    }
+    public int sum(){return this.v1+v2;}
+}
+class Cal3 extends Cal{
+    Cal3(int v1, int v2) {
+        super(v1, v2);
+        System.out.println("Cal3 init!!");
+    }
+    public int minus(){return this.v1-v2;}
+}
+public class InheritanceApp {
+    public static void main(String[] args) {
+        Cal c = new Cal(2,1);
+        Cal3 c3 = new Cal3(2, 1);
+        System.out.println(c3.sum()); // 3
+        System.out.println(c3.minus()); // 1
+    }
+}
+</code></pre>
+-상속받은 클래스의 생성자가 있다면 반드시 부모클래스의 생성자를 실행시키도록 강제하고 있다.   
+-super = 부모클래스의 생성자.   
+-만약 부모클래스에 기본 생성자가 아닌 인자를 주는 생성자만 명시된 경우 자식 클래스에서 생성자를 명시적으로 만들지 않는다면 컴파일이 되지 않는다.   
+
+< 2023-05-16 / JAVA 2 / 상속 1 ~ 6 END >
+-------------
+
+<hr/>
+
+< 2023-05-17 / JAVA 2 / 인터페이스 1 ~ 5 >
+-------------
+
+* 인터페이스
+
+-규격을 지정한다.   
+-메소드에서 implements 인터페이스시에 해당 메소드에서는 인터페이스의 규격 메소드가 생성된다.   
+<pre><code>
+interface Calculable {
+	int sum(int v1, int v2);
+}
+class RealCal implements Calculable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}	
+}
+</code></pre>
+-위 코드에서 interface로 Calculable을 만들고 내부에서 정수형 sum변수의 파라미터를 지정하였다.   
+
+* 인터페이스의 형식
+
+<pre><code>
+interface Calculable {
+	double PI = 3.14; // 변수를 초기화.
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+// 하나의 클래스는 여러개의 인터페이스를 구현할 수 있다.
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print();
+		System.out.println(c.PI);
+	}
+}
+</code></pre>
+-인터페이스의 이름은 대문자로 시작하고 형용사의 이름을 붙이기도 한다.   
+-인터페이스는 클래스 여러개를 모두 적용할 수 있다.   
+-인터페이스에는 변수를 정의할 수 있다.(변수는 반드시 초기화 되어야 한다.)   
+-인터페이스를 적용한 클래스는 변수를 다시 대입할 수 없다.   
+
+* 다형성
+
+-다형성 : 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인스턴스로 만든 객체와 같이 행동하는 것.   
+<pre><code>
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		Calculable c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print(); // Compile Error
+		System.out.println(c.PI);
+	}
+}
+</code></pre>
+-RealCal 인스턴스를 Calculable 타입으로 선언하면, Printable 메소드를 사용할 수 없다.   
+-Printable 타입으로 선언하면, Calculable 메소드를 사용할 수 없다.
+-어떤 클래스가 데이터타입을 무엇으로 하느냐에 따라서 다양한 얼굴을 가지게 된다.   
+
+* 사용설명서 속의 인터페이스
+-JAVA API속의 인터페이스   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1");
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+
+		fileWriter.close();
+	}
+}
+</code></pre>
+-FileWriter 인스턴스는 초기화할 때 파일에 접근해서 파일을 점유하고 있다는 표시를 한다.   
+-다 끝낸 후에는 close 메소드를 이용해서 현재 파일에 대한 점유를 끝낸다는 표시를 한다.   
+-close 메소드는 AutoCloseable 인터페이스에 선언되어 있는 메소드다.   
+-FileWriter와 같이 작업함에 있어서 복수의 접근을 막을 필요가 있는 경우에 AutoCloseable 인터페이스를 적용한다.   
+-(https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html)   
+
+< 2023-05-17 / JAVA 2 / 인터페이스 1 ~ 5 END >
+-------------
+
+<hr/>
+
+< 2023-05-18 / JAVA 2 / 예외 1 ~ 9 >
+-------------
+
+* 예외의 발생
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		System.out.println(2/0); // Run-Time Exception ArithmeticException
+		System.out.println(3); 
+	}
+}
+</code></pre>
+-자바는 숫자를 0으로 나누는 경우 예외로 처리한다.   
+-실제 실행을 시켜보면 ArithmeticException이라고 알려주고, 0으로 나누었다는 설명도 나오게 된다.   
+-예외가 발생하는 이유는 프로그램이 실행하는 동안, 프로그램을 만들 사람들이 설계한 모양대로 운영되지 않았기 때문이다.   
+
+* 예외의 처리
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			// 여기까지 실행 -> catch(ArrayIndexOutOfBoundsException e)문으로 이동
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch(ArithmeticException e) {
+			System.out.println("잘못된 계산이네요.");
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("없는 값을 찾고 계시네요 ^^");
+		}		
+		System.out.println(5); 
+	}
+}
+</code></pre>
+-위 코드는 try catch문을 이용하여 예외를 처리하여 이상한 경우에도 끝까지 실행되는 튼튼한 프로그램이다.
+-try catch 구문을 사용하면 프로그램이 유연하게 흘러간다.   
+-ArrayIndexOutOfBoundsException 는 배열의 없는값을 가져올려고 할때 실행된다.   
+
+* 예외의 우선순위
+ 
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요.");
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+</code></pre>
+-ArithmeticException은 RuntimeException으로부터 상속받은 클래스.   
+-또한 RuntimeException은 Exception 클래스로부터 상속받은 클래스.   
+-여러 예외가 있더라도 Exception클래스를 이용해서 포괄적으로 처리 가능.   
+-catch문의 위치가 중요하다.   
+-try문에서 발생한 예외는 여러 개의 catch문을 순서대로 거쳐서 하나씩 확인한다.   
+
+* Exception 변수 e
+
+-catch문의 변수 e는 인스턴스.   
+-예외들의 인스턴스에는 예외가 발생한 원인, 어디서 발생했는지에 대한 정보들이 들어 있다.   
+<pre><code>
+catch (ArithmeticException e) {
+	System.out.println("계산이 잘못된 것 같아요."e.getMessage());
+}
+</code></pre>
+-getMessage 메소드를 이용하면 예외 상황에 대한 자세한 정보를 얻을 수 있다.   
+
+* Checked Exception vs Unchecked Exception
+
+-ArithmeticException, ArrayIndexOutOfBoundsException 같은 경우 는 try catch 문으로 잡아내지 않아서 프로그램이 뻗어도 컴파일해서 실행할 수 있었다. 이런 예외들을 Unchecked Exception라고 부른다.   
+-try catch문 으로 잡아내지 않으면 프로그램이 컴파일 되지 않는 예외들을 Checked Exception라고 부른다.   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		try {
+			FileWriter f = new FileWriter("data.txt");
+			f.write("Hello");
+			f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+-IOException을 처리하지 않으면 컴파일이 되지 않는다.   
+
+* Finally, Resource
+
+-대표적인 Resource : 파일, 네트워크, 데이터베이스   
+=> 우리의 프로그램만을 위해 존재하지 않음.   
+=> 파일의 경우 점유상태를 나타내기도 하고, 네트워크나 데이터베이스는 연결 상태를 유지한다. 그리고 우리가 필요한 작업을 끝내고 나서는 자원을 놓아주는 작업을 한다.   
+
+-Finally : 자원을 놓아주는 작업을 try문에 넣게 되면 예외가 발생했을 때 자원을 놓아주는 작업을 하지 못한다. 그래서 자원을 일단 잡았으면 놓아주는 작업을 실행해야 하는데 이때 사용하는 형식이 Finally문이다.   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		FileWriter f = null;
+		try {
+			f = new FileWriter("data.txt");
+			f.write("Hello");
+			// close를 하기 전에 예외가 발생한다면 close가 실행되지 않음
+			// f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}			
+		}
+	}
+}
+</code></pre>
+-null : 값이 없다.   
+-위 코드를 해석하면 만약 f가 null이 아니라면 close를 실행해라.   
+-close()도 IOexception이 일어날 수 있으므로 catch에 처리해주어야 한다.   
+
+* Try-with-Resource
+
+-try-with-resource 문을 이용하여 자원관리를 훨씬 단순하게 할 수 있다.   
+-클래스가 AutoCloseable 인터페이스를 상속한다면 try-with-resource 문에 사용할 수 있다.   
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TryWithResource {
+
+	public static void main(String[] args) {
+		try (FileWriter f = new FileWriter("data.txt")) {
+			f.write("Hello");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+-이전 코드는 try catch finally 문으로 매우 복잡했지만, 이번 코드는 try-with-resource문을 사용하여 코드의 가독성을 높혔다.   
+-특징으로는 try문에 괄호를 추가하여 사용할 자원을 정의한다.   
+=> 객체를 여러개 선언할 수 있고 세미콜론으로 구별한다.   
+=> 객체의 정의 가장 마지막에는 세미콜론을 넣지 않는다.   
+=> 전체 try문이 종료되면 생성된 인스턴스는 자동으로 종료되기 때문에 명시적으로 close를 이용하여 자원을 놓아주지 않는다.   
+-자바는 내부적으로 f.close를 수행한다.   
+
+< 2023-05-18 / JAVA 2 / 예외 1 ~ 9 END >
+-------------
+
+<hr/>
+

@@ -1644,3 +1644,191 @@ public class AccountingApp {
 만약 부족하다면 기존의 변수와 메소드를 덮어쓰거나(overiding),
 아예 새로운 변수와 메소드를 추가할 수도 있습니다.
 그리고 인터페이스는 일종의 규격과도 같은 것입니다.
+
+
+This is an 상속
+-------------
+# This is a H1
+수업소개
+class Cal{
+	public int sum(int v1,int v2) {
+		return v1+v2;
+		
+	}
+}
+class Cal3 extends Cal{//Cal3가 Cal을 상속 받는다
+	
+}
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+//c3라는 인스턴스에 sum메소드를 호출해줘 하게되면 c3가 가리키는 클래스에서 sum이라고 하는 메소드를 찾는데 c3는 Cal을 확장하고 있기 때문에 Cal클래스에서 sum이라고 하는 메소드를 찾고 실핼시킨다.
+	}
+
+}
+class Cal2{
+	public int sum(int v1,int v2) {
+		return v1+v2;
+	}
+	public int minus(int v1,int v2) {
+		return v1-v2;
+	}
+}
+
+
+## This is a H2
+기능의 개선과 발전
+class Cal{
+	public int sum(int v1,int v2) {
+		return v1+v2;
+		
+	}
+}
+class Cal3 extends Cal{//Cal3가 Cal을 상속 받는다
+	public int minus(int v1,int v2) {
+		return v1-v2;
+	}
+	//Overriding : 부모가 가지고 있는 기능을 올라탔다, 덮어썼다. 
+	public int sum(int v1,int v2) {
+		System.out.println("Cal3");
+		return v1+v2;
+	}
+
+}
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));//3
+		System.out.println(c3.minus(2, 1));//1
+		System.out.println(c3.sum(2, 1));//Cal3 3
+
+	}
+
+}
+
+### This is a H3
+Overriding, Overloading
+class Cal{
+	public int sum(int v1,int v2) {
+		return v1+v2;
+	}
+	// Overloading
+	public int sum(int v1,int v2,int v3) {
+		return v1+v2+v3;
+	}
+	//자바는 같은 이름의 메소드를 여러개를 과적할 수 있다. 형태만 다르면
+}
+class Cal3 extends Cal{//Cal3가 Cal을 상속 받는다
+	public int minus(int v1,int v2) {
+		return v1-v2;
+	}
+	// Overriding : 부모가 가지고 있는 기능을 올라탔다, 덮어썼다. 
+	public int sum(int v1,int v2) {
+		System.out.println("Cal3");
+		return v1+v2;
+	}
+
+}
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		System.out.println(c.sum(2, 1,1));
+		
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));//3
+		System.out.println(c3.minus(2, 1));//1
+		System.out.println(c3.sum(2, 1));//Cal3 3
+
+	}
+
+}
+
+#### This is a H4
+This Super
+class Cal{
+	public int sum(int v1,int v2) {
+		return v1+v2;
+	}
+	// Overloading
+	public int sum(int v1,int v2,int v3) {
+		return this.sum(v1,v2)+v3;// this는 자기자신을 가리키므로 자기자신의 sum이므로 위에껄 실행시킨 결과에다가 v3를 더한 연산결과를 만들어 낸다
+	}
+}
+class Cal3 extends Cal{//Cal3가 Cal을 상속 받는다
+	public int minus(int v1,int v2) {
+		return v1-v2;
+	}
+	// Overriding
+	public int sum(int v1,int v2) {
+		System.out.println("Cal3");
+		return super.sum(v1, v2);//이 클래스의 부모 클래스 Cal의 sum을 가리키게 된다.
+	}
+
+}
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		System.out.println(c.sum(2, 1,1));
+		
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));//3
+		System.out.println(c3.minus(2, 1));//1
+		System.out.println(c3.sum(2, 1));//Cal3 3
+
+	}
+
+}
+
+##### This is a H5
+상속과 생성자
+lass Cal{
+	int v1,v2;
+	Cal(int v1, int v2){
+		System.out.println("Cal init!!");
+		this.v1 = v1; this.v2 = v2;
+	}
+	public int sum() {
+		return this.v1+v2;
+	}
+}
+class Cal3 extends Cal{
+	
+	Cal3(int v1, int v2){
+		super(v1,v2);//부모 클래스의 생성자를 실행
+		System.out.println("Cal3 init!!");
+	}
+	public int minus() {
+		return this.v1-v2;
+	}
+}
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal(2,1);
+		Cal3 c3 = new Cal3(2,1);
+		System.out.println(c3.sum()); // 3
+		System.out.println(c3.minus()); // 1
+		
+	}
+
+}
+
+###### This is a H6
+다형성(polymorphism) : 상속 관계에 있는 클래스간의 호환성을 높여주는 기능
+접근 제어자(access modifier) : default의 경우 같은 패키지 내의 클래스에서는 접근할 수 있는 권한이 있고, 
+protected의 경우 해당 클래스와 자식 클래스를 통해서 접근할 수 있습니다.
+final 키워드 : 상속과 관련하여 제한을 걸어주는 키워드
+abstract 키워드 : 해당 클래스, 메소드가 재정의가 필요하다는 것을 강제하는 키워드
