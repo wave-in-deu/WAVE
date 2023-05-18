@@ -1805,3 +1805,228 @@ Total : 22000.0
 * 인터페이스
 규격을 선언하는 것
 </code></pre> 
+
+==============================
+JAVA 상속
+==============================
+
+상속을 쓰는 이유 ??
+> 어떠한 클래스를 있을때, 클래스가 가지고 있는 변수와 메소드를 확장해서 상속해서 다른 클래스가 같도록 하는 것을 통해 재사용성을 높히고, 유지보수의 편의성을 높히고,
+가독성을 높히고, 코드의 양을 줄이는 목적
+<code><pre>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+>> cal이라는 클래스 = 덧셈을 하는 sum 메소드가 있다.
+class Cal2 {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+>> cal에서 뺄셈 기능을 추가한 cal2 클래스
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+	}
+
+}
+
+
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+	}
+}
+>> cal3 클래스를 생성할 때 extends 키워드를 이용하여 cal로부터 상속을 받을 수 있다. 
+</pre></code>
+
+기능의 개선과 발전
+---------------------
+>> 자바에서 상속이라는 개념은 부모 클래스(상위 클래스)와 자식 클래스(하위 클래스)의 관계에서 발생함
+<code><pre>
+
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+	public int sum(int v1, int v2){
+		System.out.println("Cal3!!");
+		return v1 + v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1)); 
+        // 뺄셈 기능을 자식 클래스에 추가하고자 한다면 새롭게 메소드를 정의해서 넣을 수 있음
+	}
+}
+# result
+3
+Cal3!!
+3
+1
+>>재정의(override): 상속을 하다보면 자식 클래스에서 부모 클래스에 정의된 메서드를 사용할 때 수정이 필요한 경우 이용함
+</pre></code>
+
+override(재정의) vs overload
+----------------------------------
+오버로딩은 상속과는 직접적인 관련은 없다.
+<code><pre>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+    // overriding
+    	public int sum(int v1, int v2){
+		System.out.println("Cal3!!");
+		return v1 + v2;
+}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+	}
+}
+>> overloaing은 특정 이름을 지닌 메소드가 있다고 할지라도 우리는 같은 이름을 가진 메소드를 또 만들 수 있다. 다만 파라미터의 형식이 달라진다.
+>> overriding은 같은 클래스 안에서는 이뤄질 수 없고, 상속 관계를 가진 클래스 사이에서 이뤄질 수 있다.
+</pre></code>
+
+super
+-----------------
+<code><pre>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return this.sum(v1, v2) + v3; //this는 자기 자신, sum은 부모
+	} // this는 인스턴스를 가리키는 키워드
+}
+class Cal3 extends Cal{
+	// Overriding
+	public int sum(int v1, int v2) {
+		System.out.println("Cal3!!!");
+		return super.sum(v1, v2); //super: 부모 클래스 Cal에 sum을 가리킴
+	} // 자식 클래스에서 super를 이용하여 접근 권한이 부여된 부모 클래스의 변수와 메소드에 접근이 가능함.
+
+
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+>> Cal3에서 Cal의 변수와 메소드에 접근하기 위해서 super를 이용할 수 있다.
+</pre></code>
+
+상속과 생성자
+----------------------------
+<code><pre>
+class Cal{
+    int v1,v2;
+    Cal(int v1, int v2){
+        System.out.println("Cal init!!");
+        this.v1 = v1; this.v2 = v2;
+    }
+    public int sum(){return this.v1+v2;}
+}
+
+// Compile Error
+class Cal3 extends Cal{
+    
+    public int minus(){return this.v1-v2;}
+}
+>> 부모클래스에 기본 생성자가 아닌 인자를 주는 생성자만 명시된 경우, 자식 클래스에서 생성자를 명시적으로 만들지 않는다면 컴파일이 되지 않는다.
+>> 이유는 자식 클래스에서 생성자를 호출하는 경우(인스턴스 생성), 정의한 생성자가 없기 때문에 부모 클래스의 생성자(super())를 사용해야 하는데, 명시적으로 인자를 받는 생성자만 부모 클래스에 만들어져 있기 때문에 기본 생성자가 없는 것으로 받아들여지기 때문이다.
+
+class Cal{
+    int v1,v2;
+    
+    public int sum(){return this.v1+v2;}
+}
+class Cal3 extends Cal{
+	Cal3(int v1, int v2) {
+		this.v1 = v1;
+		this.v2 = v2;
+        System.out.println("Cal3 init!!");
+    }
+    public int minus(){return this.v1-v2;}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+        Cal3 c3 = new Cal3(); // Compile Error
+	}
+}
+>> 자식 클래스의 경우에도, 기본 생성자는 명시적으로 만들지 않고, 인자를 받는 생성자만 만들었을 경우에는 인수를 주지 않고 인스턴스를 생성할 수 없다.
+>> 부모 클래스에 인자를 받는 생성자만 만들었을 경우, 자식 클래스에도 인자를 받는 생성자를 만들어야 한다.
+class Cal{
+    int v1,v2;
+    Cal(int v1, int v2){
+        System.out.println("Cal init!!");
+        this.v1 = v1; this.v2 = v2;
+    }
+    public int sum(){return this.v1+v2;}
+}
+class Cal3 extends Cal{
+    Cal3(int v1, int v2) {
+        super(v1, v2);
+        System.out.println("Cal3 init!!");
+    }
+    public int minus(){return this.v1-v2;}
+}
+public class InheritanceApp {
+    public static void main(String[] args) {
+        Cal c = new Cal(2,1);
+        Cal3 c3 = new Cal3(2, 1);
+        System.out.println(c3.sum()); // 3
+        System.out.println(c3.minus()); // 1
+    }
+}ㄴ
+# resultㄴ
+Cal init!!
+Cal3 init!!
+3
+1
+</pre></code>
+
+다음에 배울 만한 주제
+------------------------
+다형성(polymorphism): 상속 관계에 있는 클래스간의 호환성을 높여주는 기능
+
+접근 제어자(access modifier)
+
+final 키워드: 상속과 관련하여 제한을 걸어주는 키워드 
+
+abstract 키워드:  해당 클래스, 메소드가 재정의가 필요하다는 것을 강제하는 키워드

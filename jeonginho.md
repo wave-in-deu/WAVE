@@ -1093,6 +1093,7 @@ public class LoopArray {
 -------------
 
 * 제어문 종합응용 1
+
 <pre><code>
 public class AuthApp3 {
  
@@ -1123,6 +1124,7 @@ public class AuthApp3 {
 -이후 boolean 형식의 isLogined 를 false로 선언하고, for문안에서 currentld 문자열 데이터를 선언하여 if문으로 inputid와 같을 시 동작을 시키는 코드를 만들었다.   
 
 * 제어문 종합응용 2
+
 -이차원 배열을 응용한 로그인 기능
 <pre><code>
 public class AuthApp3 {
@@ -1166,6 +1168,7 @@ if(current[0].equals(inputId) && current[1].equals(inputPass))
 -이 코드는 current 0번째 배열에 해당하는 값이 inputID에 지정된 값과 같고, current 1번째 배열에 해당하는 값이 inputPass에 지정된 값과 모두 같을 시 코드를 동작시킨다.   
 
 * 메소드 - 이미 익숙한 메소드
+
 <pre><code>
 public class FirstMethod {
  
@@ -1181,6 +1184,7 @@ public class FirstMethod {
 -main 메소드 : 특수한 메소드로, 우리가 클래스를 실행할 때 어떠한 명령을 내리지 않아도 main 메소드를 실행한다.
 
 * 메소드의 기본 형식
+
 -메소드를 이용한다면 쉽게 같은 코드를 재사용하고, 유지보수를 쉽게 할 수 있다.   
 <pre><code>
 public class WhyMethod {
@@ -1206,6 +1210,7 @@ public class WhyMethod {
 -중간에 작업을하는 코드가 여러 줄 있을 때 일일이 우리가 직접 코드를 복사해서 넣지 않아도 메소드를 이용하여 코드를 재사용하여서 코드의 가독성을 높일 수 있다.   
 
 * 메소드의 입력
+
 <pre><code>
 public class WhyMethod {
      
@@ -1232,6 +1237,7 @@ public class WhyMethod {
 -main 메소드는 문자열 배열인 args파라미터를 이용함.   
 
 * 메소드의 출력
+
 <pre><code>
 public class OutputMethod {
      
@@ -1281,6 +1287,7 @@ public class WhyMethod {
 </code></pre>
 
 * 메소드의 활용
+
 <pre><code>
 public class AccountingApp {
 
@@ -1325,11 +1332,13 @@ public class AccountingApp {
 -메소드를 이요하면 재사용성이 높아진다.   
 
 * 클래스, OOP
+
 -클래스 : 비슷한 연관된 일을 하는 메소드와 변수들을 묶어 그룹으로 만든 것.   
 -인스턴스 : 클래스를 틀로 하여 실제로 프로그램에서 동작하는 객체들.   
 -위와 같은 클래스와 인스턴스 들과 같은 객체를 뼈대로 해서 프로그램을 만들어 가는 방식을 객체지향 프로그래밍(OOP, Object Oriented Programming)이라고 한다.   
 
 * Access Level Modifiers
+
 <pre><code>
 public class AccessLevelModifiersMethod {
 
@@ -1363,6 +1372,7 @@ public class AccessLevelModifiersMethod {
 -이유 : hi는 Greeting 클래스 밖에서 직접 접근해서 사용할 수 없기 때문(private 제약조건)   
 
 * Static
+
 <pre><code>
 class Print{
     public String delimiter;
