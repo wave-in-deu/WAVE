@@ -1437,3 +1437,236 @@ public class WS {
 </code></pre>
 
 ___
+0516 
+
+# 자바 2 - 상속
+
+- 상속 개념
+
+<pre><code>
+class Cal{
+    public int sum(int v1, int v2){
+        return v1+v2;
+    }
+}
+
+class Cal3 extends Cal{
+}
+
+public  class WS {
+    public static void main(String[] args){
+
+        Cal c = new Cal();  
+        System.out.println(c.sum(2,1));
+
+        // Cal 클래스를 이용한 계산
+
+        Cal3 c3 = new Cal3();  
+        System.out.println(c3.sum(2,1));
+        
+        // Cal3는 Cal 을 상속하였기에 같은 값이 나옴
+    }
+}
+</code></pre>
+
+- 기능의 개선과 발전 / Overriding, Overloading
+
+<pre><code>
+class Cal{
+    public int sum(int v1, int v2){
+        return v1+v2;
+    }
+    public int sum(int v1, int v2, int v3){
+        return v1+v2+v3;
+
+        // 원래 있던 메소드와 이름이 같지만 형태가 다를때 -> overloading
+    }
+}
+class Cal3 extends Cal{
+    public int minus(int v1, int v2){
+        return  v1-v2;
+    }
+    public int sum(int v1, int v2){
+        System.out.println("Cal3");
+        return v1+v2;
+
+        // 부모가 가진 메소드를 재정의 했다 -> overriding
+
+    }
+}
+
+public  class WS {
+    public static void main(String[] args){
+
+        Cal c = new Cal();
+        System.out.println(c.sum(2,1));
+
+        Cal3 c3 = new Cal3();
+        System.out.println(c3.sum(2,1));
+        System.out.println(c3.minus(2,1));
+        System.out.println(c3.sum(2,1));
+    }
+}
+
+</code></pre>
+
+- This Super
+
+<pre><code>
+class Cal{
+    public int sum(int v1, int v2){
+        return v1+v2;
+    }
+    public int sum(int v1, int v2, int v3) {
+        return this.sum (v1, v2, v3);  // 자기 자신을 사용함
+    }
+}
+class Cal3 extends Cal{
+    public int minus(int v1, int v2){
+        return  v1-v2;
+    }
+    public int sum(int v1, int v2){
+        System.out.println("Cal3");
+        return super.sum(v1, v2);  // 부모의 메소드를 사용함
+    }
+}
+
+public  class WS {
+    public static void main(String[] args){
+
+        Cal c = new Cal();
+        System.out.println(c.sum(2,1));
+
+        Cal3 c3 = new Cal3();
+        System.out.println(c3.minus(2,1));
+        System.out.println(c3.sum(2,1));
+    }
+}
+</code></pre>
+
+- 상속과 생성자
+
+<pre><code>
+class Cal {
+    int v1, v2;
+    Cal(int v1, int v2){
+        System.out.println("Cal init");
+        this.v1 = v1; this.v2 = v2;
+    }
+    public int sum(){return  this.v1+v2;}
+}
+class Cal3 extends  Cal{
+    Cal3(int v1, int v2){
+        super(v1,v2);
+        System.out.println("Cal3 init");
+    }
+    public int minus(){return this.v1-v2;}
+}
+public class WS {
+    public static void main(String[] args){
+
+        Cal c = new Cal(2,1);
+        Cal3 c3 = new Cal3(2,1);
+        System.out.println(c3.sum());
+        System.out.println(c3.minus());
+    }
+}
+</code></pre>
+
+___
+0517
+
+# 자바 2 - 인터페이스
+
+- 인터페이스 개념
+
+<pre><code>
+interface Calculable{  // 만들 클래스의 메소드 형식을 정한다
+    int sum(int v1, int v2);
+}
+class RealCal implements Calculable{  // 정의된 형식대로 만들어야한다
+
+    public int sum(int v1, int v2) {
+        return v1+v2;
+    }
+}
+
+public class WS {
+    public static void main(String[] args){
+
+        RealCal c = new RealCal();
+        System.out.println(c.sum(1,2));
+
+    }
+}
+</code></pre>
+
+- 인터페이스의 형식
+
+<pre><code>
+interface Calculable{
+    double PI = 3.14;
+    int sum(int v1, int v2);
+}
+interface Printable{
+    void print();
+}
+class RealCal implements Calculable, Printable{
+
+    public int sum(int v1, int v2) {
+        return v1+v2;
+    }
+    public void print() {
+        System.out.println("This is RealCal");
+    }
+}
+
+public class WS {
+    public static void main(String[] args){
+
+        RealCal c = new RealCal();
+        System.out.println(c.sum(1,2));
+        c.print();
+        System.out.println(c.PI);
+    }
+}
+</code></pre>
+
+- 다형성 (Polymorphism)
+
+<pre><code>
+interface Calculable{
+    double PI = 3.14;
+    int sum(int v1, int v2);
+}
+interface Printable{
+    void print();
+}
+class RealCal implements Calculable, Printable{
+
+    public int sum(int v1, int v2) {
+        return v1+v2;
+    }
+    public void print() {
+        System.out.println("This is RealCal");
+    }
+}
+class AdvancedPrint implements Printable{
+    public void print() {
+        System.out.println("This is RealCal");
+    }
+}
+
+public class WS {
+    public static void main(String[] args){
+
+        Printable c = new AdvancedPrint();  
+        // Printable을 가진 클래스를 할당시켜준다면 뭐가 들어오든 ok
+        System.out.println(c.sum(1,2));  // X
+        c.print();
+        System.out.println(c.PI); // X
+    }
+}
+</code></pre>
+
+___
