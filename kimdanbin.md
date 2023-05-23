@@ -1832,3 +1832,113 @@ public class InheritanceApp {
 protected의 경우 해당 클래스와 자식 클래스를 통해서 접근할 수 있습니다.
 final 키워드 : 상속과 관련하여 제한을 걸어주는 키워드
 abstract 키워드 : 해당 클래스, 메소드가 재정의가 필요하다는 것을 강제하는 키워드
+
+This is an 인터페이스
+-------------
+# This is a H1
+소개
+interface Calculable{
+	int sum(int v1,int v2);
+}
+class RealCal implements Calculable{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}
+	
+}
+class DummyCal implements Calculable{
+	public int sum(int v1, int v2) {
+		return 3;
+	}
+}
+public class InterfaceApp {
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+	    System.out.println(c.sum(2,1));
+	}
+}//인터페이스는 약솟이다 클래스의 형태를 규정한다.
+
+## This is a H2
+인터페이스의 형식
+interface Calculable{
+	double PI = 3.14;// 인터페이스에는 메소드와 변수가 정의 될 수 있는데 변수에는 값이 들어오고 메소드에는 실제 구현이 들어가지 않아서 저 메소드를 구현하는 클래스가 저 형태를 만족하는 메소드의 내용을 직접 구현해야한다.
+	int sum(int v1,int v2);
+}
+interface Printable{
+	void print();//메소드를 인터페이스에 정의할 땐 내용이 들어가지 않는다. 변수를 정의할 떈 내용이 들어간다.
+	
+}
+
+class RealCal implements Calculable, Printable{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}// 하나의 클래스는 여러개의 인터페이스를 구현할 수 있다.
+
+	public void print() {
+		System.out.println("This is RealCall!!");
+	}
+}
+
+class DummyCal implements Calculable{
+	public int sum(int v1, int v2) {
+		return 3;
+	}
+}
+public class InterfaceApp {
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+	    System.out.println(c.sum(2,1));
+	    c.print();
+	    System.out.println(c.PI);
+	}
+}//인터페이스는 약솟이다 클래스의 형태를 규정한다.
+
+### This is a H3
+다형성 : 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인스턴스로 만든 객체(자식 클래스의 인스턴스)와 같이 행동하는 것
+interface Calculable{
+	double PI = 3.14;
+	int sum(int v1,int v2);
+}
+interface Printable{
+	void print();
+	
+}
+
+class RealCal implements Calculable, Printable{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}
+
+	public void print() {
+		System.out.println("This is RealCall!!");
+	}
+}
+
+class AdvancePrint implements Printable{
+	public void print() {
+		System.out.println("This is RealCal!!");
+	}
+}
+public class InterfaceApp {
+	public static void main(String[] args) {
+		Printable c = new AdvancePrint();
+	    c.print();
+	}
+}//어떠한 클래스가 데이터 타입을 뭘로 하느냐에따라 다양한 얼굴을 갖게 되는게 다형성 
+
+#### This is a H4
+사용설명서 속의 인터페이스
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1");
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+
+		fileWriter.close();
+	}
+}
