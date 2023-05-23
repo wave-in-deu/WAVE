@@ -2197,3 +2197,216 @@ JAVA 예외
 
 우리는 프로그램은 어려 오류를 낼 수 있다. 
 >> 예외: 예상한 범위를 벗어나는 방식으로 프로그램을 동작시켜서 예상치 못한 결과내는 것
+
+예외의 발생, 처리
+-----------------------------
+<code><pre>
+
+# 1
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		System.out.println(2/0); // Run-Time Exception ArithmeticException
+		System.out.println(3); 예외를 발생 시킴
+	}
+}
+
+# 2
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); 
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch(ArithmeticException e) {
+			System.out.println("잘못된 계산이네요.");
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("없는 값을 찾고 계시네요 ^^");
+		}		
+		System.out.println(5); 
+	}
+}
+# result
+1
+2
+없는 값을 찾고 계시네요 ^^
+5
+>> try - catch 문: 예외가 발생할 것으로 예상되는 부분을 try로 묶어서 처리하고 코드를 실행 시킬때, 예외가 발생하는 코드가 실행되면 그 다음 코드를 실행하지 않고 해당 예외를 처리하는 catch 문으로 넘어간다.
+>> catch 문은 여러 개 사용 가능하다.
+</pre></code>
+
+예외의 우선순위
+-----------------
+<code><pre>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요.");
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+# result
+1
+2
+뭔가 이상합니다. 오류가 발생했습니다.
+5
+>> 여러 예외가 있더라도 Exception 클래스를 이용해서 포괄적으로 처리할 수 있다.
+>> catch 문의 위치도 중요함.
+>> try 문에서 발생한 예외는 여러 개의 catch 문을 순서대로 거쳐가면서 해당 catch 문의 예외가 이번에 발생한 예외와 맞는지 확인 !
+</pre></code>
+
+e의 비밀
+------------------
+
+<code><pre>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요."+e.getMessage());
+            e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+>> +e.getMessage, e.printStacktrace를 이용해서 에러가 나는 디테일한 정보를 알 수 있다.
+</pre></code>
+
+checked, unchecked Excption
+----------------
+>>  우리가 만들었던 프로그램은 ArithmeticException, ArrayIndexOutOfBoundsException 같은 경우, try catch 문으로 잡아내지 않아서 프로그램이 뻗는다고 할지라도 컴파일해서 실행할 수 있었다. 이러한 Exception들을 <unchecked Excecption> 이라고 부른다.
+>> unchecked Exception은 모두 RuntimeException 클래스로붙터 상속된 에외들이다.
+
+<code><pre>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		try {
+			FileWriter f = new FileWriter("data.txt");
+			f.write("Hello");
+			f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
+</pre></code>
+
+>> 하지만 try catch 문 등으로 잡아내지 않으면 프로그램이 컴파일도 안되는 예외들도 있다.
+>> 이러한 예외들을 checked Exception이라고 함
+
+
+Finally, Resource
+--------------------------------
+
+Resource
+>> 우리의 프로그램은 프로그램 외부의 자원에 접근해서 작업을 진행할 수 있다.
+>> 대표적인 자원으로는 파일, 네트워크, 데이터베이스 등이 있고, 우리가 필요한 작업을 끝내고 나서는 자원을 놓아주는 작업을 한다.
+
+# finally 문
+
+<code><pre>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		FileWriter f = null;
+		try {
+			f = new FileWriter("data.txt");
+			f.write("Hello");
+			// close를 하기 전에 예외가 발생한다면 close가 실행되지 않음
+			// f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}			
+		}
+	}
+
+}
+</pre></code>
+
+>> try 문에서 오류가 발생하면 이후에 작업이 있더라도 catch 문으로 넘어간다.
+그래서 자원을 놓아주는 작업을 try 문에 넣게 되면, 예외가 발생했을 때 자원을 놓아주는 작업을 하지 못하게 된다.
+>> finally 문: 예외가 발생했든, 발생하지 않았든 자원을 일단 잡았으면 놓아주는 작업을 실행하도록 해야 된다.
+
+
+Try with Resource
+---------------------------
+
+<code><pre>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TryWithResource {
+
+	public static void main(String[] args) {
+		try (FileWriter f = new FileWriter("data.txt")) { // 클래스를 인스턴스화 시키는 코드를 나타낸 것 !!
+			f.write("Hello");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+>> try-with-resource 문은 try 문에 괄호를 추가하여 그 안에 사용할 자원을 정의,
+객체를 여러 개 선언할 수도 있고, 세미콜론(;)으로 구별, 객체의 정의 가장 마지막에는 세미콜론(;)을 넣지 않는다.
+>> try-with-resource문은, try catch finally 구문보다 보기 좋고 실수 할 확률이 적어진다.
+</pre></code>
+
+앞으로 배울 만한 주제
+-------------------------
+throw Exception 
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class ThrowException {
+
+	public static void main(String[] args) throws IOException {
+		FileWriter f = new FileWriter("./data.txt");
+		f.write("Hello");
+		f.close();
+	}
+
+}
+>> 우리가 우리의 코드에서 예외를 발생 시킬 때, throw 구문을 통해서 예외를 발생 시킬 수 있었다.
+>> 이 경우에는 RuntimeException 객체를 이용하였지만, Exception 객체도 직접 생성할 수 있다.
