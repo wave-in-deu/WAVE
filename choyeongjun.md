@@ -916,3 +916,303 @@ public class LoopArray {
 
 2023-05-11
 -------------
+
+* 제어문 종합응용 1
+
+<pre><code>
+public class AuthApp3 {
+ 
+    public static void main(String[] args) {
+         
+        String[] users = {"egoing", "jinhuck", "youbin"};
+        String inputId = args[0];
+         
+        boolean isLogined = false;
+        for(int i=0; i< users.length; i++) {
+            String currentId = users[i];
+            if(currentId.equals(inputId)) {
+                isLogined = true;
+                break;  // 반복문 종료
+            }
+        }
+        System.out.println("Hi,"); 
+        if(isLogined) {
+            System.out.println("Master!!");
+        } else {
+            System.out.println("Who are you?");
+        }
+ 
+    }
+ 
+}
+</code></pre>
+
+* 제어문 종합응용 2
+
+<pre><code>
+public class AuthApp3 {
+ 
+    public static void main(String[] args) {
+         
+        //String[] users = {"egoing", "jinhuck", "youbin"};
+        String[][] users = { // 이차원 배열을 이용하여 하나의 배열에 각각의 원소를 두개씩 넣었다.
+                {"egoing", "1111"},
+                {"jinhuck", "2222"},
+                {"youbin", "3333"}
+        };
+        String inputId = args[0];
+        String inputPass = args[1];
+         
+        boolean isLogined = false;
+        for(int i=0; i< users.length; i++) {
+            String[] current = users[i];
+            if(
+                    current[0].equals(inputId) && 
+                    current[1].equals(inputPass)
+            ) {
+                isLogined = true;
+                break;
+            }
+        }
+        System.out.println("Hi,");
+        if(isLogined) {
+            System.out.println("Master!!");
+        } else {
+            System.out.println("Who are you?");
+        }
+ 
+    }
+ 
+}
+</code></pre>
+
+* 이미 익숙한 메소드
+
+<pre><code>
+public class FirstMethod {
+ 
+    public static void main(String[] args) { // 어떠한 명령을 더 내리지 않아도 main 메소드를 실행한다. 즉, main의 본문을 사용 중인 것.
+         
+        System.out.println("Hello Method");
+        System.out.println(Math.floor(1.1)); // Math 클래스의  floor 메소드로 인해 1.0이 출력됨
+ 
+    }
+ 
+}
+</code></pre>
+
+* 메소드의 기본 형식
+
+  의미없는 반복을 실행하는 경우 메소드를 이용한다면 쉽게 같은 코드를 재사용하고, 유지보수를 쉽게 할 수 있다.
+
+<pre><code>
+public class WhyMethod {
+     
+    public static void main(String[] args) {
+         
+        // 100000000
+        printTwoTimesA();
+        // 100000000
+        printTwoTimesA();
+        // 100000000
+        printTwoTimesA();
+               
+    }
+ 
+    public static void printTwoTimesA() {
+        System.out.println("-");
+        System.out.println("a");
+        System.out.println("a");
+    }
+ 
+}
+</code></pre>
+
+* 메소드의 입력
+
+<pre><code>
+public class WhyMethod {
+     
+    public static void main(String[] args) { // 1. main메소드가 있어야 실행 2. string[] : 문자열 배열 3. 자바가 실행할 때 입력값을 받는 역할을 하는게 args이다.
+         
+                        // (a, -) : 인자(argument)
+            printTwoTimes("a", "-");
+            // 100000000
+            printTwoTimes("a", "*");
+            // 100000000
+            printTwoTimes("a", "&");
+            printTwoTimes("b", "!");
+ 
+    }
+                                    // (text, delimiter) : 매개변수(parameter) 
+    public static void printTwoTimes(String text, String delimiter) {
+        System.out.println(delimiter);
+        System.out.println(text);
+        System.out.println(text);
+    }
+ 
+}
+</code></pre>
+
+* 메소드의 출력
+
+<pre><code>
+public class OutputMethod {
+     
+    public static String a() { // return의 a가 문자열이기때문에 void가 아닌 String로 받는다. 여기서 return값이 없는 메소드를 만들 때에는 void를 사용한다. 
+        // ... 
+        return "a"; // return : 1. 뒤에있는 값이 그 메소드의 실행결과가 된다. 2. 종료시키는 역할을 한다.
+    }
+     
+    public static int one() {  // return의 1이 숫자열이기때문에 String가 아닌 int로 받는다.
+        return 1;
+        //...
+    }
+ 
+    public static void main(String[] args) {
+ 
+        System.out.println(a());
+        System.out.println(one());
+         
+    }
+ 
+}
+</code></pre>
+
+* 메소드의 활용
+
+<pre><code>
+public class AccountingApp {
+
+	public static void main(String[] args) {
+		double valueOfSupply = 10000.0; // 공급가액
+		double vatRate = 0.1; // 부가가치세율
+		double vat = valueOfSupply * vatRate; // 부가세
+		double total = valueOfSupply + vat; // 합계
+		
+		System.out.println("Value of supply : " + valueOfSupply);
+		System.out.println("VAT : " + vat);
+		System.out.println("Total : " + total);
+
+        // main 메소드 바깥으로 지역변수화 되어 있는 valueOfSupply와 vatRate, vat, total 변수들을 빼내어 전역변수화 시킨다.
+	}
+}
+</code></pre>
+
+<pre><code>
+public class AccountingApp {
+    public static double valueOfSupply = 10000.0; // 공급가액
+
+    public static double vatRate = 0.1; // 부가가치세율
+ 
+    public static double getVAT() {
+        return valueOfSupply * vatRate; // 부가세
+    }
+     
+    public static double getTotal() {
+        return valueOfSupply + getVAT(); // 합계
+    }
+ 
+    public static void main(String[] args) {
+ 
+        System.out.println("Value of supply : " + valueOfSupply);
+        System.out.println("VAT : " + getVAT());
+        System.out.println("Total : " + getTotal());
+    }
+}
+</code></pre>
+
+* 클래스, OOP(객체 지향 프로그래밍)
+  
+  클래스 : 비슷한 연관된 일을 하는 메소드와 변수들을 묶어 그룹으로 만든 것.   
+  인스턴스 : 클래스를 틀로 하여 실제로 프로그램에서 동작하는 객체들.   
+  위와 같은 클래스와 인스턴스 들과 같은 객체를 뼈대로 해서 프로그램을 만들어 가는 방식을 객체지향 프로그래밍(OOP, Object Oriented Programming)이라고 한다.
+
+* Access Level Modifiers
+  
+<pre><code>
+public class AccessLevelModifiersMethod { //접근제어자 public의 자리에 public, protected, default, private 라는 값이 올 수 있다.(동작에는 지장없음)
+    // public = 모든 클래스에서 실행 된다. (웬만하면 public을 사용하면 된다.)
+	// private = 같은 클래스 안에서만 사용할 수 있다.
+    private static void hi() {
+		System.out.println("Hi");
+	}
+	public static void main(String[] args) {
+		hi();
+	}
+}            
+</code></pre>
+
+<pre><code>
+class Greeting {
+	private static void hi() {
+		System.out.println("Hi");
+	}
+}
+
+public class AccessLevelModifiersMethod {
+
+	public static void main(String[] args) {
+		Greeting.hi();
+	}
+} // 오류 : hi는 Greeting 클래스 밖에서 직접 접근해서 사용할 수 없기 때문(private 제약조건)
+</code></pre>   
+
+* Static
+
+  Static이란 키워드가 붙은 메소드는 클래스의 메소드다.
+  Static이란 키워드가 붙지 않은 메소드는 인스턴스의 메소드다.  
+  메소드가 인스턴스 소속일때는 static을 빼주어야 한다.
+  메소드가 클래스 소속일때는 static이 존재하여야 한다.
+
+<pre><code>
+class Print{
+    public String delimiter;
+    public void a() {
+        System.out.println(this.delimiter);
+        System.out.println("a");
+        System.out.println("a");
+    }
+    public void b() {
+        System.out.println(this.delimiter);
+        System.out.println("b");
+        System.out.println("b");
+         
+    }
+    public static void c(String delimiter) {
+        System.out.println(delimiter);
+        System.out.println("b");
+        System.out.println("b");
+    }
+}
+public class staticMethod {
+     
+    public static void main(String[] args) {
+        // Print.a("-");
+        // Print.b("-");
+         
+        // instance
+        Print t1 = new Print();
+        t1.delimiter = "-";
+        t1.a();
+        t1.b();
+        Print.c("$");
+         
+         
+        // Print.a("*");
+        // Print.b("*");
+         
+        Print t2 = new Print();
+        t2.delimiter = "*";
+        t2.a();
+        t2.b();
+    }
+}
+</code></pre>
+
+***
+
+2023-05-12
+-------------
+
+* 
