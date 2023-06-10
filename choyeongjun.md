@@ -1385,5 +1385,549 @@ public class MyOOP {
 
 ***
 
-2023-05-13
+2023-05-15
 -------------
+
+* static
+
+<pre><code>
+class Foo{
+    public static String classVar = " i class var ";
+    public String instanceVar = " i instance var ";  // 선언
+    public  static  void   classMethod(){
+        System.out.println(classVar);
+    }
+    public void instanceMethod(){
+        System.out.println(classVar);
+        System.out.println(instanceVar);
+    }
+}
+public class WS {
+    
+    public static void main(String[] args){
+
+        System.out.println(Foo.classVar);
+        Foo.classMethod();
+        
+        Foo f1 = new Foo();
+        Foo f2 = new Foo();
+
+        System.out.println(f1.classVar);
+        System.out.println(f1.instanceVar);
+        
+        f1.classVar = " changed by f1 ";  // 바꿈
+        System.out.println(Foo.classVar);
+        System.out.println(f2.classVar);  // 값을 공유하기 때문에 결과값이 달라짐
+        
+        f1.instanceVar = " changed by f1 ";
+        System.out.println(f1.instanceVar);
+        System.out.println(f2.instanceVar);
+
+        // static 은 클래스의 변수
+    }
+}
+</code></pre>
+
+* 생성자와 this
+
+<pre><code>
+class Print{
+    public String qq = "";
+    public Print(String qq){
+        this.qq = qq;
+    }
+
+    public  void A() {
+        System.out.println(this.qq);
+        System.out.println("A");
+        System.out.println("A");
+    }
+
+    public  void B() {
+        System.out.println(this.qq);
+        System.out.println("B");
+        System.out.println("B");
+    }
+}
+public class WS {
+    public static void main(String[] args) {
+
+        Print p1 = new Print("-----");
+        p1.A();
+        p1.A();
+        p1.B();
+        p1.B();
+
+        Print p2 = new Print("*****");
+        p2.A();
+        p2.A();
+        p2.B();
+        p2.B();
+    }
+}
+
+</code></pre>
+
+* 활용
+
+<pre><code>
+class Accounting{
+    public double ValueOfSupply;
+    public static double VATrate = 0.1;
+
+    public Accounting(double ValueOfSupply) {
+        this.ValueOfSupply = ValueOfSupply;
+    }
+    public double getVAT() {
+        return ValueOfSupply * VATrate;
+    }
+    public double getTotal() {
+        return ValueOfSupply + getVAT();
+    }
+}
+
+public class WS {
+    public static void main(String[] args) {
+
+        Accounting a1 = new Accounting(10000.0);
+
+        Accounting a2 = new Accounting(20000.0);
+
+        System.out.println(" Vaule of supply :" + a1.ValueOfSupply);
+        System.out.println(" Vaule of supply :" + a2.ValueOfSupply);
+
+        System.out.println(" VAT : " + a1.getVAT());
+        System.out.println(" VAT : " + a2.getVAT());
+
+        System.out.println(" Total : " + a1.getTotal());
+        System.out.println(" Total : " + a2.getTotal());
+    }
+}
+
+</code></pre>
+
+***
+
+2023-05-16
+-------------
+
+* 기능의 개선과 발전
+
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+</code></pre>
+  위 코드는 부모클래스가 가지고 있지 않은 기능을 추가했으며, 부모클래스가 가진 기능이지만 더 보태서 재정의(override)했다.
+
+* Overriding, Overloading
+
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+	// Overloading
+	public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+	}
+}
+</code></pre>
+
+<pre><code>
+class Cal {
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+    public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+    }    
+}
+class Cal3 extends Cal{
+	public int minus(int v1, int v2) {
+		return v1 - v2;
+	}
+}
+
+public class InheritanceApp {
+
+	public static void main(String[] args) {
+		Cal c = new Cal();
+		System.out.println(c.sum(2, 1));
+		Cal3 c3 = new Cal3();
+		System.out.println(c3.sum(2, 1));
+		System.out.println(c3.minus(2, 1));
+	}
+}
+</code></pre>
+  위 코드에서 오버로딩 동작을 하기위해 추가된 코드는 아래 코드와 같다.  
+ 
+<pre><code>
+public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+}
+</code></pre> 
+  만약 파라미터의 값을 세개를 추가해주고 싶다면 그 값의 개수와 동일한 코드를 부모클래스에서 찾아서 출력할 것이다.   
+  오버라이딩은 같은 클래스에서 이루어질 수 없고, 상속 관계를 가진 클래스 사이에서 이루어질 수 있다.
+
+* This Super
+
+<pre><code>
+class Cal{
+    public int sum(int v1, int v2){
+        return v1+v2;
+    }
+    public int sum(int v1, int v2, int v3) {
+        return this.sum (v1, v2, v3);  // 자기 자신을 사용함
+    }
+}
+class Cal3 extends Cal{
+    public int minus(int v1, int v2){
+        return  v1-v2;
+    }
+    public int sum(int v1, int v2){
+        System.out.println("Cal3");
+        return super.sum(v1, v2);  // 부모의 메소드를 사용함
+    }
+}
+
+public  class WS {
+    public static void main(String[] args){
+
+        Cal c = new Cal();
+        System.out.println(c.sum(2,1));
+
+        Cal3 c3 = new Cal3();
+        System.out.println(c3.minus(2,1));
+        System.out.println(c3.sum(2,1));
+    }
+}
+</code></pre>
+
+* 상속과 생성자
+
+<pre><code>
+class Cal {
+    int v1, v2;
+    Cal(int v1, int v2){
+        System.out.println("Cal init");
+        this.v1 = v1; this.v2 = v2;
+    }
+    public int sum(){return  this.v1+v2;}
+}
+class Cal3 extends  Cal{
+    Cal3(int v1, int v2){
+        super(v1,v2);
+        System.out.println("Cal3 init");
+    }
+    public int minus(){return this.v1-v2;}
+}
+public class WS {
+    public static void main(String[] args){
+
+        Cal c = new Cal(2,1);
+        Cal3 c3 = new Cal3(2,1);
+        System.out.println(c3.sum());
+        System.out.println(c3.minus());
+    }
+}
+</code></pre>
+
+***
+
+2023-05-17
+-------------
+
+* 인터페이스
+
+  규격을 지정한다.   
+  메소드에서 implements 인터페이스시에 해당 메소드에서는 인터페이스의 규격 메소드가 생성된다.
+
+<pre><code>
+interface Calculable {
+	int sum(int v1, int v2);
+}
+class RealCal implements Calculable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}	
+}
+</code></pre>
+  위 코드에서 interface로 Calculable을 만들고 내부에서 정수형 sum변수의 파라미터를 지정하였다.
+
+* 인터페이스의 형식
+
+<pre><code>
+interface Calculable{
+    double PI = 3.14;
+    int sum(int v1, int v2);
+}
+interface Printable{
+    void print();
+}
+class RealCal implements Calculable, Printable{
+
+    public int sum(int v1, int v2) {
+        return v1+v2;
+    }
+    public void print() {
+        System.out.println("This is RealCal");
+    }
+}
+
+public class WS {
+    public static void main(String[] args){
+
+        RealCal c = new RealCal();
+        System.out.println(c.sum(1,2));
+        c.print();
+        System.out.println(c.PI);
+    }
+}
+</code></pre>
+
+* 다형성
+
+* 다형성
+
+  다형성 : 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인스턴스로 만든 객체와 같이 행동하는 것
+
+<pre><code>
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		Calculable c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print(); // Compile Error
+		System.out.println(c.PI);
+	}
+}
+</code></pre>
+  RealCal 인스턴스를 Calculable 타입으로 선언하면, Printable 메소드를 사용할 수 없다.   
+  Printable 타입으로 선언하면, Calculable 메소드를 사용할 수 없다.
+  어떤 클래스가 데이터타입을 무엇으로 하느냐에 따라서 다양한 얼굴을 가지게 된다.
+
+* 사용설명서 속의 인터페이스
+
+  JAVA API속의 인터페이스
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1");
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+
+		fileWriter.close();
+	}
+}
+</code></pre>
+  FileWriter 인스턴스는 초기화할 때 파일에 접근해서 파일을 점유하고 있다는 표시를 한다.
+  다 끝낸 후에는 close 메소드를 이용해서 현재 파일에 대한 점유를 끝낸다는 표시를 한다.
+
+***
+
+2023-05-18
+-------------
+
+* 예외의 발생
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		System.out.println(2/0); // Run-Time Exception ArithmeticException
+		System.out.println(3); 
+	}
+}
+</code></pre>
+  자바는 숫자를 0으로 나누는 경우 예외로 처리한다.   
+  실제 실행을 시켜보면 ArithmeticException이라고 알려주고, 0으로 나누었다는 설명도 나오게 된다.   
+  예외가 발생하는 이유는 프로그램이 실행하는 동안, 프로그램을 만들 사람들이 설계한 모양대로 운영되지 않았기 때문이다.
+
+* 예외의 처리
+
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			// 여기까지 실행 -> catch(ArrayIndexOutOfBoundsException e)문으로 이동
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch(ArithmeticException e) {
+			System.out.println("잘못된 계산이네요.");
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("없는 값을 찾고 계시네요 ^^");
+		}		
+		System.out.println(5); 
+	}
+}
+</code></pre>
+  위 코드는 try catch문을 이용하여 예외를 처리하여 이상한 경우에도 끝까지 실행되는 튼튼한 프로그램이다.
+  try catch 구문을 사용하면 프로그램이 유연하게 흘러간다.
+
+* 예외의 우선순위
+ 
+<pre><code>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요.");
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+</code></pre>
+  ArithmeticException은 RuntimeException으로부터 상속받은 클래스.   
+  또한 RuntimeException은 Exception 클래스로부터 상속받은 클래스.   
+  여러 예외가 있더라도 Exception클래스를 이용해서 포괄적으로 처리 가능.   
+  catch문의 위치가 중요하다.   
+  try문에서 발생한 예외는 여러 개의 catch문을 순서대로 거쳐서 하나씩 확인한다.
+
+* e의 비밀
+
+  catch문의 변수 e는 인스턴스.   
+  예외들의 인스턴스에는 예외가 발생한 원인, 어디서 발생했는지에 대한 정보들이 들어 있다.
+
+* Checked exception vs Unchecked exception
+
+  ArithmeticException, ArrayIndexOutOfBoundsException 같은 경우 는 try catch 문으로 잡아내지 않아서 프로그램이 뻗어도 컴파일해서 실행할 수 있었다. 이런 예외들을 Unchecked Exception라고 부른다.   
+  try catch문 으로 잡아내지 않으면 프로그램이 컴파일 되지 않는 예외들을 Checked Exception라고 부른다.
+  
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		try {
+			FileWriter f = new FileWriter("data.txt");
+			f.write("Hello");
+			f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+  IOException을 처리하지 않으면 컴파일이 되지 않는다.
+
+* Finally, Resource
+
+  대표적인 Resource : 파일, 네트워크, 데이터베이스   
+  우리의 프로그램만을 위해 존재하지 않음.   
+  파일의 경우 점유상태를 나타내기도 하고, 네트워크나 데이터베이스는 연결 상태를 유지한다. 그리고 우리가 필요한 작업을 끝내고 나서는 자원을 놓아주는 작업을 한다.
+
+  Finally : 자원을 놓아주는 작업을 try문에 넣게 되면 예외가 발생했을 때 자원을 놓아주는 작업을 하지 못한다. 그래서 예외의 발생 유무에 관계없이 자원을 일단 잡았으면 놓아주는 작업을 실행해야 하는데 이때 사용하는 형식이 Finally문이다.
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		FileWriter f = null;
+		try {
+			f = new FileWriter("data.txt");
+			f.write("Hello");
+			// close를 하기 전에 예외가 발생한다면 close가 실행되지 않음
+			// f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}			
+		}
+	}
+}
+</code></pre>
+
+* Try-with-Resource
+
+  try-with-resource 문을 이용하여 자원관리를 훨씬 단순하게 할 수 있다.   
+  클래스가 AutoCloseable 인터페이스를 상속한다면 try-with-resource 문에 사용할 수 있다.
+
+<pre><code>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TryWithResource {
+
+	public static void main(String[] args) {
+		try (FileWriter f = new FileWriter("data.txt")) {
+			f.write("Hello");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+
+***
+
