@@ -1,4 +1,4 @@
-<h1>5월 1일 boostcorse 쉽게 배우는 자바1<h1>
+<h1>boostcorse 쉽게 배우는 자바1 1, 2, 3, 4, 5<h1>
 <h2>2-1</h2>
 
 <pre><code>
@@ -171,7 +171,8 @@ public class HelloWorldRaspberryPi {
 		}
 	}
 }
-</pre></code>
+</code></pre>
+
 
 <h2>6-1</h2>
 <h3>데이터와 연산</h3>
@@ -294,7 +295,7 @@ public class StringOperation {
 }
 </code></pre>
 
-<h1>5월 3일 boostcorse 쉽게 배우는 자바1 8, 9, 10<h1>
+
 <h2>8-1</h2>
 <h3>변수의 정의</h3>
 
@@ -560,7 +561,7 @@ public class OkJavaGoInHomeinput {
 <h2>12-1</h2>
 <h3>직접 컴파일-실행 - 소개</h3>
 
-**이클립스 없이 자바로 프로그래밍을 하려면 자파 파일을 스스로 컴파일 할 수 있어야 하고 컴파일한 클래스 파일을 실행하는 과정을 거쳐야 한다 이 과정은 운영체제에 대한 많은 지식이 필요하다**
+**이클립스 없이 자바로 프로그래밍을 하려면 자파 파일을 스스로 컴파일 할 수 있어야 하고 컴파일한 클래스 파일을 실행하는 과정을 거쳐야 한다 이 과정은 운영체제에 대한 많은 지식이 필요하다**   
 * Compile
 * Run
 * Input
@@ -1030,7 +1031,7 @@ public class AccountingClassApp {
 }
 </code></pre>
 
-<h1>5월 10일 boostcorse 쉽게 배우는 자바2<h1>
+<h1>boostcorse 쉽게 배우는 자바2<h1>
 <h2>1</h2>
 <h3>수업소개</h3>
 
@@ -2391,7 +2392,7 @@ public class TryWithResource {
 }
 </code></pre>
 
-<h2>JAVA 예외 1</h2>
+<h2>JAVA 예외 9</h2>
 <h3>수업을 마치며</h3>
 <pre><code>
 import java.io.FileWriter;
