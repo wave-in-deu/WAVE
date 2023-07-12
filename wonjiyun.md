@@ -1,4 +1,4 @@
-<h1>boostcorse 쉽게 배우는 자바1 1, 2, 3, 4, 5<h1>
+<h1>boostcorse 쉽게 배우는 자바1<h1>
 <h2>2-1</h2>
 
 <pre><code>
