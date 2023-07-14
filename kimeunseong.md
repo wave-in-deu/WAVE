@@ -1670,3 +1670,88 @@ public class WS {
 </code></pre>
 
 ___
+0714
+
+# 스프링 입문 - 섹션 1
+
+
+- hellocontroller
+
+<pre><code>
+
+package hello.hellospring.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class HelloController {
+    @GetMapping("hello")
+    public String hello(Model model) {
+        model.addAttribute("data", "hello!!");
+        return "hello";
+    }
+}
+
+</code></pre>
+
+- HelloSpringApplication
+
+<pre><code>
+package hello.hellospring;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HelloSpringApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(HelloSpringApplication.class, args);
+	}
+
+}
+
+</code></pre>
+
+- index
+
+<pre><code>
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Hello</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+Hello
+<a href="/hello">hello</a>
+</body>
+</html>
+</code></pre>
+
+- hello.html
+
+<pre><code>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="'안녕하세요. ' + ${data}" >안녕하세요. 손님</p>
+</body>
+</html>
+</code></pre>
+
+- 빌드
+
+<pre><code>
+cmd 
+cd: hello-string
+cd
+gradlew
+gradlew build
+</code></pre>
