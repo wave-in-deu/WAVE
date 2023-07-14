@@ -2226,3 +2226,653 @@ public class TryWithResource {
 -------------
 
 <hr/>
+
+< 2023-07-10 ~ 07-13 / 스프링 입문 - 섹션1 ~ 섹션 5 >
+-------------
+
+* 정적 컨텐츠
+<pre><code>
+<*!DOCTYPE HTML>
+<*html>
+<*head>
+    <*title>static content</title>
+    <*meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<*/head>
+<*body>
+정적 컨텐츠 입니다.
+<*/body>
+<*/html>
+</code></pre>
+
+* MVC
+<pre><code>
+package hello.hellospring.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class HelloController {
+
+    @GetMapping("Hello")
+    public String hello(Model model){
+        model.addAttribute("data","Hello");
+        return "hello";
+    }
+
+    @GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam("name") String name, Model model){
+        model.addAttribute("name",name);
+        return "hello-template";
+    }
+
+}
+</code></pre>
+- 
+
+* API
+<pre><code>
+package hello.hellospring.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class HelloController {
+
+    @GetMapping("Hello")
+    public String hello(Model model){
+        model.addAttribute("data","Hello");
+        return "hello";
+    }
+
+    @GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam("name") String name, Model model){
+        model.addAttribute("name",name);
+        return "hello-template";
+    }
+
+    @GetMapping("hello-string")
+    @ResponseBody
+    public String helloString(@RequestParam("name") String name){
+        return "Hello " + name; // hello spring
+    }
+
+    //API - json 방식 HTML출력
+    @GetMapping("hello-api")
+    @ResponseBody
+    public Hello helloApi(@RequestParam("name") String name){
+        Hello hello = new Hello();
+        hello.setName(name);
+        return hello;
+    }
+
+    static class Hello{
+        private String name;
+
+        public String getName(){
+            return name;
+        }
+
+        public void setName(String name){
+            this.name = name;
+        }
+    }
+
+}
+</code></pre>
+- @ResponseBody 사용원리
+- HTTP의 Body에 문자 내용을 직접 변환.
+- 'viewResolver' 대신에 'HttpMessageConverter'동작.
+- 기본 문자처리 : 'StringHttpMessageConverter'
+- 기본 객체처리 : 'MappingJackson2HttpMessageConverter'
+- byte 처리 등등 여러 HttpMessageConverter가 기본으로 등록되어 있음.
+
+* 회원 관리 예제 - 백앤드 개발
+
+- 일반적인 웹 애플리케이션 계층
+- 컨트롤러 : 웹 MVC의 컨트롤러 역할
+- 서비스 : 핵심 비즈니스 로직 구현
+- 리포지토리 : 데이터베이스에 접근, 도메인 객체를 DB에 저장하고 관리
+- 도메인 : 비즈니스 도메인 객체, 예) 회원, 주문, 쿠폰 등등 주로 데이터베이스에 저장하고 관리됨.
+
+* 테스트코드
+- 테스트 코드는 개발자들에게 있어서 없어선 안되는 기능중 하나.
+- 개인으로 할때는 상관없지만 단체로 프로젝트를 진행할 때 오류를 줄이기 위해 미리 개인 코드를 테스트 해보는 용도로 사용.
+
+* 회원 관리 예제 - Domain
+<pre><code>
+package hello.hellospring.domain;
+
+public class Member {
+
+    private Long id;
+    private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+</code></pre>
+- getter, setter 단축키 숙지
+
+* 회원 관리 예제 - Controller
+<pre><code>
+//HelloController
+package hello.hellospring.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class HelloController {
+
+    @GetMapping("Hello")
+    public String hello(Model model){
+        model.addAttribute("data","Hello");
+        return "hello";
+    }
+
+    @GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam("name") String name, Model model){
+        model.addAttribute("name",name);
+        return "hello-template";
+    }
+
+    @GetMapping("hello-string")
+    @ResponseBody
+    public String helloString(@RequestParam("name") String name){
+        return "Hello " + name; // hello spring
+    }
+
+    //API
+    @GetMapping("hello-api")
+    @ResponseBody
+    public Hello helloApi(@RequestParam("name") String name){
+        Hello hello = new Hello();
+        hello.setName(name);
+        return hello;
+    }
+
+    static class Hello{
+        private String name;
+
+        public String getName(){
+            return name;
+        }
+
+        public void setName(String name){
+            this.name = name;
+        }
+    }
+}
+</code></pre>
+<pre><code>
+//MemberController
+package hello.hellospring.controller;
+
+import hello.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class MemberController {
+
+    private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+}
+</code></pre>
+
+* 회원 관리 예제 - Repository
+<pre><code>
+//INTERFACE
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface MemberRepository {
+    Member save(Member member);
+    Optional<Member> findById(Long id);
+    Optional<Member> findByName(String name);
+    List<Member> findAll();
+}
+</code></pre>
+<pre><code>
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.stereotype.Repository;
+
+import java.util.*;
+
+@Repository
+public class MemoryMemberRepository implements MemberRepository {
+
+    private static Map<Long, Member> store = new HashMap<>();
+    private static long sequence = 0L;
+
+    @Override
+    public Member save(Member member) {
+        member.setId(++sequence);
+        store.put(member.getId(), member);
+        return member;
+    }
+
+    @Override
+    public Optional<Member> findById(Long id) {
+        return Optional.ofNullable(store.get(id));
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        return store.values().stream()
+               .filter(member -> member.getName().equals(name))
+               .findAny();
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return new ArrayList<>(store.values());
+    }
+
+    public void clearStore(){
+        store.clear();
+    }
+}
+</code></pre>
+
+* 회원 관리 예제 - Service
+<pre><code>
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+    @Autowired
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+
+    /**
+     *회원가입
+     */
+    public Long join(Member member){
+        validateDuplicateMember(member); // 중복 회원 검증
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                .ifPresent(member1 -> {
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+    }
+
+    /**
+     * 전체회원 조회
+     */
+    public List<Member> findMembers(){
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memberId){
+        return memberRepository.findById(memberId);
+    }
+}
+</code></pre>
+- join을 통해서 멤버함수에 접근하고 .getId()를 통해 중복회원인지 아닌지 검증한다.
+- 이후 vaildateDuplicateMember객체에서 getId()에 들어간 회원정보를 찾고 만약 회원정보가 같다면 "이미 존재하는 회원입니다."라는 문구를 출력한다.
+
+* 스프링 빈 실행방법 1 : 컴포넌트 스캔, 자동 의존관계 설정
+<pre><code>
+@Component // 애노테이션이 있으면 스프링 빈으로 자동 등록된다.
+@Controller // 컨트롤러가 스프링 빈으로 자동 등록된 이유도 컴포턴트 스캔 때문.
+</code></pre>
+- 스프링 빈 : 스프링 컨테이너에 의해 관리되는 재사용 가능한 소프트웨어 컴포넌트, 스프링 컨테이너가 관리하는 자바 객체를 뜻함.
+- 빈(Bean) : 인스턴스화된 객체
+- `@Component`를 포함하는 다음 애노테이션도 스프링 빈으로 자동 등록 됨.
+- `@Controller`
+- `@Service`
+- `@Repsitory`
+
+* 스프링 빈 실행방법 2 : 자바 코드로 직접 스프링 빈 등록하기
+<pre><code>
+package hello.hellospring;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+
+    @Bean
+    public MemberService memberService(){
+        return new MemberService(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+}
+</code></pre>
+- 위 코드에서 @Bean을 선언하여 스프링 빈 컨테이너에 public MemberService memberService(), public MemberRepository memberRepository() 를 올려준다.
+- 컨트롤러는 스프링이 관리하는 코드이기 때문에 컴포넌트 스캔으로 올라가며, 컴포넌트 스캔이기 때문에 오토와이어로 유지해도 된다.
+
+- 참고 ) DI에는 필드, setter 주입, 생성자 주입 이렇게 3가지 방법이 있다. 의존관계가 실해중에 동적으로 변하는 경우는 거의 없으므로 생성자 주입을 권장한다.
+- 참고 ) 실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용한다. 그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하면 설정을 통해 스프링 빈으로 등록한다.
+
+- 주의 ) `@Autowired`를 통한 DI는 `helloController`, `MemberService`등과 같이 스프링이 관리하는 객체에서만 동작한다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않는다.
+
+* 회원 관리 예제 - 웹 MVC 개발
+* 회원 웹 기능 - 홈 화면 추가
+<pre><code>
+// Controller
+package hello.hellospring.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class HomeController {
+
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+}
+</code></pre>
+- HomeController 클래스를 생성하고 리턴값으로 home을 출력한다.
+
+<pre><code>
+// HTML
+<*!DOCTYPE html>
+<*html xmlns:th="http://www.thymeleaf.org">
+<*body>
+
+<*div class="container">
+  <*div>
+    <*h1>Hello Spring<*/h1>
+    <*p>회원 기능<*/p>
+    <*p>
+      <*a href="/members/new">회원 가입<*/a>
+      <*a href="/members">회원 목록<*/a>
+    <*/p>
+  <*/div>
+<*/div>
+
+<*/body>
+<*/html>
+</code></pre>
+- 코드 작성 후 localhost:8080 에 접속.
+- 아래는 결과.
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="container">
+  <div>
+    <h1>Hello Spring</h1>
+    <p>회원 기능</p>
+    <p>
+      <a href="/members/new">회원 가입</a>
+      <a href="/members">회원 목록</a>
+    </p>
+  </div>
+</div>
+
+</body>
+</html>
+-------------------------------------------
+* 회원 웹 기능 - 등록
+<pre><code>
+//MemberController
+
+package hello.hellospring.controller;
+
+import hello.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MemberController {
+
+    private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    @GetMapping("/members/new")
+    public String createForm() {
+        return "members/createMemberForm";
+    }
+}
+</code></pre>  
+
+- MemberController 클래스 에 @GetMapping("/members/new")를 추가.
+<pre><code>
+<*!DOCTYPE html>
+<*html xmlns:th="http://www.thymeleaf.org">
+<*body>
+
+<*div class="contrainer">
+  <*form action="/members/new" method="post">
+    <*div class="form-group">
+      <*label for="name">이름<*/label>
+      <*input type="text" id="name" name="name"  placeholder="이름을 입력하세요">
+    <*/div>
+    <*button type="submit">등록<*/button>
+  <*/form>
+
+<*/div>
+
+<*/body>
+<*/html>
+</code></pre>
+- <*form>은 값을 입력할 수 있는 구간
+- 아래는 결과.
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="contrainer">
+  <form action="/members/new" method="post">
+    <div class="form-group">
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
+    </div>
+    <button type="submit">등록</button>
+  </form>
+
+</div>
+
+</body>
+</html>
+-------------------------------------------
+<pre><code>
+@MemberController
+
+package hello.hellospring.controller;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+@Controller
+public class MemberController {
+
+    private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    @GetMapping("/members/new")
+    public String createForm() {
+        return "members/createMemberForm"; // createMemberForm으로 이동한다.
+    }
+
+    @PostMapping("/members/new")
+    public String create(MemberForm form){
+        Member member = new Member();
+        member.setName(form.getName());
+
+        memberService.join(member);
+
+        return "redirect:/"; // 회원가입이 끝나면 홈 화면으로 돌려보냄.
+    }
+}
+</code></pre>
+
+- `@PostMapping(/members/new)`은 데이터를 form에 넣어서 전달할 때 사용한다.
+- 위에서 method를 "post"로 지정했기 때문에 데이터를 등록할 때 `@PostMapping`이 사용된다.
+
+* 회원 웹 기능 - 조회
+<pre><code>
+//MemberController
+
+import java.util.List;
+
+@Controller
+public class MemberController {
+
+    private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    @GetMapping("/members/new")
+    public String createForm() {
+        return "members/createMemberForm";
+    }
+
+    @PostMapping("/members/new")
+    public String create(MemberForm form){
+        Member member = new Member();
+        member.setName(form.getName());
+
+        memberService.join(member);
+
+        return "redirect:/"; // 회원가입이 끝나면 홈 화면으로 돌려보냄.
+    }
+
+    @GetMapping("/members")
+    public String List(Model model){
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+        return "members/memberList";
+    }
+}
+</code></pre>
+- 회원조회를 위해 `@GetMapping("/members")`로 매핑하여 memberList라는 페이지로 이동할 수 있도록 리턴값을 설정한다.
+<pre><code>
+//HTML
+<*!DOCTYPE HTML>
+<*html xmlns:t="http://www.thymeleaf.org">
+<*body>
+<*div class="contrainer">
+    <*div>
+        <*table>
+            <*thead>
+            <*tr>
+                <*th>#<*/th>
+                <*th>이름<*/th>
+            <*/tr>
+            <*/thead>
+            <*tbody>
+            <*tr th:each="member : ${members}">
+                <*td th:text="${member.id}"><*/td>
+                <*td th:text="${member.name}"><*/td>
+            <*/tr>
+            <*/tbody>
+        <*/table>
+    <*/div>
+<*/div>
+
+<*/body>
+<*/html>
+</code></pre>
+- return값으로 받았던 memberList를 HTML로 구현한다.
+- 아래는 결과.
+<!DOCTYPE HTML>
+<html xmlns:t="http://www.thymeleaf.org">
+<body>
+<div class="contrainer">
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.id}"></td>
+                <td th:text="${member.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
+--------------------------------
+
+- 만약 자바를 실행 중지하고 다시 실행하게 되면 데이터가 다 사라지므로 주의 해야한다.
+
+< 2023-07-10 ~ 07-13 / 스프링 입문 - 섹션1 ~ 섹션 5 END >
+-------------
