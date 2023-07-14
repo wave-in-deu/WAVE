@@ -2014,7 +2014,7 @@ public class InheritanceApp {
         System.out.println(c3.minus()); // 1
     }
 }ㄴ
-# resultㄴ
+# result
 Cal init!!
 Cal3 init!!
 3
@@ -2030,3 +2030,383 @@ Cal3 init!!
 final 키워드: 상속과 관련하여 제한을 걸어주는 키워드 
 
 abstract 키워드:  해당 클래스, 메소드가 재정의가 필요하다는 것을 강제하는 키워드
+
+====================
+JAVA 인터페이스
+====================
+<code><pre>
+>> 처음 원했던 덧셈을 수행하는 메소드
+ 
+# 1
+class DummyCal {
+	public int sum(int v1, int v2) { // v1, v2 인수 2개를 받아서 덧셈을 수행하는 메소드
+		// do something
+        return result_value;
+	}
+}
+# 2
+class RealCal {
+	public int sum(int v1, int v2, int v3) {
+		return v1 + v2 + v3;
+	}
+}
+// 인수 세 개를 받아서 덧셈을 수행하는 메소드를 지닌 형태
+## 두 개를 받아서 덧셈을 수행하는 메소드를 가진 형태 원했는데, 세 개를 받아서 덧셈을 수행하는 메소드를 지닌 형태의 코드를 만들었다면 ??
+>> 다시 수정해야된다. 최악의 경우에는 사용자에게 큰 피해를 끼칠 수도 있다.
+>> 이러한 경우에 인터페이스를 이용함
+interface Calculable {
+	int sum(int v1, int v2);
+}
+class RealCal implements Calculable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}	
+}
+</pre></code>
+
+
+인터페이스의 형식
+------------------
+> 인터페이스의 이름은 클래스와 마찬가지로 보통 첫 글자를 대문자로 만들고, "~을 할 수 있는" 것들의 규격이라는 의미에서 형용사의 이름을 붙이기도 함
+<code><pre>
+interface Calculable {
+	double PI = 3.14; // 인터페이스에서는 변수를 정의할 수도 있다. 다만 변수는 반드시 초기화 되어야된다.
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable { //클래스를 상속할 때는 하나의 클래스로부터 상속받을 수 있는 것과 대조적으로 인터페이스는 여러 개를 모두 적용할 수 있다 !!
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+		System.out.println(c.sum(2, 1));
+		c.print();
+		System.out.println(c.PI);
+	}
+
+}
+>> 인터페이스를 적용한 클래스는 변수를 다시 대입할 수 없다!!
+</pre></code>
+
+다형성
+-------------------
+>
+<code><pre>
+
+# 1
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}	
+	
+}
+
+public class InterfaceApp {
+
+	public static void main(String[] args) {
+		Calculable c = new RealCal(); //Calculable로 받았기 때문에 sum, pi는 실행이 되지만, print는 에러가 난다
+		System.out.println(c.sum(2, 1)); //printable로 받으면 반대로 print는 실행이 되지만, sum,pi는 에러가 난다
+		c.print(); // Compile Error
+		System.out.println(c.PI);
+	}
+# 2 
+}
+
+interface Calculable {
+	double PI = 3.14;
+	int sum(int v1, int v2);
+}
+interface Printable {
+	void print();
+}
+class RealCal implements Calculable, Printable {
+
+	public int sum(int v1, int v2) {
+		return v1 + v2;
+	}
+
+	public void print() {
+		System.out.println("this is RealCal!!!");
+	}		
+}
+class AdvancedPrint implements Printable{ 
+    public void print(){
+        System.out.println("This is RealCal!!");
+    }
+}
+
+public class InterfaceApp {
+    public static void main(string[] args){ 
+        printable c = new AdvancedPrint(); // AdvancedPrint로 다양한 클래스 표현
+        c.print();
+    }
+}
+>> 다형성: 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인슽턴스로 만든 객체와 같이 행동하는 것
+</pre></code>
+
+사용설명서 속의 인터페이스
+--------------------------------
+<code><pre>
+import java.io.FileWriter; 
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1"); 
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+        // close 메소드는 AutoCloseable 인터페이스에 선언되어 있는 메소드
+		fileWriter.close(); //close 메소드 사용으로 현재 파일에 대한 점유를 끝낸다.
+	}
+}
+> 조작 하는 방식을 표준화하는데 많이 사용됨.
+>> FileWriter와 같이 작업에 있어서 복수의 접근을 막을 필요가 있는 경우에 해당 인터페이스를 적용한다.
+</pre></code>
+
+=============================
+JAVA 예외
+=============================
+
+우리는 프로그램은 어려 오류를 낼 수 있다. 
+>> 예외: 예상한 범위를 벗어나는 방식으로 프로그램을 동작시켜서 예상치 못한 결과내는 것
+
+예외의 발생, 처리
+-----------------------------
+<code><pre>
+
+# 1
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		System.out.println(2/0); // Run-Time Exception ArithmeticException
+		System.out.println(3); 예외를 발생 시킴
+	}
+}
+
+# 2
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); 
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch(ArithmeticException e) {
+			System.out.println("잘못된 계산이네요.");
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("없는 값을 찾고 계시네요 ^^");
+		}		
+		System.out.println(5); 
+	}
+}
+# result
+1
+2
+없는 값을 찾고 계시네요 ^^
+5
+>> try - catch 문: 예외가 발생할 것으로 예상되는 부분을 try로 묶어서 처리하고 코드를 실행 시킬때, 예외가 발생하는 코드가 실행되면 그 다음 코드를 실행하지 않고 해당 예외를 처리하는 catch 문으로 넘어간다.
+>> catch 문은 여러 개 사용 가능하다.
+</pre></code>
+
+예외의 우선순위
+-----------------
+<code><pre>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요.");
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+# result
+1
+2
+뭔가 이상합니다. 오류가 발생했습니다.
+5
+>> 여러 예외가 있더라도 Exception 클래스를 이용해서 포괄적으로 처리할 수 있다.
+>> catch 문의 위치도 중요함.
+>> try 문에서 발생한 예외는 여러 개의 catch 문을 순서대로 거쳐가면서 해당 catch 문의 예외가 이번에 발생한 예외와 맞는지 확인 !
+</pre></code>
+
+e의 비밀
+------------------
+
+<code><pre>
+public class ExceptionApp {
+	public static void main(String[] args) throws ArithmeticException {
+		System.out.println(1);
+		int[] scores = {10, 20, 30};
+
+		try {
+			System.out.println(2);
+			System.out.println(scores[3]); //ArrayIndexOutOfBoundsException
+			System.out.println(3);
+			System.out.println(2/0); //ArithmeticException
+			System.out.println(4);
+		} catch (ArithmeticException e) {
+			System.out.println("계산이 잘못된 것 같아요."+e.getMessage());
+            e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("뭔가 이상합니다. 오류가 발생했습니다. ");
+		}	
+		System.out.println(5); 
+	}
+}
+>> +e.getMessage, e.printStacktrace를 이용해서 에러가 나는 디테일한 정보를 알 수 있다.
+</pre></code>
+
+checked, unchecked Excption
+----------------
+>>  우리가 만들었던 프로그램은 ArithmeticException, ArrayIndexOutOfBoundsException 같은 경우, try catch 문으로 잡아내지 않아서 프로그램이 뻗는다고 할지라도 컴파일해서 실행할 수 있었다. 이러한 Exception들을 <unchecked Excecption> 이라고 부른다.
+>> unchecked Exception은 모두 RuntimeException 클래스로붙터 상속된 에외들이다.
+
+<code><pre>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		try {
+			FileWriter f = new FileWriter("data.txt");
+			f.write("Hello");
+			f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
+</pre></code>
+
+>> 하지만 try catch 문 등으로 잡아내지 않으면 프로그램이 컴파일도 안되는 예외들도 있다.
+>> 이러한 예외들을 checked Exception이라고 함
+
+
+Finally, Resource
+--------------------------------
+
+Resource
+>> 우리의 프로그램은 프로그램 외부의 자원에 접근해서 작업을 진행할 수 있다.
+>> 대표적인 자원으로는 파일, 네트워크, 데이터베이스 등이 있고, 우리가 필요한 작업을 끝내고 나서는 자원을 놓아주는 작업을 한다.
+
+# finally 문
+
+<code><pre>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CheckedExceptionApp {
+
+	public static void main(String[] args) {
+		FileWriter f = null;
+		try {
+			f = new FileWriter("data.txt");
+			f.write("Hello");
+			// close를 하기 전에 예외가 발생한다면 close가 실행되지 않음
+			// f.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}			
+		}
+	}
+
+}
+</pre></code>
+
+>> try 문에서 오류가 발생하면 이후에 작업이 있더라도 catch 문으로 넘어간다.
+그래서 자원을 놓아주는 작업을 try 문에 넣게 되면, 예외가 발생했을 때 자원을 놓아주는 작업을 하지 못하게 된다.
+>> finally 문: 예외가 발생했든, 발생하지 않았든 자원을 일단 잡았으면 놓아주는 작업을 실행하도록 해야 된다.
+
+
+Try with Resource
+---------------------------
+
+<code><pre>
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TryWithResource {
+
+	public static void main(String[] args) {
+		try (FileWriter f = new FileWriter("data.txt")) { // 클래스를 인스턴스화 시키는 코드를 나타낸 것 !!
+			f.write("Hello");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+>> try-with-resource 문은 try 문에 괄호를 추가하여 그 안에 사용할 자원을 정의,
+객체를 여러 개 선언할 수도 있고, 세미콜론(;)으로 구별, 객체의 정의 가장 마지막에는 세미콜론(;)을 넣지 않는다.
+>> try-with-resource문은, try catch finally 구문보다 보기 좋고 실수 할 확률이 적어진다.
+</pre></code>
+
+앞으로 배울 만한 주제
+-------------------------
+throw Exception 
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class ThrowException {
+
+	public static void main(String[] args) throws IOException {
+		FileWriter f = new FileWriter("./data.txt");
+		f.write("Hello");
+		f.close();
+	}
+
+}
+>> 우리가 우리의 코드에서 예외를 발생 시킬 때, throw 구문을 통해서 예외를 발생 시킬 수 있었다.
+>> 이 경우에는 RuntimeException 객체를 이용하였지만, Exception 객체도 직접 생성할 수 있다.
