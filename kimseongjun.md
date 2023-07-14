@@ -2410,3 +2410,50 @@ public class ThrowException {
 }
 >> 우리가 우리의 코드에서 예외를 발생 시킬 때, throw 구문을 통해서 예외를 발생 시킬 수 있었다.
 >> 이 경우에는 RuntimeException 객체를 이용하였지만, Exception 객체도 직접 생성할 수 있다.
+
+===========================================================================
+
+스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
+
+section 1 - 프로젝트 환경설정
+-------------------------------
+# 1 프로젝트 생성
+>>Java 11 설치, intelij IDEA 사용
+
+https://start.spring.io 들어가서 스프링 프로젝트 생성
+
+intelij IDEA 설치 후 open에 들어가서 스프링 프로젝트 생성한 거 가져오기
+# 2 라이브러리 살펴보기
+> 스프링 부트 라이브러리
+spring-boot-starter-tomcat:톰캣(웹서버)
+spring-webmvc:스프링 웹 MVC
+spring-boot-starter-thymeleaf:타임리프 템플릿 엔진(View)
+spring-boot-starter:스프링 부트 + 스프링 코어 + 로깅
+> 테스트 라이브러리
+spring-boot-starter-test
+junit: 테스트 프레임워크
+mockito: 목 라이브러리
+assertj: 테스트 코드를 좀 더 편하게 작성하게 도와주는 라이브러리
+spring-test: 스프릥 통합 테스트 지원
+# 3 환경설정
+> Welcome page 만들기
+<pre><code>
+<!DOCTYPE HTML>
+<html>
+<head>
+ <title>Hello</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+Hello
+<a href="/hello">hello</a>
+</body>
+</html>
+</code></pre>
+> localhost:8080/hello 치면 hello가 나오게 된다.
+# 4 빌드하고 실행하기
+window 기준
+# 콘솔로 이동 > cmd로 이동
+## hello-spring 입력한 후 gradlew 입력
+### gradlew build 입력
+#### dir로 폴더 목록 확인
