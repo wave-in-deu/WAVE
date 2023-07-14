@@ -1832,3 +1832,225 @@ public class InheritanceApp {
 protected의 경우 해당 클래스와 자식 클래스를 통해서 접근할 수 있습니다.
 final 키워드 : 상속과 관련하여 제한을 걸어주는 키워드
 abstract 키워드 : 해당 클래스, 메소드가 재정의가 필요하다는 것을 강제하는 키워드
+
+This is an 인터페이스
+-------------
+# This is a H1
+소개
+interface Calculable{
+	int sum(int v1,int v2);
+}
+class RealCal implements Calculable{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}
+	
+}
+class DummyCal implements Calculable{
+	public int sum(int v1, int v2) {
+		return 3;
+	}
+}
+public class InterfaceApp {
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+	    System.out.println(c.sum(2,1));
+	}
+}//인터페이스는 약솟이다 클래스의 형태를 규정한다.
+
+## This is a H2
+인터페이스의 형식
+interface Calculable{
+	double PI = 3.14;// 인터페이스에는 메소드와 변수가 정의 될 수 있는데 변수에는 값이 들어오고 메소드에는 실제 구현이 들어가지 않아서 저 메소드를 구현하는 클래스가 저 형태를 만족하는 메소드의 내용을 직접 구현해야한다.
+	int sum(int v1,int v2);
+}
+interface Printable{
+	void print();//메소드를 인터페이스에 정의할 땐 내용이 들어가지 않는다. 변수를 정의할 떈 내용이 들어간다.
+	
+}
+
+class RealCal implements Calculable, Printable{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}// 하나의 클래스는 여러개의 인터페이스를 구현할 수 있다.
+
+	public void print() {
+		System.out.println("This is RealCall!!");
+	}
+}
+
+class DummyCal implements Calculable{
+	public int sum(int v1, int v2) {
+		return 3;
+	}
+}
+public class InterfaceApp {
+	public static void main(String[] args) {
+		RealCal c = new RealCal();
+	    System.out.println(c.sum(2,1));
+	    c.print();
+	    System.out.println(c.PI);
+	}
+}//인터페이스는 약솟이다 클래스의 형태를 규정한다.
+
+### This is a H3
+다형성 : 객체의 타입이 부모 클래스, 인터페이스, 자식 클래스 등 여러 형태인데도 인스턴스로 만든 객체(자식 클래스의 인스턴스)와 같이 행동하는 것
+interface Calculable{
+	double PI = 3.14;
+	int sum(int v1,int v2);
+}
+interface Printable{
+	void print();
+	
+}
+
+class RealCal implements Calculable, Printable{
+	public int sum(int v1, int v2) {
+		return v1+v2;
+	}
+
+	public void print() {
+		System.out.println("This is RealCall!!");
+	}
+}
+
+class AdvancePrint implements Printable{
+	public void print() {
+		System.out.println("This is RealCal!!");
+	}
+}
+public class InterfaceApp {
+	public static void main(String[] args) {
+		Printable c = new AdvancePrint();
+	    c.print();
+	}
+}//어떠한 클래스가 데이터 타입을 뭘로 하느냐에따라 다양한 얼굴을 갖게 되는게 다형성 
+
+#### This is a H4
+사용설명서 속의 인터페이스
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
+public class FileWriterApp {
+	public static void main(String[] args) throws IOException {
+		Writer fileWriter = new FileWriter("filewriter.txt");
+		fileWriter.write("data 1");
+		fileWriter.write("data 2");
+		fileWriter.write("data 3");
+
+		fileWriter.close();
+	}
+}
+
+
+This is an H1
+================
+
+This is an 섹션1
+----------------
+# This is a H1
+package hello.hellospring;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HelloSpringApplication {
+
+	public static void main(String[] args) {
+
+		SpringApplication.run(HelloSpringApplication.class, args);
+	}
+
+}
+
+
+## This is a H2
+스프링 부트 라이브러리
+spring-boot-starter-web에 
+ spring-boot-starter-tomcat: 톰캣 (웹서버)
+ spring-webmvc: 스프링 웹 MVC
+이 2가지가 들어있다.
+
+spring-boot-starter-thymeleaf: 타임리프 템플릿 엔진(View)
+spring-boot-starter(공통): 스프링 부트 + 스프링 코어 + 로깅
+ spring-boot
+  spring-core
+ spring-boot-starter-logging 을 logback, slf4j 이 두 가지 조합으로 운영
+
+
+테스트 라이브러리
+spring-boot-starter-test
+ junit: 테스트 프레임워크
+ mockito: 목 라이브러리
+ assertj: 테스트 코드를 좀 더 편하게 작성하게 도와주는 라이브러리
+ spring-test: 스프링 통합 테스트 지원
+
+
+### This is a H3
+resources/static/-> New File만들기 : index.html
+
+<!DOCTYPE HTML>
+<html>
+<head>
+ <title>Hello</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+Hello
+<a href="/hello">hello</a>
+</body>
+</html>
+
+#### This is a H4
+(mian/java/hello.hellospring/controller/HelloController)
+package hello.hellospring.controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class HelloController {
+    @GetMapping("hello")
+    public String hello(Model model){
+        model.addAttribute("data","hello!!"); // 값은 hello!!
+        return "hello";
+    }
+}
+
+-->  return "hello"; 에서 hello는 resources/templates/hello.html의 이름과 같다. 따라서 'resources/templates/hello.html를 찯아서 가서 랜더링 해라.' 라는 뜻.
+
+
+(resources/templates/hello.html)
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+ <title>Hello</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="'안녕하세요. ' + ${data}" >안녕하세요. 손님</p>
+</body>
+</html>
+
+--> ${data}는 model에서의 hello!!
+==> 실행 : localhost:8080/hello -> 안녕하세요. hello!!
+( localhost:8080/hello라고 치면 스트링 부트가 톰켓을 내장하고 있기떄문에 HelloController에 @GetMapping("hello")에 매칭이 되서 이 메소드가 실행된다. )
+
+컨트롤러에서 리턴 값으로 문자를 반환하면 뷰 리졸버( viewResolver )가 화면을 찾아서 처리한다.
+ 스프링 부트 템플릿엔진 기본 viewName 매핑
+ resources:templates/ +{ViewName}+ .html   -> 여기서 {ViewName}은 즉, hello
+
+> 참고: spring-boot-devtools 라이브러리를 추가하면, html 파일을 컴파일만 해주면 서버 재시작 없이
+View 파일 변경이 가능하다.
+> 인텔리J 컴파일 방법: 메뉴 build Recompile
+
+
+##### This is a H5
+빌드하고 실행하기
+윈도우 사용자를 위한 팁
+콘솔로 이동 명령 프롬프트(cmd)로 이동
+./gradlew gradlew.bat 를 실행하면 됩니다.
+명령 프롬프트에서 gradlew.bat 를 실행하려면 gradlew 하고 엔터를 치면 됩니다.
+gradlew build
