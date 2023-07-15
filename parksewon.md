@@ -1827,6 +1827,7 @@ class MemberServiceTest {
 }
 
 ---------
+
 # 1.컴포넌트 스캔과 자동 의존관계 설정
 컨트롤러와 서비스를 연결
 컨트롤러엔 @Autowired 서비스엔@Service
