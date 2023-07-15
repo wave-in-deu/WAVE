@@ -1944,7 +1944,7 @@ public class TryWithResource {
 
   spring-boot-starter(공통) : 스프링 부트 + 스프링 코어 + 로깅
   spring-boot
-    spring-core
+  spring-core
 
   spring-boot-starter-logging
   logback, slf4j logging을 이 두 가지 조합으로 많이 운영함
