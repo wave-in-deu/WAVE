@@ -1699,11 +1699,12 @@ public class HelloController {
 ```
 localhost:8080/hello에서 data가 hello!!!로 치환되어 보여짐
 retrun"hello"는 hello.html을 찾아서 랜더링 하라는 뜻임
-<<<<<<< HEAD
+
 
 ******
-회원가입
-
+# 0715
+## 1.회원가입
+```java
 package hello.hellospring.service;
 
 import hello.hellospring.domain.Member;
@@ -1748,10 +1749,10 @@ public class MemberService {
         return memberRepository.findById(memberId);
     }
 }
+```
 
-
-회원가입서비스 테스트
-
+## 2.회원가입서비스 테스트
+```java
 package hello.hellospring.service;
 
 import hello.hellospring.MemoryMemberRepositoryTest;
@@ -1824,16 +1825,5 @@ class MemberServiceTest {
     void findOne() {
     }
 }
-
----------
-# 1.컴포넌트 스캔과 자동 의존관계 설정
-컨트롤러와 서비스를 연결
-컨트롤러엔 @Autowired 서비스엔@Service
-
-스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 싱글톤으로 등록한다(유일하게 하나만
-등록해서 공유한다) 따라서 같은 스프링 빈이면 모두 같은 인스턴스다. 설정으로 싱글톤이 아니게 설정할 수
-있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다
-
-# 2.자바 코드로 직접 스프링 빈 등록하기
-* 회원 서비스와 회원 리포지토리의 @Service, @Repository, @Autowired 애노테이션을 제거하고
-진행한다
+=======
+>>>>>>> 5c51c875a3e5cebbe1a768912cc6e157cdec5e45
