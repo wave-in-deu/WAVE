@@ -1702,8 +1702,8 @@ retrun"hello"는 hello.html을 찾아서 랜더링 하라는 뜻임
 <<<<<<< HEAD
 
 ******
-회원가입
-
+# 1.회원가입
+```java
 package hello.hellospring.service;
 
 import hello.hellospring.domain.Member;
@@ -1748,10 +1748,10 @@ public class MemberService {
         return memberRepository.findById(memberId);
     }
 }
+```
 
-
-회원가입서비스 테스트
-
+# 2.회원가입서비스 테스트
+```java
 package hello.hellospring.service;
 
 import hello.hellospring.MemoryMemberRepositoryTest;
@@ -1824,5 +1824,6 @@ class MemberServiceTest {
     void findOne() {
     }
 }
+```
 =======
 >>>>>>> 5c51c875a3e5cebbe1a768912cc6e157cdec5e45
