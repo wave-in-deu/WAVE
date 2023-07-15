@@ -1699,7 +1699,7 @@ public class HelloController {
 ```
 localhost:8080/hello에서 data가 hello!!!로 치환되어 보여짐
 retrun"hello"는 hello.html을 찾아서 랜더링 하라는 뜻임
-<<<<<<< HEAD
+
 
 ******
 # 1.회원가입
@@ -1825,5 +1825,8 @@ class MemberServiceTest {
     }
 }
 ```
-=======
->>>>>>> 5c51c875a3e5cebbe1a768912cc6e157cdec5e45
+------------
+### 3.junit5라는 프레임워크로 테스트를 생행: 준비하고 실행하는데 오래걸리고, 반복 실행이 어렵다는 단점을 없앰.
+### 4.optional: null 클래스를 감싼느 wrapper class이다. 값이 있을 수도 있고 없을 수도 있는 객체를 다룰 때 유용하다.
+### 5.AfterEach: 각각의 테스트 시작전 DB에 저장된 메모리를 삭제한다.
+### 6.BeforeEach: 각 테스트 시작전에 호출된다. 테스트에 영항이 없도록 새로운 객체를 형성하고, 의존관계도 새로 맺어준다.
