@@ -1418,7 +1418,7 @@ interface : 규격 지정
 
 a.해당 메소드로 기능 정립 및 호출
 
-
+```
 interface Calculable {
 	double PI = 3.14;
 	int sum(int v1, int v2);
@@ -1448,11 +1448,12 @@ public class InterfaceApp {
 	}
 
 }
-
+```
 인터페이스는 껍데기만 만드는 구조(메소드 껍데기 만들기) 실제 구현은 implements받은 클래스 내 메소드에서 실 구현.
 
 
 
+```
 interface Calculable {
 	double PI = 3.14;
 	int sum(int v1, int v2);
@@ -1482,11 +1483,12 @@ public class InterfaceApp {
 	}
 
 }
+```
 A a = new B()
 A 메소드 기준으로 a가 생성된다.
 뒤 B의 메소드 내 함수들은 무존재, 무기능으로 감쳐짐(=다형성)
 
-
+```
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -1501,10 +1503,10 @@ public class FileWriterApp {
 		fileWriter.close();
 	}
 }
-
+```
 예외
 개발자는 '어떤 기능을 하는 코드'를 '의도'를 가지고 만들게 되는데, 모든 사람이 그 의도에 맞춰서 행동하는 것은 불가능하기 때문에 그 "예외" 케이스에 대해 처리하는 코드를 작성해주어야 한다.
-
+```
 public class ExceptionApp {
 	public static void main(String[] args) throws ArithmeticException {
 		System.out.println(1);
@@ -1512,8 +1514,9 @@ public class ExceptionApp {
 		System.out.println(3); 
 	}
 }
+```
 
-
+```
 public class ExceptionApp {
 	public static void main(String[] args) throws ArithmeticException {
 		System.out.println(1);
@@ -1534,8 +1537,9 @@ public class ExceptionApp {
 		System.out.println(5); 
 	}
 }
+```
 
-
+```
 public class ExceptionApp {
 	public static void main(String[] args) throws ArithmeticException {
 		System.out.println(1);
@@ -1555,9 +1559,10 @@ public class ExceptionApp {
 		System.out.println(5); 
 	}
 }
+```
 예외를 포괄적으로 처리하는것은 좋지 않다.
 
-
+```
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -1574,8 +1579,9 @@ public class CheckedExceptionApp {
 	}
 
 }
+```
 
-
+```
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -1602,8 +1608,9 @@ public class CheckedExceptionApp {
 	}
 
 }
+```
 
-
+```
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -1617,9 +1624,10 @@ public class TryWithResource {
 		}
 	}
 }
+```
 try문의 괄호 안에 들어가는 인스턴스 자원의 클래스가 "AutoCloseable"을 인터페이스로 가지고 있어야 한다.
 
-
+```
 public class MyException {
 
 	public static void main(String[] args) {
@@ -1641,10 +1649,10 @@ public class ThrowException {
 	}
 
 }
+```
 
-
-0713
-스트링부트
+# 0713
+## 1.스트링부트
 
 
 스프링 입문
@@ -1668,11 +1676,12 @@ Logging으로 출력 → 심각한 에러를 따로 모아 볼수있고 로그�
 Slf4j= 인터페이스, logback = 실제 로그를 어떤 구현체로 출력할 것인가.
 테스트 할때에는 junit 5 사용
 
-Welcome page 만들기
+## 2.Welcome page 만들기
 Welcome page: 도메인을 누루고 왔을때의 첫 화면.
 Static 파일에 index.HTML 생성 →welcome page가됨.
 Index. HTML에 head와 바디를 포함해 hello를 입력 → Main 절 실행 → local host 8080 → hello 입력되어 있음.
 
+```
 package hello.hellospring.controller;
 
 import org.springframework.stereotype.Controller;
@@ -1687,5 +1696,148 @@ public class HelloController {
                 return"hello";
     }
 }
+```
 localhost:8080/hello에서 data가 hello!!!로 치환되어 보여짐
+retrun"hello"는 hello.html을 찾아서 랜더링 하라는 뜻임
+
+
+******
+# 0715
+## 1.회원가입
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepsitory;
+import hello.hellospring.repository.MemoryMemberRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class MemberService {
+
+    private final MemberRepsitory memberRepository;
+
+    public MemberService(MemberRepsitory memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    /**
+     * 회원가입
+     */
+    public Long join(Member member){
+        //같은 이름 중복 X
+        validateDuplicateMember(member);
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    private void validateDuplicateMember(Member member) {
+        Optional<Member> result = memberRepository.findByName(member.getName());
+        result.ifPresent(m ->{
+            throw new IllegalStateException("이미 존재하는 회원입니다");
+        });
+    }
+
+    /**
+     * 전체회원조회
+     */
+    public List<Member> findMembers(){
+        return memberRepository.findAll();
+    }
+    public Optional<Member> findOne(Long memberId){
+        return memberRepository.findById(memberId);
+    }
+}
+```
+
+## 2.회원가입서비스 테스트
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.MemoryMemberRepositoryTest;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MemberServiceTest {
+    MemberService memberService;
+    MemoryMemberRepository memberRepository;
+
+    @BeforeEach
+    public void beforeEach(){
+        memberRepository = new MemoryMemberRepository();
+        memberService = new MemberService(memberRepository);
+    }
+    @AfterEach
+    public void afterEach(){
+        memberRepository.clearStore();
+    }
+
+
+    @Test
+    void 회원가입() {
+        //given
+        Member member = new Member();
+        member.setName("hello");
+        //when
+        Long saveId = memberService.join(member);
+        //then
+        Member findMember = memberService.findOne(saveId).get();
+        assertThat(member.getName()).isEqualTo(findMember.getName());
+    }
+    @Test
+    public void 중복_회원_예외(){
+        //given
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+        //when
+        memberService.join(member1);
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다");
+  /*      try{
+            memberService.join(member2);
+            fail();
+        }catch (IllegalStateException e){
+           assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다123");
+
+        }
+*/
+
+    }
+
+    @Test
+    void findMembers() {
+    }
+
+    @Test
+    void findOne() {
+    }
+}
+```
+-----------
+# 1.컴포넌트 스캔과 자동 의존관계 설정
+
+
+* 컨트롤러와 서비스를 연결
+컨트롤러엔 @Autowired 서비스엔@Service
+
+* 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 싱글톤으로 등록한다(유일하게 하나만
+등록해서 공유한다) 따라서 같은 스프링 빈이면 모두 같은 인스턴스다. 설정으로 싱글톤이 아니게 설정할 수
+있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다
+
+# 2.자바 코드로 직접 스프링 빈 등록하기
+* 회원 서비스와 회원 리포지토리의 @Service, @Repository, @Autowired 애노테이션을 제거하고
+진행한다
 retrun"hello"는 hello.html을 찾아서 랜더링 하라는 뜻임
