@@ -2735,9 +2735,9 @@ public class SpringConfig {
 
 - 스프링 JDBCTemplate - 반복되는 코드가 굉장히 줄어들지만 Sql은 직접 작성해야 한다. 
 
-- JPA - 기본적인 CRUD를 할 때 쿼리를 작성할 필요가 없다. (select를 할 땐 JPQL를 짜야한다.)
+- JPA - 기본적인 CRUD를 할 때 쿼리를 작성할 필요가 없다. (select를 할 땐 JPQL를 짜야한다)
 
-- 스프링 데이터 JPA - 아예 구현 클래스를 작성할 필요 없이 인터페이스만으로 개발이 끝난다. (findByName, findByEmail 등을 제공해준다.)
+- 스프링 데이터 JPA - 아예 구현 클래스를 작성할 필요 없이 인터페이스만으로 개발이 끝난다. (findByName, findByEmail 등을 제공해준다)
 
 - SpringDataMemberRepository.java
 
