@@ -3507,3 +3507,54 @@ public class SpringConfig {
 
 <hr/>
 
+< 2023-07-17 / 스프링 입문 - 섹션 7 >
+-------------
+
+* AOP
+
+- AOP : Aspect Orented Programming
+- 공통 관심 사항 (cross-cutting concern) vs 핵심 관심 사항 (core concern)분리
+
+<pre><code>
+package hello.hellospring.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class TimeTraceAop {
+
+    @Around("execution(* hello.hellospring..*(..))")
+    public Object execut(ProceedingJoinPoint joinPoint) throws Throwable{
+        long start = System.currentTimeMillis();
+        System.out.println("START: " + joinPoint.toString());
+
+        try{
+            return joinPoint.proceed();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("END: " + joinPoint.toString() + " " + timeMs + "ms");
+        }
+    }
+}
+</code></pre>
+
+- 위 코드를 통해 시간을 측정하는 로직을 별도의 공동 로직으로 만들었다.
+- AOP를 이용하여 핵심 관리 사항을 깔끔하게 유지할 수 있다.
+- 변경이 필요하면 이 로직만 변경하면 된다.
+- `@Around()`를 사용하여 원하는 적용 대상을 선택할 수 있다.
+
+* AOP 동작 방식 설명
+- 스프링은 helloController가 memberService를 의존하고 있고 helloController가 만약 메소드를 호출하면 memberService도 메소드를 호출했을 것이다.
+
+- AOP가 존재할 때 가짜 memberService(프록시)를 만든다. 컨테이너에 스프링 빈을 등록할 때 진짜 서비스가 아닌 가짜 서비스(프록시)를 세워둔다.
+- 가짜 서비스(프록시)가  `joinPoint.proceed()`를 하면 그때 진짜 서비스를 호출한다.
+
+< 2023-07-17 / 스프링 입문 - 섹션 7 END >
+-------------
+
+<hr/>
