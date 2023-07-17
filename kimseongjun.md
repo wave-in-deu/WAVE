@@ -2478,3 +2478,236 @@ public class HelloController {
 </code></pre>
 > http://localhost:8080/hello-api?name=spring 입력하면 나오게 된다.
 > answer: hello spring
+
+section 3 - 회원 관리 예제 - 백엔드 개발
+> 컨트롤러: 웹 MVC의 컨트롤러 역할
+> 서비스: 핵심 비즈니스 로직 구현
+> 리포지토리: 데이터베이스에 접근, 도메인 객체를 DB에 저장하고 관리
+> 도메인: 비즈니스 도메인 객체, 주로 데이터베이스에 저장하고 관리
+# 1 회원 객체
+<pre><code>
+package hello.hellospring.domain;
+public class Member {
+ 
+ private Long id;
+ private String name;
+ public Long getId() {
+ return id;
+ }
+ public void setId(Long id) {
+ this.id = id;
+ }
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+}
+</code></pre>
+>> alt + insert 기능을 통해 id, name의 getter/setter을 만들었음.
+# 2 회원 지포지토리 인터페이스
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import java.util.List;
+import java.util.Optional;
+public interface MemberRepository {
+ Member save(Member member);
+ Optional<Member> findById(Long id);
+ Optional<Member> findByName(String name);
+ List<Member> findAll();
+}
+</code></pre>
+# 3 회원 리포지토리 메모리 구현체
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import java.util.*;
+/**
+ * 동시성 문제가 고려되어 있지 않음, 실무에서는 ConcurrentHashMap, AtomicLong 사용 고려
+ */
+public class MemoryMemberRepository implements MemberRepository {
+ private static Map<Long, Member> store = new HashMap<>();
+ private static long sequence = 0L;
+ @Override
+ public Member save(Member member) {
+ member.setId(++sequence);
+ store.put(member.getId(), member);
+ return member;
+ }
+ @Override
+ public Optional<Member> findById(Long id) {
+ return Optional.ofNullable(store.get(id));
+ }
+ @Override
+ public List<Member> findAll() {
+ return new ArrayList<>(store.values());
+ }
+ @Override
+ public Optional<Member> findByName(String name) {
+ return store.values().stream()
+ .filter(member -> member.getName().equals(name))
+ .findAny();
+ }
+ public void clearStore() {
+ store.clear();
+ }
+}
+</code></pre>
+>> sequence: 키 값 생성
+>> store: 저장
+>> lammda: -> 
+>> clearStone를 넣어줌으로써
+# 4 회원 리포지토리 메모리 구헌체 테스트
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import java.util.List;
+import java.util.Optional;
+import static org.assertj.core.api.Assertions.*;
+class MemoryMemberRepositoryTest {
+ MemoryMemberRepository repository = new MemoryMemberRepository();
+ @AfterEach
+ public void afterEach() {
+ repository.clearStore();
+ }
+ @Test
+ public void save() {
+ //given
+ Member member = new Member();
+ member.setName("spring");
+ //when
+ repository.save(member);
+ //then
+ Member result = repository.findById(member.getId()).get();
+ assertThat(result).isEqualTo(member);
+ }
+ @Test
+ public void findByName() {
+ //given
+ Member member1 = new Member();
+ member1.setName("spring1");
+ repository.save(member1);
+ Member member2 = new Member();
+ member2.setName("spring2");
+ repository.save(member2);
+ //when
+ Member result = repository.findByName("spring1").get();
+ //then
+ assertThat(result).isEqualTo(member1);
+ }
+ @Test
+ public void findAll() {
+ //given
+ Member member1 = new Member();
+ member1.setName("spring1");
+ repository.save(member1);
+ Member member2 = new Member();
+ member2.setName("spring2");
+ repository.save(member2);
+ //when
+ List<Member> result = repository.findAll();
+ //then
+ assertThat(result.size()).isEqualTo(2);
+ }
+}
+</code></pre>
+>> static import로 하나로 합쳐줌
+<pre><code>
+ @AfterEach
+    public void afterEach(){
+        memberRepository.clearStore();}
+</code></pre>
+>> clearstone을 이용해서 전체 실행 시킬때, 이전의 테스트에서 활용된 부분들을 삭제시켜 중복이 안되게끔 하는 역할
+# 5 회원 서비스 개발
+<pre><code>
+package hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import java.util.List;
+import java.util.Optional;
+public class MemberService {
+ private final MemberRepository memberRepository = new
+MemoryMemberRepository();
+ /**
+ * 회원가입
+ */
+ public Long join(Member member) {
+ validateDuplicateMember(member); //중복 회원 검증
+ memberRepository.save(member);
+ return member.getId();
+ }
+ private void validateDuplicateMember(Member member) {
+ memberRepository.findByName(member.getName())
+ .ifPresent(m -> {
+ throw new IllegalStateException("이미 존재하는 회원입니다.");
+ });
+ }
+ /**
+ * 전체 회원 조회
+ */
+ public List<Member> findMembers() {
+ return memberRepository.findAll();
+ }
+ public Optional<Member> findOne(Long memberId) {
+ return memberRepository.findById(memberId);
+ }
+}
+</code></pre>
+# 6 회원 서비스 테스트
+<pre><code>
+ackage hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+class MemberServiceTest {
+ MemberService memberService;
+ MemoryMemberRepository memberRepository;
+ @BeforeEach
+ public void beforeEach() {
+ memberRepository = new MemoryMemberRepository();
+ memberService = new MemberService(memberRepository);
+ }
+ @AfterEach
+ public void afterEach() {
+ memberRepository.clearStore();
+ }
+ @Test
+ public void 회원가입() throws Exception {
+ //Given
+ Member member = new Member();
+ member.setName("hello");
+ //When
+ Long saveId = memberService.join(member);
+ //Then
+ Member findMember = memberRepository.findById(saveId).get();
+ assertEquals(member.getName(), findMember.getName());
+ }
+ @Test
+ public void 중복_회원_예외() throws Exception {
+ //Given
+ Member member1 = new Member();
+ member1.setName("spring");
+ Member member2 = new Member();
+ member2.setName("spring");
+ //When
+ memberService.join(member1);
+ IllegalStateException e = assertThrows(IllegalStateException.class,
+ () -> memberService.join(member2));//예외가 발생해야 한다.
+ assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+ }
+}
+</code></pre>
+>> Ctrl + shift + Alt + T를 이용해서 Refactor this 활용해서 extract method 활용
+>> ctrl + shift + T를 이용해서 create test로 memberservicetest를 쉽게 생성할 수 있음
+>> 이와 같은 단축키를 이용해서 빠르게 백앤드 개발을 할 수 있음
+
+
+section 4 - 스프링 빈과 의존관계
+----------------------------------------------
