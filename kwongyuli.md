@@ -2728,3 +2728,326 @@ public class SpringConfig {
 </code></pre>
 
 
+2023-07-15~6 6일차 스터디
+-------------
+
+- 순수 JDBC 
+
+- 스프링 JDBCTemplate - 반복되는 코드가 굉장히 줄어들지만 Sql은 직접 작성해야 한다. 
+
+- JPA - 기본적인 CRUD를 할 때 쿼리를 작성할 필요가 없다. (select를 할 땐 JPQL를 짜야한다)
+
+- 스프링 데이터 JPA - 아예 구현 클래스를 작성할 필요 없이 인터페이스만으로 개발이 끝난다. (findByName, findByEmail 등을 제공해준다)
+
+- SpringDataMemberRepository.java
+
+<pre><code>
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface SpringDataMemberRepository extends JpaRepository<Member, Long>, MemberRepository {
+
+    // JPQL select m from Member m where m.name = ?
+    @Override
+    Optional<Member> findByName(String name);
+}
+</code></pre>
+
+- MemberService.java
+
+<pre><code>
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+@Transactional
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    // 회원 가입
+    public Long join(Member member){
+        // 같은 이름이 있는 중복 회원은 안 된다, 중복 회원 검증
+        vaildateDuplicateMember(member);
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    private void vaildateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                } );
+    }
+
+    // 전체 회원 조회
+    public List<Member> findMembers(){
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memberId){
+        return memberRepository.findById(memberId);
+    }
+}
+</code></pre>
+
+- JpaMemberRepository.java
+
+<pre><code>
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import jakarta.persistence.EntityManager;
+
+import java.util.List;
+import java.util.Optional;
+
+public class JpaMemberRepository implements MemberRepository{
+
+    private final EntityManager em;
+
+    public JpaMemberRepository(EntityManager em) {
+        this.em = em;
+    }
+
+    @Override
+    public Member save(Member member) {
+        em.persist(member);
+        return member;
+    }
+
+    @Override
+    public Optional<Member> findById(Long id) {
+        Member member = em.find(Member.class, id);
+        return Optional.ofNullable(member);
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        List<Member> result = em.createQuery("select m from Member m where m.name = :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+
+        return result.stream().findAny();
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
+}
+</code></pre>
+
+- TimeTraceAop.java
+
+<pre><code>
+package hello.hellospring.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class TimeTraceAop {
+    @Around("execution(* hello.hellospring..*(..))")
+    public Object execute(ProceedingJoinPoint joinPoint) throws Throwable{
+        long start = System.currentTimeMillis();
+        System.out.println("START: " +joinPoint.toString());
+        try{
+            return joinPoint.proceed();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("END: " +joinPoint.toString() + " " + timeMs + "ms");
+        }
+    }
+}
+</code></pre>
+
+- MemberController.java
+
+<pre><code>
+package hello.hellospring.controller;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
+
+@Controller
+public class MemberController {
+//    @Autowired private  MemberService memberService;
+
+    private  final MemberService memberService;
+    @Autowired
+    public MemberController(MemberService memberService) {
+
+        this.memberService = memberService;
+        System.out.println("memberService = " + memberService.getClass());
+    }
+
+//    private MemberService memberService;
+//    @Autowired
+//    public void setMemberService(MemberService memberService) {
+//        this.memberService = memberService;
+//    }
+
+    @GetMapping("/members/new")
+    public String createForm(){
+        return "members/createMemberForm";
+    }
+
+    @PostMapping("/members/new")
+    public String create(MemberForm form){
+        Member member = new Member();
+        member.setName(form.getName());
+
+        memberService.join(member);
+
+        return "redirect:/"; // 홈화면으로 보내기
+    }
+
+    @GetMapping("/members")
+    public String list(Model model){
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+        return "members/memberList";
+    }
+}
+</code></pre>
+
+- SpringConfig
+
+<pre><code>
+package hello.hellospring;
+
+import hello.hellospring.aop.TimeTraceAop;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+
+    private final MemberRepository memberRepository;
+    @Autowired
+    public SpringConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Bean
+    public MemberService memberService(){
+        return new MemberService(memberRepository);
+    }
+
+//    @Bean
+//    public TimeTraceAop timeTraceAop(){
+//        return new TimeTraceAop();
+//    }
+
+//    @Bean
+//    public MemberRepository memberRepository(){
+//        return new MemoryMemberRepository();
+//        return new JdbcMemberRepository(dataSource);
+//        return new JdbcTemplateMemberRepository(dataSource);
+//        return new JpaMemberRepository(em);
+//    }
+}
+</code></pre>
+
+- MemberServiceIntegrationTest.java
+
+<pre><code>
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SpringBootTest
+@Transactional
+class MemberServiceIntegrationTest {
+
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Test
+    void 회원가입() {
+        // given
+        Member member = new Member();
+        member.setName("spring");
+
+        // when
+        Long saveId = memberService.join(member);
+
+        // then
+        Member findMember = memberService.findOne(saveId).get();
+        assertThat(member.getName()).isEqualTo(findMember.getName());
+    }
+
+    @Test
+    public void 중복_회원_예외(){
+        //given
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        //when
+        memberService.join(member1);
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+
+    }
+
+}
+</code></pre>
+
+- application.properties
+
+<pre><code>
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+</code></pre>
+

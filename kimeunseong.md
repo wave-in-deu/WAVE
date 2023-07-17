@@ -1670,3 +1670,101 @@ public class WS {
 </code></pre>
 
 ___
+0716
+
+# 스프링 - 섹션 2
+
+- 정적 컨텐츠
+
+hello-static.html
+<pre><code>
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>static content</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+정적 컨텐츠 입니다.
+</body>
+</html>
+
+// 웹 브라우저 -> 내장 톰켓 서버 -> 스프링 컨테이너에 관련 컨트롤러가 없을때 -> resources 에서 static/hello-static.html 찾아서 반환해줌 
+
+</code></pre>
+
+- MVC 와 템플릿 엔진
+
+MVC : Model, View, Controller
+
+HelloController
+<pre><code>
+
+@GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam(value = "name") String name, Model model) {
+        model.addAttribute("name", name);
+        return "hello-template";
+    }
+
+</code></pre>
+
+hello-template.html
+<pre><code>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p th:text="'hello ' + ${name}">hello! empty</p>
+</body>
+
+// hello! empty는 겉보기 값
+// http://localhost:8080/hello-mvc?name=@@@@@ 입력값에 따라 출력물이 바뀜
+
+</code></pre>
+
+- API
+
+HelloController
+<pre><code>
+
+    // json
+    { 키 : 값 }
+
+    @GetMapping("hello-string")
+    @ResponseBody
+    public String helloString(@RequestParam("name") String name){
+        return "hello "+name;  // 문자로 받음
+    }
+
+    @GetMapping("hello-api")
+    @ResponseBody
+    public  Hello helloApi(@RequestParam("name") String name){
+        Hello hello = new Hello();  // 객체로 받음
+        hello.setName(name);
+        return hello;
+    }
+
+    static class Hello {
+        private String name;
+
+        public String getName() {  // 단축키 Alt + Ins 
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+내장 톰켓 
+-> 스프링 컨테이너 
+@ResponseBody 를 사용
+HTTP의 BODY에 문자 내용을 직접 반환
+viewResolver 대신에 HttpMessageConverter 가 동작
+기본 문자처리: StringHttpMessageConverter
+기본 객체처리: MappingJackson2HttpMessageConverter
+byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 있음
+-> json 값 반환
+
+</code></pre>
