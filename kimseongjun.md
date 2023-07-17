@@ -2462,3 +2462,71 @@ window 기준
 ## hello-spring 입력한 후 gradlew 입력
 ### gradlew build 입력
 #### dir로 폴더 목록 확인
+
+section 2 - 스프링 웹 개발 기초
+------------------------------------------
+# 1 정적 컨텐츠
+> 누가 언제 서버에 요청하더라도 동일하게 내용을 보여주는 것
+<pre><code>
+<!DOCTYPE HTML>
+<html>
+<head>
+ <title>static content</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+정적 컨텐츠 입니다.
+</body>
+</html>
+</code></pre>
+>> http://localhost:8080/hello-static.html 입력하면 나오게 된다.
+>> Answer: 정적 컨텐츠 입니다.
+# 2 MVC, 템플릿 엔진
+> 템블릿 엔진: html을 그냥 주는 것이 아닌 서버에서 프로그래밍해서 동적으로 내리는것
+> MVC: 소프트웨어 설계에서 세 가지 구성 요소인 모델(model), 뷰(view), 컨트롤러(controller)를 이용한 설계 방식
+
+<pre><code>
+@Controller
+public class HelloController {
+ @GetMapping("hello-mvc")
+ public String helloMvc(@RequestParam("name") String name, Model model) {
+ model.addAttribute("name", name);
+ return "hello-template";
+ }
+}
+
+View
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p th:text="'hello ' + ${name}">hello! empty</p>
+</body>
+</code></pre>
+> http://localhost:8080/hello-mvc?name=spring 입력하면 나오게 된다.
+> answer: hello spring
+> 뒤쪽 ?name=spring에서 ?name=spring!!!으로 바꾸면 후자로 바뀐다.
+
+# 3 API
+> API: 운영체제와 응용프로그램 사이의 통신에 사용되는 언어나 메세지 형식을 말한다.
+<pre><code>
+@Controller
+public class HelloController {
+ @GetMapping("hello-api")
+ @ResponseBody
+ public Hello helloApi(@RequestParam("name") String name) {
+ Hello hello = new Hello();
+ hello.setName(name);
+ return hello;
+ }
+ static class Hello {
+ private String name;
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+ }
+}
+</code></pre>
+> http://localhost:8080/hello-api?name=spring 입력하면 나오게 된다.
+> answer: hello spring
