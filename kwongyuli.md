@@ -2727,73 +2727,164 @@ public class SpringConfig {
 }
 </code></pre>
 
-2023-07-13 4일차 스터디
+
+2023-07-15~6 6일차 스터디
 -------------
 
-- url에 직접 넣는 방식 = get 방식 (http method)
+- 순수 JDBC 
 
-- PostMapping -> 데이터를 form 같은 곳에 넣어서 전달할 때, 등록
+- 스프링 JDBCTemplate - 반복되는 코드가 굉장히 줄어들지만 Sql은 직접 작성해야 한다. 
 
-- GetMapping -> 조회할 때
+- JPA - 기본적인 CRUD를 할 때 쿼리를 작성할 필요가 없다. (select를 할 땐 JPQL를 짜야한다)
 
-- application.properties.java
+- 스프링 데이터 JPA - 아예 구현 클래스를 작성할 필요 없이 인터페이스만으로 개발이 끝난다. (findByName, findByEmail 등을 제공해준다)
+
+- SpringDataMemberRepository.java
 
 <pre><code>
-spring.datasource.url=jdbc:h2:tcp://localhost/~/test
-spring.datasource.driver-class-name=org.h2.Driver
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface SpringDataMemberRepository extends JpaRepository<Member, Long>, MemberRepository {
+
+    // JPQL select m from Member m where m.name = ?
+    @Override
+    Optional<Member> findByName(String name);
+}
 </code></pre>
 
-- MemberForm.java
+- MemberService.java
 
 <pre><code>
-package hello.hellospring.controller;
+package hello.hellospring.service;
 
-public class MemberForm {
-    private String name;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    public String getName() {
-        return name;
+import java.util.List;
+import java.util.Optional;
+@Transactional
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    // 회원 가입
+    public Long join(Member member){
+        // 같은 이름이 있는 중복 회원은 안 된다, 중복 회원 검증
+        vaildateDuplicateMember(member);
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    private void vaildateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                } );
+    }
+
+    // 전체 회원 조회
+    public List<Member> findMembers(){
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memberId){
+        return memberRepository.findById(memberId);
     }
 }
 </code></pre>
 
-- memberList.html
+- JpaMemberRepository.java
 
 <pre><code>
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-<div class="container">
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>이름</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="member : ${members}">
-                <td th:text="${member.id}"></td>
-                <td th:text="${member.name}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div> <!-- /container -->
-</body>
-</html>
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import jakarta.persistence.EntityManager;
+
+import java.util.List;
+import java.util.Optional;
+
+public class JpaMemberRepository implements MemberRepository{
+
+    private final EntityManager em;
+
+    public JpaMemberRepository(EntityManager em) {
+        this.em = em;
+    }
+
+    @Override
+    public Member save(Member member) {
+        em.persist(member);
+        return member;
+    }
+
+    @Override
+    public Optional<Member> findById(Long id) {
+        Member member = em.find(Member.class, id);
+        return Optional.ofNullable(member);
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        List<Member> result = em.createQuery("select m from Member m where m.name = :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+
+        return result.stream().findAny();
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
+}
+</code></pre>
+
+- TimeTraceAop.java
+
+<pre><code>
+package hello.hellospring.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class TimeTraceAop {
+    @Around("execution(* hello.hellospring..*(..))")
+    public Object execute(ProceedingJoinPoint joinPoint) throws Throwable{
+        long start = System.currentTimeMillis();
+        System.out.println("START: " +joinPoint.toString());
+        try{
+            return joinPoint.proceed();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("END: " +joinPoint.toString() + " " + timeMs + "ms");
+        }
+    }
+}
 </code></pre>
 
 - MemberController.java
 
 <pre><code>
 package hello.hellospring.controller;
-
 
 import hello.hellospring.domain.Member;
 import hello.hellospring.service.MemberService;
@@ -2812,7 +2903,9 @@ public class MemberController {
     private  final MemberService memberService;
     @Autowired
     public MemberController(MemberService memberService) {
+
         this.memberService = memberService;
+        System.out.println("memberService = " + memberService.getClass());
     }
 
 //    private MemberService memberService;
@@ -2845,207 +2938,46 @@ public class MemberController {
 }
 </code></pre>
 
-- JdbcMemberRepository.java
-
-<pre><code>
-package hello.hellospring.repository;
-import hello.hellospring.domain.Member;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-public class JdbcMemberRepository implements MemberRepository {
-    private final DataSource dataSource;
-    public JdbcMemberRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-    @Override
-    public Member save(Member member) {
-        String sql = "insert into member(name) values(?)";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql,
-                    Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, member.getName());
-            pstmt.executeUpdate();
-            rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                member.setId(rs.getLong(1));
-            } else {
-                throw new SQLException("id 조회 실패");
-            }
-            return member;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        } finally {
-            close(conn, pstmt, rs);
-        }
-    }
-    @Override
-    public Optional<Member> findById(Long id) {
-        String sql = "select * from member where id = ?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setLong(1, id);
-            rs = pstmt.executeQuery();
-            if(rs.next()) {
-                Member member = new Member();
-                member.setId(rs.getLong("id"));
-                member.setName(rs.getString("name"));
-                return Optional.of(member);
-            } else {
-                return Optional.empty();
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        } finally {
-            close(conn, pstmt, rs);
-        }
-    }
-    @Override
-    public List<Member> findAll() {
-        String sql = "select * from member";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-            List<Member> members = new ArrayList<>();
-            while(rs.next()) {
-                Member member = new Member();
-                member.setId(rs.getLong("id"));
-                member.setName(rs.getString("name"));
-                members.add(member);
-            }
-            return members;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        } finally {
-            close(conn, pstmt, rs);
-        }
-    }
-    @Override
-    public Optional<Member> findByName(String name) {
-        String sql = "select * from member where name = ?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, name);
-            rs = pstmt.executeQuery();
-            if(rs.next()) {
-                Member member = new Member();
-                member.setId(rs.getLong("id"));
-                member.setName(rs.getString("name"));
-                return Optional.of(member);
-            }
-            return Optional.empty();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        } finally {
-            close(conn, pstmt, rs);
-        }
-    }
-    private Connection getConnection() {
-        return DataSourceUtils.getConnection(dataSource);
-    }
-    private void close(Connection conn, PreparedStatement pstmt, ResultSet rs)
-    {
-        try {
-            if (rs != null) {
-                rs.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (conn != null) {
-                close(conn);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    private void close(Connection conn) throws SQLException {
-        DataSourceUtils.releaseConnection(conn, dataSource);
-    }
-}
-</code></pre>
-
-- SpringConfig.java
+- SpringConfig
 
 <pre><code>
 package hello.hellospring;
 
-import hello.hellospring.repository.JdbcMemberRepository;
+import hello.hellospring.aop.TimeTraceAop;
 import hello.hellospring.repository.MemberRepository;
-import hello.hellospring.repository.MemoryMemberRepository;
 import hello.hellospring.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
-
 @Configuration
 public class SpringConfig {
 
-    private DataSource dataSource;
-
+    private final MemberRepository memberRepository;
     @Autowired
-    public SpringConfig(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public SpringConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     @Bean
     public MemberService memberService(){
-        return new MemberService(memberRepository());
+        return new MemberService(memberRepository);
     }
 
-    @Bean
-    public MemberRepository memberRepository(){
+//    @Bean
+//    public TimeTraceAop timeTraceAop(){
+//        return new TimeTraceAop();
+//    }
+
+//    @Bean
+//    public MemberRepository memberRepository(){
 //        return new MemoryMemberRepository();
-        return new JdbcMemberRepository(dataSource);
-    }
+//        return new JdbcMemberRepository(dataSource);
+//        return new JdbcTemplateMemberRepository(dataSource);
+//        return new JpaMemberRepository(em);
+//    }
 }
 </code></pre>
-
-- ddl.sql
-
-<pre><code>
-drop table if exists member CASCADE;
-create table member
-(
- id bigint generated by default as identity,
- name varchar(255),
- primary key (id)
-);
-</code></pre>
-
-2023-07-14 5일차 스터디
--------------
-
-- h2.bat 실행시킨 상태에서 진행할 것
 
 - MemberServiceIntegrationTest.java
 
@@ -3060,6 +2992,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -3067,8 +3000,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
-
-
 class MemberServiceIntegrationTest {
 
     @Autowired
@@ -3109,113 +3040,14 @@ class MemberServiceIntegrationTest {
 }
 </code></pre>
 
-- JdbcTemplateMemberRepository.java
+- application.properties
 
 <pre><code>
-package hello.hellospring.repository;
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
 
-import hello.hellospring.domain.Member;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-public class JdbcTemplateMemberRepository implements MemberRepository {
-
-    private final JdbcTemplate jdbcTemplate;
-
-    public JdbcTemplateMemberRepository(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    @Override
-    public Member save(Member member) {
-        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
-        jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id");
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("name", member.getName());
-
-        Number key = jdbcInsert.executeAndReturnKey(new
-                MapSqlParameterSource(parameters));
-        member.setId(key.longValue());
-        return member;
-    }
-
-    @Override
-    public Optional<Member> findById(Long id) {
-        List<Member> result = jdbcTemplate.query("select * from member where id = ?", memberRowMapper(), id);
-        return result.stream().findAny();
-    }
-
-    @Override
-    public Optional<Member> findByName(String name) {
-        List<Member> result = jdbcTemplate.query("select * from member where name = ?", memberRowMapper(), name);
-        return result.stream().findAny();
-    }
-
-    @Override
-    public List<Member> findAll() {
-        return jdbcTemplate.query("select * from member", memberRowMapper());
-    }
-
-    private RowMapper<Member> memberRowMapper() {
-        return (rs, rowNum) -> {
-            Member member = new Member();
-            member.setId(rs.getLong("id"));
-            member.setName(rs.getString("name"));
-            return member;
-        };
-    }
-}
-</code></pre>
-
-- SpringConfig
-
-<pre><code>
-package hello.hellospring;
-
-import hello.hellospring.repository.JdbcMemberRepository;
-import hello.hellospring.repository.JdbcTemplateMemberRepository;
-import hello.hellospring.repository.MemberRepository;
-import hello.hellospring.repository.MemoryMemberRepository;
-import hello.hellospring.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
-
-@Configuration
-public class SpringConfig {
-
-    private DataSource dataSource;
-
-    @Autowired
-    public SpringConfig(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @Bean
-    public MemberService memberService(){
-        return new MemberService(memberRepository());
-    }
-
-    @Bean
-    public MemberRepository memberRepository(){
-//        return new MemoryMemberRepository();
-//        return new JdbcMemberRepository(dataSource);
-        return new JdbcTemplateMemberRepository(dataSource);
-    }
-}
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
 </code></pre>
 

@@ -2054,3 +2054,328 @@ View 파일 변경이 가능하다.
 ./gradlew gradlew.bat 를 실행하면 됩니다.
 명령 프롬프트에서 gradlew.bat 를 실행하려면 gradlew 하고 엔터를 치면 됩니다.
 gradlew build
+
+This is an H2
+-------------
+
+# This is a H1
+스프링 웹 개발 기초
+-정적 컨텐츠
+-MVC와 템플릿 엔진
+-API
+
+정적 콘텐츠
+(resources/static/hello-static.html)
+<!DOCTYPE HTML>
+<html>
+<head>
+ <title>static content</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+정적 컨텐츠 입니다.
+</body>
+</html>
+
+==> 실행 : http://localhost:8080/hello-static.html
+-> 내장 톰켓 서버가 이 요청을 받고 스프링에 넘기고 스프링을 먼저 controller쪽에서 hello-static이 있는지 먼저 찾아보고(컨트롤러가 우선순위를 가진다는 뜻) hello-static라는 컨트롤러가 없다. -> 내부에있는 resources/static/hello-static.html을 찾고 있으므로 반환한다.
+
+
+## This is a H2
+MVC와 템플릿 엔진
+-MVC: Model, View, Controller
+
+
+@GetMapping("hello-mvc")
+    public String helloMvc(@RequestParam("name") String name, Model model){
+        model.addAttribute("name",name);
+        return "hello-template";
+    }
+
+
+(resources/templates/hello-template.html)
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p th:text="'hello ' + ${name}">hello! empty</p>
+</body></html>
+
+==> 실행 : http://localhost:8080/hello-mvc -> 오류
+==> http://localhost:8080/hello-mvc?name=spring!!!!!  -> hello spring!!!!!
+
+--> String name에서 name은 spring!!!!!으로 바뀌고 model.addAttribute("name",name);에서 name은 spring!!!!!으로 바뀌고 model에 담긴다. -> return "hello-template"; 그리고 hello-template으로 넘어가면  resources/templates/hello-template.html에 ${name}은 model에서 값을 꺼내는 것이므로 name은 spring!!!!!으로 바꼈었으므로 
+
+--> 웹 브라우저에서 localhost:8080/hello-mvc을 넘기면 내장 톰켓 서버를 거쳐 스프링은 helloController에 저 메소드에 매핑이 되있네하고 메소드를 호출해주고 return "hello-template"; / model에서 키는 named이고 값은 spring이다. 이거를 스프링에 넘겨주고 스프링이 viewResolver(화면에 관한 해결자)가 templates/hello-template.html를 찾아서 Thymeleaf 템플릿 엔진에 처리해달라고 넘기고 그럼 Thymeleaf 템플릿 엔진이 랜더링해서 변환 후! 웹 브라우저에 반환한다.
+(정적일때는 변환을 하지않고 그냥 반환, 템플릿 엔진에서는 변환 후 반환)
+
+
+### This is a H3
+API
+
+@ResponseBody 문자 반환
+
+@Controller
+public class HelloController {
+ @GetMapping("hello-string")
+ @ResponseBody
+ public String helloString(@RequestParam("name") String name) {
+ return "hello " + name;
+ }
+}
+
+@ResponseBody 를 사용하면 뷰 리졸버( viewResolver )를 사용하지 않음
+대신에 HTTP의 BODY에 문자 내용을 직접 반환(HTML BODY TAG를 말하는 것이 아님)
+
+
+@ResponseBody 객체 반환
+
+@Controller
+public class HelloController {
+ @GetMapping("hello-api")
+ @ResponseBody
+ public Hello helloApi(@RequestParam("name") String name) {
+ Hello hello = new Hello();
+ hello.setName(name);
+ return hello;
+ }
+ static class Hello {
+ private String name;
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+ }
+}
+
+@ResponseBody 를 사용하고, 객체를 반환하면 객체가 JSON으로 변환됨
+==> 실행 : http://localhost:8080/hello-api?name=spring --> {"name":"spring!!!"}
+
+@ResponseBody 를 사용
+HTTP의 BODY에 문자 내용을 직접 반환
+viewResolver 대신에 HttpMessageConverter 가 동작
+기본 문자처리: StringHttpMessageConverter
+기본 객체처리: MappingJackson2HttpMessageConverter
+byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 있음
+
+
+This is an 섹션3
+----------------
+# This is a H1
+비즈니스 요구사항 정리
+-데이터: 회원ID, 이름
+-기능: 회원 등록, 조회
+-아직 데이터 저장소가 선정되지 않음(가상의 시나리오)
+
+
+## This is a H2
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+
+import java.util.*;
+
+public class MemoryMemberRepository implements MemberRepository{
+
+    private static Map<Long, Member> store = new HashMap<>();
+    private static long sequence = 0L; //sequence는 0,1,2,...이렇게 키 값을 생성해주는 애
+    @Override
+    public Member save(Member member) {
+        member.setId(++sequence);//아이디를 세팅하고
+        store.put(member.getId(),member);//store에다가 저장하고
+        return member;//저장된 결과를 반환
+    }
+
+    @Override
+    public Optional<Member> findById(Long id) {
+        return Optional.ofNullable(store.get(id));//Optional.ofNullable하면 store.get(id)가 널이어도 감쌀 수 있다
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        return store.values().stream()
+                .filter(member -> member.getName().equals(name))
+                .findAny();//getName()이 파라미터에서 넘어온 name이랑 같은지 확인 -> 같은 경우에만 필터링되고 루프를 돌면서 그 중에서 찾으면 반환, 없으면 Optional에 널이 포함되서 반환 
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return new ArrayList<>(store.values());//store.values()이게 Member
+    }
+
+    public void clearStore() {
+        store.clear();
+    }
+}
+
+### This is a H3
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+
+class MemoryMemberRepositoryTest {
+
+    MemoryMemberRepository repository = new MemoryMemberRepository();
+
+    @AfterEach
+    public void afterEach() {
+        repository.clearStore();
+    }//테스트가 실행되고 끝날때마다 한번씩 repository저장소를 지운다. 그러면 순서가 상관없어진다.
+
+    @Test
+    public void save(){
+        Member member = new Member();
+        member.setName("spring");
+
+        repository.save(member);
+
+        Member result = repository.findById(member.getId()).get();
+        assertThat(member).isEqualTo(result);
+    }
+
+    @Test
+    public void findByName(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();//shift + F6해서 member1을 member2로 바꾸기
+        member2.setName("spring2");
+        repository.save(member2);
+
+        Member result = repository.findByName("spring1").get();
+
+        assertThat(result).isEqualTo(member1);
+    }
+
+    @Test
+    public void findAll(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        List<Member> result = repository.findAll();
+
+        assertThat(result.size()).isEqualTo(2);
+
+
+    }
+}
+//클래스 실행시키면 오류 -> finAll이 먼저 실행 -> 순서가 보장되지 않는다. 모든 테스트는 순서랑 상관없이 메소드별로 따로 동작하도록 설계해야함. -> 따라서 순서를 자기가 잡아야함.
+//테스트 하나 끝나고 클리어 시켜줘야함.
+
+#### This is a H4
+package hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import java.util.List;
+
+public class MemberService {
+	private final MemberRepository memberRepository = new
+	MemoryMemberRepository();
+
+ /**
+ * 회원가입
+ */
+ public Long join(Member member) {
+	validateDuplicateMember(member); //중복 회원 검증
+	memberRepository.save(member);
+	return member.getId();
+	}
+ private void validateDuplicateMember(Member member) {
+	memberRepository.findByName(member.getName())
+	.ifPresent(m -> {
+		throw new IllegalStateException("이미 존재하는 회원입니다.");
+		});
+	}
+
+ /**
+ * 전체 회원 조회
+ */
+ public List<Member> findMembers() {
+	return memberRepository.findAll();
+	}
+ public Optional<Member> findOne(Long memberId) {
+	return memberRepository.findById(memberId);
+	}
+}
+
+##### This is a H5
+public class MemberService {
+	private final MemberRepository memberRepository = 
+	new MemoryMemberRepository();
+}
+
+public class MemberService {
+	private final MemberRepository memberRepository;
+	
+	public MemberService(MemberRepository memberRepository) {
+	this.memberRepository = memberRepository;
+	}
+    ...
+}
+
+package hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MemberServiceTest { 
+	MemberService memberService;
+	MemoryMemberRepository memberRepository;
+	
+	@BeforeEach
+	public void beforeEach() {
+		memberRepository = new MemoryMemberRepository();
+		memberService = new MemberService(memberRepository);
+    }
+	
+	@AfterEach
+	public void afterEach() {
+		memberRepository.clearStore();
+	}
+	
+	@Test
+	public void 회원가입() throws Exception {
+		//Given
+		Member member = new Member();
+		member.setName("hello");
+		
+		//When
+		Long saveId = memberService.join(member);
+		
+		//Then
+		Member findMember = memberRepository.findById(saveId).get();assertEquals(member.getName(), findMember.getName());
+	}
+	
+	@Test
+	public void 중복_회원_예외() throws Exception {
+		
+		//Given
+		Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring"); 
+		
+		//When
+        memberService.join(member1);
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+		() -> memberService.join(member2));//예외가 발생해야 한다.assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+    }
+}
