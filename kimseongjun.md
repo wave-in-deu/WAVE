@@ -2478,3 +2478,924 @@ public class HelloController {
 </code></pre>
 > http://localhost:8080/hello-api?name=spring 입력하면 나오게 된다.
 > answer: hello spring
+
+section 3 - 회원 관리 예제 - 백엔드 개발
+----------------------------------------------
+> 컨트롤러: 웹 MVC의 컨트롤러 역할
+> 서비스: 핵심 비즈니스 로직 구현
+> 리포지토리: 데이터베이스에 접근, 도메인 객체를 DB에 저장하고 관리
+> 도메인: 비즈니스 도메인 객체, 주로 데이터베이스에 저장하고 관리
+# 1 회원 객체
+<pre><code>
+package hello.hellospring.domain;
+public class Member {
+ 
+ private Long id;
+ private String name;
+ public Long getId() {
+ return id;
+ }
+ public void setId(Long id) {
+ this.id = id;
+ }
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+}
+</code></pre>
+>> alt + insert 기능을 통해 id, name의 getter/setter을 만들었음.
+# 2 회원 지포지토리 인터페이스
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import java.util.List;
+import java.util.Optional;
+public interface MemberRepository {
+ Member save(Member member);
+ Optional<Member> findById(Long id);
+ Optional<Member> findByName(String name);
+ List<Member> findAll();
+}
+</code></pre>
+# 3 회원 리포지토리 메모리 구현체
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import java.util.*;
+/**
+ * 동시성 문제가 고려되어 있지 않음, 실무에서는 ConcurrentHashMap, AtomicLong 사용 고려
+ */
+public class MemoryMemberRepository implements MemberRepository {
+ private static Map<Long, Member> store = new HashMap<>();
+ private static long sequence = 0L;
+ @Override
+ public Member save(Member member) {
+ member.setId(++sequence);
+ store.put(member.getId(), member);
+ return member;
+ }
+ @Override
+ public Optional<Member> findById(Long id) {
+ return Optional.ofNullable(store.get(id));
+ }
+ @Override
+ public List<Member> findAll() {
+ return new ArrayList<>(store.values());
+ }
+ @Override
+ public Optional<Member> findByName(String name) {
+ return store.values().stream()
+ .filter(member -> member.getName().equals(name))
+ .findAny();
+ }
+ public void clearStore() {
+ store.clear();
+ }
+}
+</code></pre>
+>> sequence: 키 값 생성
+>> store: 저장
+>> lammda: -> 
+>> clearStone를 넣어줌으로써
+# 4 회원 리포지토리 메모리 구헌체 테스트
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import java.util.List;
+import java.util.Optional;
+import static org.assertj.core.api.Assertions.*;
+class MemoryMemberRepositoryTest {
+ MemoryMemberRepository repository = new MemoryMemberRepository();
+ @AfterEach
+ public void afterEach() {
+ repository.clearStore();
+ }
+ @Test
+ public void save() {
+ //given
+ Member member = new Member();
+ member.setName("spring");
+ //when
+ repository.save(member);
+ //then
+ Member result = repository.findById(member.getId()).get();
+ assertThat(result).isEqualTo(member);
+ }
+ @Test
+ public void findByName() {
+ //given
+ Member member1 = new Member();
+ member1.setName("spring1");
+ repository.save(member1);
+ Member member2 = new Member();
+ member2.setName("spring2");
+ repository.save(member2);
+ //when
+ Member result = repository.findByName("spring1").get();
+ //then
+ assertThat(result).isEqualTo(member1);
+ }
+ @Test
+ public void findAll() {
+ //given
+ Member member1 = new Member();
+ member1.setName("spring1");
+ repository.save(member1);
+ Member member2 = new Member();
+ member2.setName("spring2");
+ repository.save(member2);
+ //when
+ List<Member> result = repository.findAll();
+ //then
+ assertThat(result.size()).isEqualTo(2);
+ }
+}
+</code></pre>
+>> static import로 하나로 합쳐줌
+<pre><code>
+ @AfterEach
+    public void afterEach(){
+        memberRepository.clearStore();}
+</code></pre>
+>> clearstone을 이용해서 전체 실행 시킬때, 이전의 테스트에서 활용된 부분들을 삭제시켜 중복이 안되게끔 하는 역할
+# 5 회원 서비스 개발
+<pre><code>
+package hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import java.util.List;
+import java.util.Optional;
+public class MemberService {
+ private final MemberRepository memberRepository = new
+MemoryMemberRepository();
+ /**
+ * 회원가입
+ */
+ public Long join(Member member) {
+ validateDuplicateMember(member); //중복 회원 검증
+ memberRepository.save(member);
+ return member.getId();
+ }
+ private void validateDuplicateMember(Member member) {
+ memberRepository.findByName(member.getName())
+ .ifPresent(m -> {
+ throw new IllegalStateException("이미 존재하는 회원입니다.");
+ });
+ }
+ /**
+ * 전체 회원 조회
+ */
+ public List<Member> findMembers() {
+ return memberRepository.findAll();
+ }
+ public Optional<Member> findOne(Long memberId) {
+ return memberRepository.findById(memberId);
+ }
+}
+</code></pre>
+# 6 회원 서비스 테스트
+<pre><code>
+ackage hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+class MemberServiceTest {
+ MemberService memberService;
+ MemoryMemberRepository memberRepository;
+ @BeforeEach
+ public void beforeEach() {
+ memberRepository = new MemoryMemberRepository();
+ memberService = new MemberService(memberRepository);
+ }
+ @AfterEach
+ public void afterEach() {
+ memberRepository.clearStore();
+ }
+ @Test
+ public void 회원가입() throws Exception {
+ //Given
+ Member member = new Member();
+ member.setName("hello");
+ //When
+ Long saveId = memberService.join(member);
+ //Then
+ Member findMember = memberRepository.findById(saveId).get();
+ assertEquals(member.getName(), findMember.getName());
+ }
+ @Test
+ public void 중복_회원_예외() throws Exception {
+ //Given
+ Member member1 = new Member();
+ member1.setName("spring");
+ Member member2 = new Member();
+ member2.setName("spring");
+ //When
+ memberService.join(member1);
+ IllegalStateException e = assertThrows(IllegalStateException.class,
+ () -> memberService.join(member2));//예외가 발생해야 한다.
+ assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+ }
+}
+</code></pre>
+>> Ctrl + shift + Alt + T를 이용해서 Refactor this 활용해서 extract method 활용
+>> ctrl + shift + T를 이용해서 create test로 memberservicetest를 쉽게 생성할 수 있음
+>> 이와 같은 단축키를 이용해서 빠르게 백앤드 개발을 할 수 있음
+
+
+section 4 - 스프링 빈과 의존관계
+----------------------------------------------
+<pre><code>
+package hello.hellospring.controller;
+
+import hello.hellospring.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class MemberController{
+
+    private final MemberService memberService;
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+}
+</code></pre>
+> 생성자에 @Autowired가 있으면 스프링이 연관된 객체를 스프링 컨테이너에서 찾아서 넣어준다. 
+> 객체 의존관계를 외부에서 넣어주는 것을 DI(Dependency Injection), 의존성 주입이라 한다.
+# 스프링 빈을 등록하는 2가지 방법
+1. 컴포넌트 스캔과 자동 의존관계 설정 (@Service, @Controller, @Autowird 등)
+> @Component 에노테이션이 있으면 스프링 빈으로 자동 등록된다.
+> @Controller 컨트롤러가 스프링 빈으로 자동 등록된 이유도 컴포넌트 스킨 때문이다.
+> @Component를 포함하는 다음 애노테이션도 스프링 빈으로 자동 등록된다.
+@Controller, @Service, @Repository
+2. 자바 코드로 직접 스프링 빈 등록하기
+<pre><code>
+package hello.hellospring;
+
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+
+        @Bean
+        public MemberService memberService(){
+            return new MemberService(memberRepository());
+        }
+
+        @Bean
+        public MemberRepository memberRepository(){
+            return new MemoryMemberRepository();
+        }
+}
+</code></pre>
+> DI에는 필드 주입, setter 주입, 생성자 주입 이렇게 3가지가 있다.
+# 1 필드 주입
+@Autowired ~
+# 2 setter 주입
+setter + @Autowired
+>> setter 주입을 쓸때 주의사항 : 누군가 필드에 들어올때 public이 있어야하고, final이 빠저야 된다.
+# 3 생성자 주입
+의존관계가 실행중에 동적으로 변하는 경우는 거의 없으므로 생성자 주입을 권장한다.
+
+## 주의: @Autowird를 통한 DI는 helloController, memberService등과 같이 스프링이 관리되는 객체에서만 동작한다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않는다.
+
+section 5 - 회원 관리 예제 - 웹 MVC 개발
+---------------------------------------------------
+
+# 1 회원 웹 기능 - 홈 화면 추가
+>> 홈 컨트롤러 추가
+<pre><code>
+package hello.hellospring.controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+@Controller
+public class HomeController {
+ @GetMapping("/")
+ public String home() {
+ return "home";
+ }
+}
+</code></pre>
+>> 회원 관리용 홈
+<pre><code>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container">
+ <div>
+ <h1>Hello Spring</h1>
+ <p>회원 기능</p>
+ <p>
+ <a href="/members/new">회원 가입</a>
+ <a href="/members">회원 목록</a>
+ </p>
+ </div>
+</div> <!-- /container -->
+</body>
+</html>
+</code></pre>
+>> localhost:8080에 들어가게 되면 hello spring과 함께 회원 기능, 회원 가입, 회원 목록이 뜬다.
+
+# 2 회원 웹 기능 - 등록
+
+>> 회원 등록 폼 컨트롤러
+<pre><code>
+@Controller
+public class MemberController {
+ private final MemberService memberService;
+ @Autowired
+ public MemberController(MemberService memberService) {
+ this.memberService = memberService;
+ }
+ @GetMapping(value = "/members/new")
+ public String createForm() {
+ return "members/createMemberForm";
+ }
+}
+</code></pre>
+>> 회원 등록 품 HTML
+<pre><code>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container">
+ <form action="/members/new" method="post">
+ <div class="form-group">
+ <label for="name">이름</label>
+ <input type="text" id="name" name="name" placeholder="이름을
+입력하세요">
+ </div>
+ <button type="submit">등록</button>
+ </form>
+</div> <!-- /container -->
+</body>
+</html>
+</code></pre>
+>> 컨트롤러와 html를 만들면, 회원가입을 눌렀을 때 이름을 등록할 수 있다.
+# 3 회원 웹 기능 - 조회
+>> 회원 컨트롤러에서 조회 기능
+<pre><code>
+@GetMapping(value = "/members")
+public String list(Model model) {
+ List<Member> members = memberService.findMembers();
+ model.addAttribute("members", members);
+ return "members/memberList";
+}
+</code></pre>
+>> 회원 리스크 HTML
+<pre><code>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container">
+ <div>
+ <table>
+ <thead>
+ <tr>
+ <th>#</th>
+ <th>이름</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr th:each="member : ${members}">
+ <td th:text="${member.id}"></td>
+ <td th:text="${member.name}"></td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+</div> <!-- /container -->
+</body>
+</html>
+</code></pre>
+localhost:8080에서 회원가입 누르고 이름을 입력하고 회원목록을 누르게 되면 내가 입력했던 이름들이 나오게 된다.
+서버를 정지 시켰다가 다시 하게 되면 만들었던 회원 목록들이 사라지게 된다.
+
+section 6 - 스프링 DB 접근 기술
+---------------------------------------------------------------------------
+> h2 설치
+> window 기준 h2.dat 눌러서 실행, jdbc:h2:~/test 데이터베이스 파일 생성
+>> 테이블 생성하기
+<pre><code>
+drop table if exists member CASCADE;
+create table member
+(
+ id bigint generated by default as identity,
+ name varchar(255),
+ primary key (id)
+);
+</code></pre>
+# Jdbc 회원 리포지토리
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+public class JdbcMemberRepository implements MemberRepository {
+    private final DataSource dataSource;
+    public JdbcMemberRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    @Override
+    public Member save(Member member) {
+        String sql = "insert into member(name) values(?)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, member.getName());
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                member.setId(rs.getLong(1));
+            } else {
+                throw new SQLException("id 조회 실패");
+            }
+            return member;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    @Override
+    public Optional<Member> findById(Long id) {
+        String sql = "select * from member where id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, id);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                return Optional.of(member);
+            } else {
+                return Optional.empty();
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    @Override
+    public List<Member> findAll() {
+        String sql = "select * from member";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            List<Member> members = new ArrayList<>();
+            while(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                members.add(member);
+            }
+            return members;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    @Override
+    public Optional<Member> findByName(String name) {
+        String sql = "select * from member where name = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                return Optional.of(member);
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    private Connection getConnection() {
+        return DataSourceUtils.getConnection(dataSource);
+    }
+    private void close(Connection conn, PreparedStatement pstmt, ResultSet rs)
+    {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (conn != null) {
+                close(conn);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private void close(Connection conn) throws SQLException {
+        DataSourceUtils.releaseConnection(conn, dataSource);
+    }
+}
+</code></pre>
+# 스프링 설정 변경
+<pre><code>
+package hello.hellospring;
+import hello.hellospring.repository.JdbcMemberRepository;
+import hello.hellospring.repository.JdbcTemplateMemberRepository;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import javax.sql.DataSource;
+@Configuration
+public class SpringConfig {
+ private final DataSource dataSource;
+ public SpringConfig(DataSource dataSource) {
+ this.dataSource = dataSource;
+ }
+ @Bean
+ public MemberService memberService() {
+ return new MemberService(memberRepository());
+ }
+ @Bean
+ public MemberRepository memberRepository() {
+// return new MemoryMemberRepository();
+return new JdbcMemberRepository(dataSource);
+ }
+}
+</code></pre>
+>> <memory> memberRepository --> <jdbc> memberRepository로 바꿔줌
+>> DataSource는 데이터베이스 커넥션을 획득할 때 사용하는 객체다. 스프링 부트는 데이터베이스 커넥션 정보를 바탕으로 DataSource를 생성하고 스프링 빈으로 만들어둔다. 그래서 DI를 받을 수 있다.
+>> 개방-폐쇄 원칙
+확장에는 열려있고, 수정, 변경에는 닫혀있다.
+
+# 회원 서비스 스프링 통합 테스트
+<pre><code>
+package hello.hellospring.service;
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+@SpringBootTest
+@Transactional
+class MemberServiceIntegrationTest {
+ @Autowired MemberService memberService;
+ @Autowired MemberRepository memberRepository;
+ @Test
+ public void 회원가입() throws Exception {
+ //Given
+ Member member = new Member();
+ member.setName("hello");
+ //When
+ Long saveId = memberService.join(member);
+ //Then
+ Member findMember = memberRepository.findById(saveId).get();
+ assertEquals(member.getName(), findMember.getName());
+ }
+ @Test
+ public void 중복_회원_예외() throws Exception {
+ //Given
+ Member member1 = new Member();
+ member1.setName("spring");
+ Member member2 = new Member();
+ member2.setName("spring");
+ //When
+ memberService.join(member1);
+ IllegalStateException e = assertThrows(IllegalStateException.class,
+ () -> memberService.join(member2));//예외가 발생해야 한다.
+ assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+ }
+}
+</code></pre>
+@SpringBootTest: 스프링 컨테이너와 테스트를 함께 실행함
+@Transactional: 테스트 케이스에 이 애노테이션이 있으면, 테스트 시작 전에 트랜잭션을 시작하고 테스트 완료 후에 항상 롤백함. 이렇게 하면 DB에 데이터가 남지 않으므로 다음 테스트에 영향을 주지 않음
+
+# 스프링 JdbcTemplate
+<pre><code>
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+public class JdbcTemplateMemberRepository implements  MemberRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public JdbcTemplateMemberRepository(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public Member save(Member member) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+        jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", member.getName());
+        Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
+        member.setId(key.longValue());
+        return member;
+    }
+
+    @Override
+    public Optional<Member> findById(Long id) {
+        List<Member> result = jdbcTemplate.query("select * from member where id = ?", memberRowMapper());
+        return result.stream().findAny();
+    }
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        List<Member> result = jdbcTemplate.query("select * from member where name = ?", memberRowMapper(), name);
+        return result.stream().findAny();
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return jdbcTemplate.query("select * from member", memberRowMapper());
+    }
+
+    private RowMapper<Member> memberRowMapper() {
+        return new RowMapper<Member>() {
+            @Override
+            public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                return member;
+            }
+
+
+        };
+    }
+}
+</code></pre>
+>> ++ SpringConfig에 들어가서 Jdbc Template을 사용하도록 스프링 설정 변경
+return new JdbcMemberRepository(dataSource) -->
+return new JdbcTemplateMemberRepository(dataSource);
+# JPA
+> JPA는 기존의 반복 코드는 물론이고, 기본적인 sql도 JPA가 직접 만들어서 실행해준다.
+> JPA를 사용하면, sql과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임을 전환을 할 수 있다.
+> ++ 개발 생산성을 높일 수 있다.
+# 스프링 부트에 JPA 설정 추가
+<pre><code>
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+</code></pre>
+>> show-sql :  JPA가 생성하는 SQL을 출력함
+>> ddl-auto: JPa는 테이블을 자동으로 생성하는 기능을 제공하는데 none을 사용하면 해당 기능을 끔
+# JPA 엔티티 매핑
+<pre><code>
+package hello.hellospring.domain;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+@Entity
+public class Member {
+ @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+ private Long id;
+ private String name;
+ public Long getId() {
+ return id;
+ }
+ public void setId(Long id) {
+ this.id = id;
+ }
+ public String getName() {
+ return name;
+ }
+ public void setName(String name) {
+ this.name = name;
+ }
+}
+</code></pre>
+>> jpa 설정이 완료된 후 @Entity, @ID, @GeneratedValue을 실행
+# JPA 회원 리포지토리
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
+public class JpaMemberRepository implements MemberRepository {
+ private final EntityManager em;
+ public JpaMemberRepository(EntityManager em) {
+ this.em = em;
+ }
+ public Member save(Member member) {
+ em.persist(member);
+ return member;
+ }
+ public Optional<Member> findById(Long id) {
+ Member member = em.find(Member.class, id);
+ return Optional.ofNullable(member);
+ }
+ public List<Member> findAll() {
+ return em.createQuery("select m from Member m", Member.class)
+ .getResultList();
+ }
+ public Optional<Member> findByName(String name) {
+ List<Member> result = em.createQuery("select m from Member m where 
+m.name = :name", Member.class)
+ .setParameter("name", name)
+ .getResultList();
+ return result.stream().findAny();
+ }
+}
+</code></pre>
+>> ++ springConfig에서 
+ return new JdbcTemplateMemberRepository(dataSource); -> return new JpaMemberRepository(em);으로 변경함
+
+ # 스프링 데이터 JPA
+> JPA를 편리하게 사용하도록 도와주는 기술, 따라서 JPA를 먼저 학습 후, 스프링 데이터 JPA를 학습해야함!!
+> JPA의 장점은 개발 생산성이 많이 증가하고, 개발해야할 코드도 확연히 줄어든다.
+여기에다가 스프링 데이터 JPA를 사용하면, 리포지토리에 구현 클래스 없이 인터페이스 만으로 개발을 완료할 수 있다.
+> 스프링 데이터 JPA에서는 기본 CRUD 기능도 제공
+# 스프링 데이터 JPA 회원 리포지토리
+<pre><code>
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+public interface SpringDataJpaMemberRepository extends JpaRepository<Member,
+Long>, MemberRepository {
+ Optional<Member> findByName(String name);
+}
+</code></pre>
+<pre><code>
+package hello.hellospring;
+import hello.hellospring.repository.*;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+@Configuration
+public class SpringConfig {
+ private final MemberRepository memberRepository;
+ public SpringConfig(MemberRepository memberRepository) {
+ this.memberRepository = memberRepository;
+ }
+ @Bean
+ public MemberService memberService() {
+ return new MemberService(memberRepository);
+ }
+}
+</code></pre>
+>> 스프링 데이터 JPA 제공 기능
+1. 인터페이스를 통한 기본적인 CRUD
+2. findByName(), findByEmail()처럼 매서드 이름 만으로 조회 기능 제공
+3. 페이징 기능 자동 제공
+>> 복잡한 동적 쿼리는 Querydsl이라는 라이브러리 사용, 이걸로도 어렵다면 네이티브 쿼리를 사용하거나, 앞서 학습한 스프링 JdbcTemplate를 사용
+
+section 7 - AOP
+-------------------------------------------------------------------------
+> AOP가 필요한 상황
+1. 모든 메소드의 호출 시간을 측정하고 싶다면 ?
+2. 공통 관심 사항 vs 핵심 관심 사항
+3. 회원 가입 시간, 회원 조회 시간을 측정하고 싶다면 ?
+
+# MemberService 회원 조회 시간 측정 추가
+<pre><code>
+package hello.hellospring.service;
+@Transactional
+public class MemberService {
+ /**
+ * 회원가입
+ */
+ public Long join(Member member) {
+ long start = System.currentTimeMillis();
+ try {
+ validateDuplicateMember(member); //중복 회원 검증
+ memberRepository.save(member);
+ return member.getId();
+ } finally {
+ long finish = System.currentTimeMillis();
+ long timeMs = finish - start;
+ System.out.println("join " + timeMs + "ms");
+ }
+ }
+ /**
+ * 전체 회원 조회
+ */
+ public List<Member> findMembers() {
+ long start = System.currentTimeMillis();
+ try {
+ return memberRepository.findAll();
+ } finally {
+ long finish = System.currentTimeMillis();
+ long timeMs = finish - start;
+ System.out.println("findMembers " + timeMs + "ms");
+ }
+ }
+}
+</code></pre>
+> 문제
+1. 회원가입, 회원 조회에 시간을 측정하는 기능은 핵심 관심 사항이 아니다.
+2. 시간을 측정하는 로직은 공통 관심 사항이다.
+3. 시간을 측정하는 로직과 핵심 비즈니스의 로직이 섞여서 유지보수가 어렵다.
+4. 시간을 측정하는 로직을 별도의 공통 로직으로 만들기 매우 어렵다.
+5. 시간을 측정하는 로직을 변경할 때 모든 로직을 찾아가면서 변경해야 한다.
+
+# AOP 적용
+
+# 시간 측정 AOP 등록
+<pre><code>
+package hello.hellospring.aop;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+@Component
+@Aspect
+public class TimeTraceAop {
+ @Around("execution(* hello.hellospring..*(..))")
+ public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+ long start = System.currentTimeMillis();
+ System.out.println("START: " + joinPoint.toString());
+ try {
+ return joinPoint.proceed();
+ } finally {
+ long finish = System.currentTimeMillis();
+ long timeMs = finish - start;
+ System.out.println("END: " + joinPoint.toString()+ " " + timeMs +
+"ms");
+ }
+ }
+}
+</code></pre>
+> 해결
+1. 회원가입, 회원 조회등 핵심 관심사항과 시간을 측정하는 공통 관심 사항을 분리한다.
+2. 시간을 측정하는 로직을 별도의 공통 로직으로 만들었다.
+3. 핵심 관심 사항을 깔끔하게 유지할 수 있다.
+4. 변경이 필요하면 이 로직만 변경하면 된다.
+5. 원하는 적용 대상을 선택할 수 있다.
+
+==========================================================================
+스프링 입문 강의 끝
