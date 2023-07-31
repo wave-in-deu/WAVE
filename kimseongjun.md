@@ -3399,3 +3399,115 @@ public class TimeTraceAop {
 
 ==========================================================================
 스프링 입문 강의 끝
+======================================
+
+웹 백엔드
+
+SQL & JDBC 프로그래밍
+----------------------------------
+
+# 1 데이터베이스의 기본개념 
+> 데이터의 집합
+> 여러 응용 시스템(프로그램)들의 통합된 정보들을 저장하여 운영할 수 있는 공용 데이터의 집합
+> 효율적으로 저장, 검색, 갱신할 수 있도록 데이터 집합들끼리 연관시키고 조직화되어야함
+
+# 2 데이터베이스의 특성
+1. 실시간 접근성
+2. 게속적인 변화
+3. 동시 공유성
+4. 내용 참조
+
+# 3 데이터베이스 관리 시스템
+> 데이터베이스를 관리하는 소프트웨어
+필수 3기능
+1. 정의기능 : 데이터 베이스의 논리적, 물리적 구조를 정의
+2. 조작기능 : 데이터를 검색, 삭제, 갱신, 삽입, 삭제하는 기능
+3. 제어기능 : 데이터베이스의 내용 정확성과 안전성을 유지하도록 제어하는 기능
+Oracle, SQL Server, MySQL, DB2 등의 상용 또는 공개 DBMS가 있다.
+
+# 4 DBMS 장,단점
+장점
+> 데이터 중복이 최소화, 데이터의 일관성 및 무결성 유지, 데이터 보안 보장
+단점
+> 운영비가 비싸다, 백업 및 복구에 대한 관리가 복잡, 부분적 데이터베이스 손실이 전체 시스템을 정지
+
+SQL
+---------------------------------------------------------------------
+# 1 SQL ?
+> 데이터를 보다 쉽게 검색하고 추가, 삭제, 수정 같은 조작을 할 수 있도록 고안된 컴퓨터 언어
+> DML : 데이터를 조작하기 위해 사용(insert, update, delete, select)
+> DDL : 데이터베이스의 스키마를 정의 하거나 조작하기 위해 사용(create, drop, alter) 
+> DCL : 데이터를 제어하는 언어(grant, revoke)
+
+# 2 DML의 종류
+1. select - 검색
+2. insert - 등록
+3. update - 수정
+4. delete - 삭제
+
+# 3 select 구문의 기본문형
+1. select: 검색하고자 하는 데이터(칼럼)를 나열한다
+2. distinct: 중복행을 제거
+3. alias: 나타날 컬럼에 대한 다른 이름 부여
+4. from: 선택한 컬럼이 있는 테이블을 명시
+
+# 4 select 구문 예제(특정 행 검색 - where절)
+>
+<pre><code>
+select 칼럼명
+from 테이블명
+where (조건식)
+order by 칼럼 or 표현식
+</code></pre>
+# 5 select 구문 예제(함수 사용)
+1. ucase, upper
+2. lcase, lower
+3. substring
+4. lpad, rpad
+
+FLOOR(x) : x보다 크지 않은 가장 큰 정수를 반환합니다. BIGINT로 자동 변환합니다.
+CEILING(x) : x보다 작지 않은 가장 작은 정수를 반환합니다.
+ROUND(x) : x에 가장 근접한 정수를 반환합니다.
+POW(x,y) POWER(x,y) : x의 y 제곱 승을 반환합니다.
+GREATEST(x,y,...) : 가장 큰 값을 반환합니다.
+LEAST(x,y,...) : 가장 작은 값을 반환합니다.
+CURDATE(),CURRENT_DATE : 오늘 날짜를 YYYY-MM-DD나 YYYYMMDD 형식으로 반환합니다.
+CURTIME(), CURRENT_TIME : 현재 시각을 HH:MM:SS나 HHMMSS 형식으로 반환합니다.
+NOW(), SYSDATE() , CURRENT_TIMESTAMP : 오늘 현시각을 YYYY-MM-DD HH:MM:SS나 YYYYMMDDHHMMSS 형식으로 반환합니다. 
+DATE_FORMAT(date,format) : 입력된 date를 format 형식으로 반환합니다.
+PERIOD_DIFF(p1,p2) : YYMM이나 YYYYMM으로 표기되는 p1과 p2의 차이 개월을 반환합니다.
+
+# 6 SELECT 구문 예제(그룹함수와 groupby 절)
+> employee 테이블에서 부서별 직원의 부서번호, 급여 평균과 총합계를 출력하시오.
+<pre><code>
+SELECT deptno, AVG(salary) , SUM(salary)
+FROM employee
+group by deptno;
+</code></pre>
+
+DDL
+-----------------------------------------------------------------------
+# 1 테이블 생성
+<pre><code>
+create table 테이블명( 
+          필드명1 타입 [NULL | NOT NULL][DEFAULT ][AUTO_INCREMENT], 
+          필드명2 타입 [NULL | NOT NULL][DEFAULT ][AUTO_INCREMENT], 
+          필드명3 타입 [NULL | NOT NULL][DEFAULT ][AUTO_INCREMENT], 
+          ........... 
+          PRIMARY KEY(필드명) 
+          );
+</code></pre>
+# 2 테이블 수정
+<pre><code>
+alter table 테이블명
+          add  필드명 타입 [NULL | NOT NULL][DEFAULT ][AUTO_INCREMENT];
+
+alter table 테이블명
+         drop  필드명;
+</code></pre>
+# 3 테이블 삭제
+<pre><code>
+alter table EMPLOYEE2
+
+drop birthdate;​
+</code></pre>
