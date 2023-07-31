@@ -2550,3 +2550,633 @@ public class MemberForm {
         return "members/memberList";
         
     }
+
+
+This is an 섹션6
+----------------
+# This is a H1
+H2 데이터베이스 설치
+
+## This is a H2
+resources/application.properties
+
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+
+--------------------------------------------------------------------
+
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+public class JdbcMemberRepository implements MemberRepository {
+    private final DataSource dataSource;
+    public JdbcMemberRepository(DataSource dataSource) {
+        this.dataSource = dataSource; }
+    @Override
+    public Member save(Member member) {
+        String sql = "insert into member(name) values(?)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, member.getName());
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                member.setId(rs.getLong(1));
+            } else {
+                throw new SQLException("id 조회 실패");
+            }
+            return member;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    @Override
+    public Optional<Member> findById(Long id) {
+        String sql = "select * from member where id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null; ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, id);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                return Optional.of(member);
+            } else {
+                return Optional.empty();
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    @Override
+    public List<Member> findAll() {
+        String sql = "select * from member";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery(); List<Member> members = new ArrayList<>();
+            while(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                members.add(member);
+            }
+            return members;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    @Override
+    public Optional<Member> findByName(String name) {
+        String sql = "select * from member where name = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                return Optional.of(member);
+            } return Optional.empty();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    private Connection getConnection() {
+        return DataSourceUtils.getConnection(dataSource);
+    }
+    private void close(Connection conn, PreparedStatement pstmt, ResultSet rs)
+    {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (conn != null) {
+                close(conn);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private void close(Connection conn) throws SQLException {
+        DataSourceUtils.releaseConnection(conn, dataSource); }
+}
+
+
+---------------------------------------------------------------------
+
+package hello.hellospring;
+
+import hello.hellospring.repository.JdbcMemberRepository;
+import hello.hellospring.repository.JdbcTemplateMemberRepository;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import javax.sql.DataSource;
+@Configuration
+public class SpringConfig {
+    private final DataSource dataSource;
+    public SpringConfig(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    @Bean
+    public MemberService memberService() {
+        return new MemberService(memberRepository());
+    }
+    @Bean
+    public MemberRepository memberRepository() {
+// return new MemoryMemberRepository();
+        return new JdbcMemberRepository(dataSource);
+    }
+}
+
+
+
+### This is a H3
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SpringBootTest
+@Transactional
+class MemberServiceIntegrationTest {
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
+    @Test
+    public void 회원가입() throws Exception { //Given
+        Member member = new Member();
+        member.setName("hello");
+        //When
+        Long saveId = memberService.join(member);
+        //Then
+        Member findMember = memberRepository.findById(saveId).get();
+        assertEquals(member.getName(), findMember.getName());
+    }
+    @Test
+    public void 중복_회원_예외() throws Exception {
+        //Given
+        Member member1 = new Member();
+        member1.setName("spring");
+        Member member2 = new Member();
+        member2.setName("spring");
+        //When
+        memberService.join(member1);
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> memberService.join(member2));//예외가 발생해야 한다.
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+    }
+}
+
+
+
+#### This is a H4
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+public class JdbcTemplateMemberRepository implements MemberRepository {
+    private final JdbcTemplate jdbcTemplate;
+    public JdbcTemplateMemberRepository(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+    @Override
+    public Member save(Member member) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+        jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id"); Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", member.getName());
+        Number key = jdbcInsert.executeAndReturnKey(new
+                MapSqlParameterSource(parameters));
+        member.setId(key.longValue());
+        return member;
+    }
+    @Override
+    public Optional<Member> findById(Long id) {
+        List<Member> result = jdbcTemplate.query("select * from member where id 
+                = ?", memberRowMapper(), id);
+        return result.stream().findAny();
+    }
+    @Override
+    public List<Member> findAll() {
+        return jdbcTemplate.query("select * from member", memberRowMapper());
+    }
+    @Override
+    public Optional<Member> findByName(String name) {
+        List<Member> result = jdbcTemplate.query("select * from member where 
+                name = ?", memberRowMapper(), name);
+        return result.stream().findAny();
+    }
+    private RowMapper<Member> memberRowMapper() {
+        return (rs, rowNum) -> {
+            Member member = new Member();
+            member.setId(rs.getLong("id"));
+            member.setName(rs.getString("name"));
+            return member;
+        };
+    }
+}
+
+
+--------------------------------------------------------------------------
+
+package hello.hellospring;
+import hello.hellospring.repository.JdbcMemberRepository;
+import hello.hellospring.repository.JdbcTemplateMemberRepository;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import javax.sql.DataSource;
+@Configuration
+public class SpringConfig {
+ private final DataSource dataSource;
+ public SpringConfig(DataSource dataSource) {
+ this.dataSource = dataSource;
+ }
+ @Bean
+ public MemberService memberService() {
+ return new MemberService(memberRepository());
+ }
+ @Bean
+ public MemberRepository memberRepository() {
+// return new MemoryMemberRepository();
+// return new JdbcMemberRepository(dataSource);
+ return new JdbcTemplateMemberRepository(dataSource);
+ }
+}
+
+
+##### This is a H5
+JPA는 기존의 반복 코드는 물론이고, 기본적인 SQL도 JPA가 직접 만들어서 실행해준다.
+JPA를 사용하면, SQL과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임을 전환을 할 수 있다.
+JPA를 사용하면 개발 생산성을 크게 높일 수 있다.
+
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+//implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        runtimeOnly 'com.h2database:h2'
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+    }
+
+
+
+--------------------------------------------------------------------------
+
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+
+
+--------------------------------------------------------------------------
+package hello.hellospring.domain;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+@Entity
+public class Member {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+
+--------------------------------------------------------------------------
+
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
+public class JpaMemberRepository implements MemberRepository {
+    private final EntityManager em;
+    public JpaMemberRepository(EntityManager em) {
+        this.em = em;
+    }
+    public Member save(Member member) {
+        em.persist(member);
+        return member;
+    }
+    public Optional<Member> findById(Long id) {
+        Member member = em.find(Member.class, id);
+        return Optional.ofNullable(member);
+    }
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
+    public Optional<Member> findByName(String name) { List<Member> result = em.createQuery("select m from Member m where 
+            m.name = :name", Member.class)
+            .setParameter("name", name)
+            .getResultList();
+        return result.stream().findAny();
+    }
+}
+
+
+--------------------------------------------------------------------------
+
+import org.springframework.transaction.annotation.Transactional
+
+@Transactional
+public class MemberService {}
+
+
+--------------------------------------------------------------------------
+
+package hello.hellospring;
+
+import hello.hellospring.repository.*;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
+@Configuration
+public class SpringConfig { private final DataSource dataSource;
+    private final EntityManager em;
+    public SpringConfig(DataSource dataSource, EntityManager em) {
+        this.dataSource = dataSource;
+        this.em = em;
+    }
+    @Bean
+    public MemberService memberService() {
+        return new MemberService(memberRepository());
+    }
+    @Bean
+    public MemberRepository memberRepository() {
+// return new MemoryMemberRepository();
+// return new JdbcMemberRepository(dataSource);
+// return new JdbcTemplateMemberRepository(dataSource);
+        return new JpaMemberRepository(em);
+    }
+}
+
+
+
+###### This is a H6
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+public interface SpringDataJpaMemberRepository extends JpaRepository<Member,
+        Long>, MemberRepository {
+    Optional<Member> findByName(String name);
+}
+
+
+--------------------------------------------------------------------------
+
+package hello.hellospring;
+
+import hello.hellospring.repository.*;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+@Configuration
+public class SpringConfig {
+    private final MemberRepository memberRepository; public SpringConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+    @Bean
+    public MemberService memberService() {
+        return new MemberService(memberRepository);
+    }
+}
+
+
+스프링 데이터 JPA 제공 기능
+-인터페이스를 통한 기본적인 CRUD
+-findByName() , findByEmail() 처럼 메서드 이름 만으로 조회 기능 제공
+-페이징 기능 자동 제공
+
+
+This is an 섹션7
+----------------
+
+# This is a H1
+AOP가 필요한 상황
+-모든 메소드의 호출 시간을 측정하고 싶다면?
+-공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern)
+-회원 가입 시간, 회원 조회 시간을 측정하고 싶다면?
+
+
+package hello.hellospring.service;
+@Transactionalpublic class MemberService {
+
+    /**
+     * 회원가입
+     */
+    public Long join(Member member) {
+
+        long start = System.currentTimeMillis();
+
+        try {
+            validateDuplicateMember(member); //중복 회원 검증
+            memberRepository.save(member);
+            return member.getId();
+
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("join " + timeMs + "ms");
+        }
+    }
+
+    /**
+     * 전체 회원 조회
+     */
+    public List<Member> findMembers() {
+
+        long start = System.currentTimeMillis();
+
+        try {
+            return memberRepository.findAll();
+
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("findMembers " + timeMs + "ms");
+        }
+    }
+}
+
+
+문제
+-회원가입, 회원 조회에 시간을 측정하는 기능은 핵심 관심 사항이 아니다.
+-시간을 측정하는 로직은 공통 관심 사항이다.
+-시간을 측정하는 로직과 핵심 비즈니스의 로직이 섞여서 유지보수가 어렵다.
+-시간을 측정하는 로직을 별도의 공통 로직으로 만들기 매우 어렵다.
+-시간을 측정하는 로직을 변경할 때 모든 로직을 찾아가면서 변경해야 한다.
+
+
+## This is a H2
+AOP 적용
+-AOP: Aspect Oriented Programming
+-공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern) 분리
+
+package hello.hellospring.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Component
+@Aspect
+public class TimeTraceAop {
+    @Around("execution(* hello.hellospring..*(..))")
+    public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        long start = System.currentTimeMillis();
+
+        System.out.println("START: " + joinPoint.toString());
+
+        try {
+            return joinPoint.proceed();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            
+            System.out.println("END: " + joinPoint.toString()+ " " + timeMs + "ms");
+        }
+    }
+}
+
+
+This is an H1
+=============
+
+This is an H1
+-------------
+
+# This is a H1
+* 데이터베이스의 기본개념 (정의)
+
+데이터의 집합 (a Set of Data)
+여러 응용 시스템(프로그램)들의 통합된 정보들을 저장하여 운영할 수 있는 공용(share) 데이터의 집합
+효율적으로 저장, 검색, 갱신할 수 있도록 데이터 집합들끼리 연관시키고 조직화되어야 한다.
+
+
+* 데이터베이스의 특성
+
+실시간 접근성(Real-time Accessability)
+- 사용자의 요구를 즉시 처리할 수 있다.
+계속적인 변화(Continuous Evolution)
+- 정확한 값을 유지하려고 삽입·삭제·수정 작업 등을 이용해 데이터를 지속적으로 갱신할 수 있다.
+동시 공유성(Concurrent Sharing)
+- 사용자마다 서로 다른 목적으로 사용하므로 동시에 여러 사람이 동일한 데이터에 접근하고 이용할 수 있다.
+내용 참조(Content Reference)
+- 저장한 데이터 레코드의 위치나 주소가 아닌 사용자가 요구하는 데이터의 내용, 즉 데이터 값에 따라 참조할 수 있어야 한다.
+
+
+* 데이터베이스 관리 시스템 (Database Management System = DBMS)
+
+데이터베이스를 관리하는 소프트웨어
+여러 응용 소프트웨어(프로그램) 또는 시스템이 동시에 데이터베이스에 접근하여 사용할 수 있게 한다
+필수 3기능
+- 정의기능 :  데이터 베이스의 논리적, 물리적 구조를 정의
+- 조작기능 : 데이터를 검색, 삭제, 갱신, 삽입, 삭제하는 기능
+- 제어기능 :  데이터베이스의 내용 정확성과 안전성을 유지하도록 제어하는 기능
+Oracle, SQL Server, MySQL, DB2 등의 상용 또는 공개 DBMS가 있다.
+
+
+## This is a H2
+MySQL 실행
+
+윈도우 검색 버튼에서 서비스라고 입력하면 서비스(데스크톱 앱)
+위와 같이 MySQL57 이라는 이름으로 서비스가 실행된 것을 알 수 있습니다.
+
+
+### This is a H3
+MySQL 종료
+
+서비스 목록에서 MySQL57을 선택한 후 우측버튼을 클릭합니다.
+우측버튼을 클릭했다면 속성버튼을 클릭합니다.
+속성 창에서 “중지”버튼을 클릭하면 MySQL서버는 정지됩니다.
+
